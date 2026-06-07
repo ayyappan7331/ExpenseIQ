@@ -33,8 +33,10 @@ const buildRateLimiter = (overrides = {}) =>
     standardHeaders: true,
     legacyHeaders: false,
     message: { error: 'Too many requests' },
-    // Silence the v7 trust-proxy warning on localhost-only deployments.
-    validate: { trustProxy: false },
+    // Silence the v7 trust-proxy / x-forwarded-for warnings.
+    // We set app.set('trust proxy', 1) in server.js, but the rate-limiter's
+    // own validator can still throw; disable both checks explicitly.
+    validate: { trustProxy: false, xForwardedForHeader: false },
     ...overrides,
   });
 

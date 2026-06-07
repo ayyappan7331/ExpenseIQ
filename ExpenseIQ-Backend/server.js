@@ -13,6 +13,10 @@ const logger = require('./utils/logger');
 
 const app = express();
 
+// Trust the first proxy (Render, Vercel, etc.) so express-rate-limit and
+// req.ip work correctly behind a reverse proxy.
+app.set('trust proxy', 1);
+
 // Connect to MongoDB
 connectDB();
 
