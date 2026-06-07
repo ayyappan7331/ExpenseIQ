@@ -11,29 +11,76 @@ const requireSecret = () => {
   return s;
 };
 
-const register = async ({ email, password, name, dob, purpose } = {}) => {
-  if (!email || !password) throw httpError(400, 'email and password are required');
-  const existing = await User.findOne({ email: String(email).toLowerCase() });
-  if (existing) throw httpError(400, 'Email already registered');
+/** Detect whether a string looks like a mobile number */
+const isMobile = (val) => /^(\+91|91)?[6-9]\d{9}$/.test((val || '').replace(/[\s-]/g, ''));
+
+/**
+ * Register — requires at least email or mobile.
+ */
+const register = async ({ email, mobile, password, name, dob, purpose } = {}) => {
+  if (!email && !mobile) throw httpError(400, 'Email or mobile number is required');
+  if (!password) throw httpError(400, 'Password is required');
+
+  // Normalise
+  const normEmail = email ? String(email).toLowerCase().trim() : undefined;
+  const normMobile = mobile ? String(mobile).replace(/[\s-]/g, '').trim() : undefined;
+
+  // Check duplicates
+  if (normEmail) {
+    const existingEmail = await User.findOne({ email: normEmail });
+    if (existingEmail) throw httpError(400, 'Email already registered');
+  }
+  if (normMobile) {
+    const existingMobile = await User.findOne({ mobile: normMobile });
+    if (existingMobile) throw httpError(400, 'Mobile number already registered');
+  }
+
   const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-  const user = await User.create({ email, passwordHash, name: name || '', dob: dob || '', purpose: purpose || '' });
-  return { id: user._id.toString(), email: user.email, name: user.name };
+  const user = await User.create({
+    email: normEmail || undefined,
+    mobile: normMobile || undefined,
+    passwordHash,
+    name: name || '',
+    dob: dob || '',
+    purpose: purpose || '',
+  });
+
+  return { id: user._id.toString(), email: user.email, mobile: user.mobile, name: user.name };
 };
 
-const login = async ({ email, password } = {}) => {
-  if (!email || !password) throw httpError(400, 'email and password are required');
-  const user = await User.findOne({ email: String(email).toLowerCase() });
+/**
+ * Login — identifier can be email or mobile.
+ */
+const login = async ({ identifier, password } = {}) => {
+  if (!identifier || !password) throw httpError(400, 'Identifier and password are required');
+
+  const norm = String(identifier).toLowerCase().trim();
+  const query = isMobile(norm)
+    ? { mobile: norm.replace(/[\s-]/g, '') }
+    : { email: norm };
+
+  const user = await User.findOne(query);
   if (!user) throw httpError(401, 'Invalid credentials');
+
   const ok = await bcrypt.compare(password, user.passwordHash);
   if (!ok) throw httpError(401, 'Invalid credentials');
+
   const token = jwt.sign(
-    { userId: user._id.toString(), email: user.email },
+    { userId: user._id.toString(), email: user.email || '' },
     requireSecret(),
     { expiresIn: process.env.JWT_EXPIRY || '7d' }
   );
+
   return {
     token,
-    user: { id: user._id.toString(), email: user.email, name: user.name, dob: user.dob, purpose: user.purpose },
+    user: {
+      id: user._id.toString(),
+      email: user.email || '',
+      mobile: user.mobile || '',
+      name: user.name,
+      dob: user.dob,
+      purpose: user.purpose,
+    },
   };
 };
 
@@ -46,7 +93,28 @@ const update = async (userId, { name, dob, purpose } = {}) => {
     { new: true }
   );
   if (!user) throw httpError(404, 'User not found');
-  return { id: user._id.toString(), email: user.email, name: user.name, dob: user.dob, purpose: user.purpose };
+  return { id: user._id.toString(), email: user.email, mobile: user.mobile, name: user.name, dob: user.dob, purpose: user.purpose };
 };
 
-module.exports = { register, login, verifyToken, update };
+/**
+ * Find user by identifier (email or mobile). Used by OTP flows.
+ */
+const findByIdentifier = async (identifier) => {
+  const norm = String(identifier).toLowerCase().trim();
+  const query = isMobile(norm)
+    ? { mobile: norm.replace(/[\s-]/g, '') }
+    : { email: norm };
+  return User.findOne(query);
+};
+
+/**
+ * Reset password (called after OTP verification).
+ */
+const resetPassword = async (userId, newPassword) => {
+  const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+  const user = await User.findByIdAndUpdate(userId, { passwordHash }, { new: true });
+  if (!user) throw httpError(404, 'User not found');
+  return { id: user._id.toString(), email: user.email, mobile: user.mobile, name: user.name };
+};
+
+module.exports = { register, login, verifyToken, update, findByIdentifier, resetPassword };
