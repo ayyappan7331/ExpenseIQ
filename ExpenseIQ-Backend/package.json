@@ -31,12 +31,12 @@
     "morgan": "^1.10.0",
     "pino": "^9.4.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.7"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",
-    "@types/node": "^20.12.7",
     "cross-env": "^7.0.3",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
