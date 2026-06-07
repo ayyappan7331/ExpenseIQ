@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Debts API GET returns documents for profile: list 1`] = `
+[
+  {
+    "__v": "<__v>",
+    "_id": "<_id>",
+    "amount": 500,
+    "createdAt": "<createdAt>",
+    "date": "2026-05-10",
+    "note": "movie tickets",
+    "person": "Bob",
+    "profileId": "default",
+    "settled": false,
+    "settledDate": null,
+    "type": "borrowed",
+    "updatedAt": "<updatedAt>",
+  },
+  {
+    "__v": "<__v>",
+    "_id": "<_id>",
+    "amount": 500,
+    "createdAt": "<createdAt>",
+    "date": "2026-05-10",
+    "note": "movie tickets",
+    "person": "Alice",
+    "profileId": "default",
+    "settled": false,
+    "settledDate": null,
+    "type": "lent",
+    "updatedAt": "<updatedAt>",
+  },
+]
+`;
+
+exports[`Debts API POST creates (201): create 1`] = `
+{
+  "__v": "<__v>",
+  "_id": "<_id>",
+  "amount": 500,
+  "createdAt": "<createdAt>",
+  "date": "2026-05-10",
+  "note": "movie tickets",
+  "person": "Alice",
+  "profileId": "default",
+  "settled": false,
+  "settledDate": null,
+  "type": "lent",
+  "updatedAt": "<updatedAt>",
+}
+`;
+
+exports[`Debts API PUT updates (mark settled): update 1`] = `
+{
+  "__v": "<__v>",
+  "_id": "<_id>",
+  "amount": 500,
+  "createdAt": "<createdAt>",
+  "date": "2026-05-10",
+  "note": "movie tickets",
+  "person": "Alice",
+  "profileId": "default",
+  "settled": true,
+  "settledDate": "2026-05-20",
+  "type": "lent",
+  "updatedAt": "<updatedAt>",
+}
+`;

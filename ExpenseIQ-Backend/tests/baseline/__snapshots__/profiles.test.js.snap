@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Profiles API GET auto-creates a default profile when none exist: auto-default 1`] = `
+[
+  {
+    "__v": "<__v>",
+    "_id": "<_id>",
+    "createdAt": "<createdAt>",
+    "icon": "👤",
+    "isDefault": true,
+    "name": "Personal",
+    "profileId": "default",
+    "updatedAt": "<updatedAt>",
+    "userId": null,
+  },
+]
+`;
+
+exports[`Profiles API GET sorts isDefault first: list-sorted 1`] = `
+[
+  {
+    "__v": "<__v>",
+    "_id": "<_id>",
+    "createdAt": "<createdAt>",
+    "icon": "👤",
+    "isDefault": true,
+    "name": "Personal",
+    "profileId": "default",
+    "updatedAt": "<updatedAt>",
+    "userId": null,
+  },
+  {
+    "__v": "<__v>",
+    "_id": "<_id>",
+    "createdAt": "<createdAt>",
+    "icon": "👤",
+    "isDefault": false,
+    "name": "Work",
+    "profileId": "work",
+    "updatedAt": "<updatedAt>",
+    "userId": null,
+  },
+]
+`;
+
+exports[`Profiles API POST creates a new profile (201): create 1`] = `
+{
+  "__v": "<__v>",
+  "_id": "<_id>",
+  "createdAt": "<createdAt>",
+  "icon": "💼",
+  "isDefault": false,
+  "name": "Work",
+  "profileId": "work",
+  "updatedAt": "<updatedAt>",
+  "userId": null,
+}
+`;

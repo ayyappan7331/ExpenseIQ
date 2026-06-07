@@ -1,0 +1,386 @@
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.8 [39m[90mc:/Users/ayyappan.pichumani/Downloads/expenseiq-frontend[39m
+
+ [32m✓[39m src/app/(app)/dashboard/helpers.test.ts [2m([22m[2m12 tests[22m[2m)[22m[90m 19[2mms[22m[39m
+ [31m❯[39m src/app/(app)/creditcards/creditcards.test.ts [2m([22m[2m84 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[90m 73[2mms[22m[39m
+[31m   [31m×[31m computeCardStats subtype-aware[2m > [22mundefined subtype income counts as paymentsAfterCycle (backward compat)[90m 23[2mms[22m[31m[39m
+[31m     → expected +0 to be 1000 // Object.is equality[39m
+ [32m✓[39m src/lib/utils/csv/csv.test.ts [2m([22m[2m42 tests[22m[2m)[22m[90m 30[2mms[22m[39m
+ [32m✓[39m src/lib/api/client.test.ts [2m([22m[2m12 tests[22m[2m)[22m[33m 380[2mms[22m[39m
+ [32m✓[39m src/components/charts/charts.test.tsx [2m([22m[2m19 tests[22m[2m)[22m[33m 555[2mms[22m[39m
+ [32m✓[39m src/app/(app)/analytics/analytics.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 882[2mms[22m[39m
+   [33m[2m✓[22m[39m AnalyticsPage[2m > [22mrenders the page header [33m664[2mms[22m[39m
+ [32m✓[39m src/components/ui/ui.test.tsx [2m([22m[2m41 tests[22m[2m)[22m[33m 1139[2mms[22m[39m
+ [32m✓[39m src/lib/utils/dates.test.ts [2m([22m[2m11 tests[22m[2m)[22m[90m 66[2mms[22m[39m
+ [32m✓[39m src/lib/themes.test.ts [2m([22m[2m9 tests[22m[2m)[22m[90m 38[2mms[22m[39m
+ [32m✓[39m src/app/(app)/transactions/e3-enhancements.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[90m 51[2mms[22m[39m
+ [32m✓[39m src/components/ThemeProvider.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[90m 255[2mms[22m[39m
+ [32m✓[39m src/app/(app)/modules.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 1874[2mms[22m[39m
+   [33m[2m✓[22m[39m SubscriptionsPage[2m > [22mrenders the page header and add button [33m540[2mms[22m[39m
+   [33m[2m✓[22m[39m CreditCardsPage[2m > [22mrenders the page header [33m369[2mms[22m[39m
+   [33m[2m✓[22m[39m CreditCardsPage[2m > [22mrenders portfolio summary [33m356[2mms[22m[39m
+ [32m✓[39m src/components/layout/Sidebar.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 1711[2mms[22m[39m
+   [33m[2m✓[22m[39m Sidebar[2m > [22mrenders all 9 legacy nav items as links [33m800[2mms[22m[39m
+   [33m[2m✓[22m[39m Sidebar[2m > [22mclicking a nav link fires onCloseMobile (so mobile sidebar shuts on navigate) [33m517[2mms[22m[39m
+ [32m✓[39m src/app/(app)/budgets/budgets.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 15[2mms[22m[39m
+ [31m❯[39m src/app/(app)/transactions/transactions.test.tsx [2m([22m[2m5 tests[22m[2m | [22m[31m5 failed[39m[2m)[22m[90m 139[2mms[22m[39m
+[31m   [31m×[31m TransactionsPage[2m > [22mrenders the page header[90m 80[2mms[22m[31m[39m
+[31m     → [vitest] No "useSearchParams" export is defined on the "next/navigation" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+[39m
+[31m   [31m×[31m TransactionsPage[2m > [22mrenders filter chips (All, Income, Expense)[90m 12[2mms[22m[31m[39m
+[31m     → [vitest] No "useSearchParams" export is defined on the "next/navigation" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+[39m
+[31m   [31m×[31m TransactionsPage[2m > [22mrenders transaction data from MSW fixtures[90m 13[2mms[22m[31m[39m
+[31m     → [vitest] No "useSearchParams" export is defined on the "next/navigation" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+[39m
+[31m   [31m×[31m TransactionsPage[2m > [22mshows onboarding guidance when no categories configured[90m 11[2mms[22m[31m[39m
+[31m     → [vitest] No "useSearchParams" export is defined on the "next/navigation" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+[39m
+[31m   [31m×[31m TransactionsPage[2m > [22msearch input filters transactions[90m 12[2mms[22m[31m[39m
+[31m     → [vitest] No "useSearchParams" export is defined on the "next/navigation" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+[39m
+ [32m✓[39m src/app/(app)/goals/goals.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 841[2mms[22m[39m
+   [33m[2m✓[22m[39m GoalsPage[2m > [22mrenders the page header [33m596[2mms[22m[39m
+ [32m✓[39m src/app/(app)/themes/page.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 2391[2mms[22m[39m
+   [33m[2m✓[22m[39m /themes page[2m > [22mrenders one card per registered theme [33m965[2mms[22m[39m
+   [33m[2m✓[22m[39m /themes page[2m > [22mclicking a theme card flips the active theme [33m756[2mms[22m[39m
+   [33m[2m✓[22m[39m /themes page[2m > [22mclicking a new theme card applies the theme [33m660[2mms[22m[39m
+ [32m✓[39m src/lib/hooks/queries/useTransactions.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 355[2mms[22m[39m
+ [32m✓[39m src/components/layout/Topbar.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 511[2mms[22m[39m
+ [32m✓[39m src/components/layout/nav.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 18[2mms[22m[39m
+ [32m✓[39m src/components/layout/ProfileManager.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 768[2mms[22m[39m
+   [33m[2m✓[22m[39m ProfileManager[2m > [22mrenders profile list when open [33m348[2mms[22m[39m
+ [31m❯[39m src/app/(app)/dashboard/dashboard.test.tsx [2m([22m[2m2 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 1532[2mms[22m[39m
+[31m   [31m×[31m DashboardPage[2m > [22mrenders stat cards after data loads[33m 1250[2mms[22m[31m[39m
+[31m     → Unable to find an element with the text: Transactions. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"space-y-6"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"glass-surface bg-card border border-card-border rounded-2xl p-4 flex items-start gap-3 shadow-[var(--shadow)] "[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center text-accent shrink-0"[31m
+          [36m>[31m
+            [36m<svg[31m
+              [33maria-hidden[31m=[32m"true"[31m
+              [33mclass[31m=[32m"lucide lucide-wallet w-5 h-5"[31m
+              [33mfill[31m=[32m"none"[31m
+              [33mheight[31m=[32m"24"[31m
+              [33mstroke[31m=[32m"currentColor"[31m
+              [33mstroke-linecap[31m=[32m"round"[31m
+              [33mstroke-linejoin[31m=[32m"round"[31m
+              [33mstroke-width[31m=[32m"2"[31m
+              [33mviewBox[31m=[32m"0 0 24 24"[31m
+              [33mwidth[31m=[32m"24"[31m
+              [33mxmlns[31m=[32m"http://www.w3.org/2000/svg"[31m
+            [36m>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"[31m
+              [36m/>[31m
+            [36m</svg>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"min-w-0 flex-1"[31m
+          [36m>[31m
+            [36m<p[31m
+              [33mclass[31m=[32m"text-xs text-text-3 truncate"[31m
+            [36m>[31m
+              [0mIncome[0m
+            [36m</p>[31m
+            [36m<p[31m
+              [33mclass[31m=[32m"text-lg font-semibold text-text leading-tight mt-0.5 truncate"[31m
+            [36m>[31m
+              [0m₹50,000[0m
+            [36m</p>[31m
+            [36m<p[31m
+              [33mclass[31m=[32m"text-[11px] mt-0.5 truncate text-income"[31m
+            [36m>[31m
+              [0m+0% vs last month[0m
+            [36m</p>[31m
+          [36m</div>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"glass-surface bg-card border border-card-border rounded-2xl p-4 flex items-start gap-3 shadow-[var(--shadow)] "[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center text-accent shrink-0"[31m
+          [36m>[31m
+            [36m<svg[31m
+              [33maria-hidden[31m=[32m"true"[31m
+              [33mclass[31m=[32m"lucide lucide-trending-down w-5 h-5"[31m
+              [33mfill[31m=[32m"none"[31m
+              [33mheight[31m=[32m"24"[31m
+              [33mstroke[31m=[32m"currentColor"[31m
+              [33mstroke-linecap[31m=[32m"round"[31m
+              [33mstroke-linejoin[31m=[32m"round"[31m
+              [33mstroke-width[31m=[32m"2"[31m
+              [33mviewBox[31m=[32m"0 0 24 24"[31m
+              [33mwidth[31m=[32m"24"[31m
+              [33mxmlns[31m=[32m"http://www.w3.org/2000/svg"[31m
+            [36m>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M16 17h6v-6"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"m22 17-8.5-8.5-5 5L2 7"[31m
+              [36m/>[31m
+            [36m</svg>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"min-w-0 flex-1"[31m
+          [36m>[31m
+            [36m<p[31m
+              [33mclass[31m=[32m"text-xs text-text-3 truncate"[31m
+            [36m>[31m
+              [0mExpense[0m
+            [36m</p>[31m
+            [36m<p[31m
+              [33mclass[31m=[32m"text-lg font-semibold text-text leading-tight mt-0.5 truncate"[31m
+            [36m>[31m
+              [0m₹250[0m
+            [36m</p>[31m
+            [36m<p[31m
+              [33mclass[31m=[32m"text-[11px] mt-0.5 truncate text-income"[31m
+            [36m>[31m
+              [0m+0% vs last month[0m
+            [36m</p>[31m
+          [36m</div>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"glass-surface bg-card border border-card-border rounded-2xl p-4 flex items-start gap-3 shadow-[var(--shadow)] "[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center text-accent shrink-0"[31m
+          [36m>[31m
+            [36m<svg[31m
+              [33maria-hidden[31m=[32m"true"[31m
+              [33mclass[31m=[32m"lucide lucide-piggy-bank w-5 h-5"[31m
+              [33mfill[31m=[32m"none"[31m
+              [33mheight[31m=[32m"24"[31m
+              [33mstroke[31m=[32m"currentColor"[31m
+              [33mstroke-linecap[31m=[32m"round"[31m
+              [33mstroke-linejoin[31m=[32m"round"[31m
+              [33mstroke-width[31m=[32m"2"[31m
+              [33mviewBox[31m=[32m"0 0 24 24"[31m
+              [33mwidth[31m=[32m"24"[31m
+              [33mxmlns[31m=[32m"http://www.w3.org/2000/svg"[31m
+            [36m>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M16 10h.01"[31m
+              [36m/>[31m
+              [36m<path[31m
+                [33md[31m=[32m"M2 8v1a2 2 0 0 0 2 2h1"[31m
+              [36m/>[31m
+            [36m</svg>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"min-w-0 flex-1"[31m
+          [36m>[31m
+            [36m<p[31m
+              [33mclass[31m=[32m"text-xs text-text-3 truncate"[31m
+            [36m>[31m
+              [0mBalance[0m
+            [36m</p>[31m
+            [36m<p[31m
+              [33mclass[31m=[32m"text-lg font-semibold text-text leading-tight mt-0.5 truncate"[31m
+            [36m>[31m
+              [0m₹49,750[0m
+            [36m</p>[31m
+            [36m<p[31m
+              [33mclass[31m=[32m"text-[11px] mt-0.5 truncate text-income"[31m
+            [36m>[31m
+              [0m100% savings rate[0m
+            [36m</p>[31m
+          [36m</div>[31m
+        [36m</div>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"glass-surface bg-card border border-card-border rounded-2xl p-4 flex items-start gap-3 shadow-[var(--shadow)] "[31m
+        [36m>[31m
+     ...
+
+Ignored nodes: comments, script, style
+[36m<html>[31m
+  [36m<head />[31m
+  [36m<body>[31m
+    [36m<div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"space-y-6"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"glass-surface bg-card border border-card-border rounded-2xl p-4 flex items-start gap-3 shadow-[var(--shadow)] "[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center text-accent shrink-0"[31m
+            [36m>[31m
+              [36m<svg[31m
+                [33maria-hidden[31m=[32m"true"[31m
+                [33mclass[31m=[32m"lucide lucide-wallet w-5 h-5"[31m
+                [33mfill[31m=[32m"none"[31m
+                [33mheight[31m=[32m"24"[31m
+                [33mstroke[31m=[32m"currentColor"[31m
+                [33mstroke-linecap[31m=[32m"round"[31m
+                [33mstroke-linejoin[31m=[32m"round"[31m
+                [33mstroke-width[31m=[32m"2"[31m
+                [33mviewBox[31m=[32m"0 0 24 24"[31m
+                [33mwidth[31m=[32m"24"[31m
+                [33mxmlns[31m=[32m"http://www.w3.org/2000/svg"[31m
+              [36m>[31m
+                [36m<path[31m
+                  [33md[31m=[32m"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"[31m
+                [36m/>[31m
+                [36m<path[31m
+                  [33md[31m=[32m"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"[31m
+                [36m/>[31m
+              [36m</svg>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"min-w-0 flex-1"[31m
+            [36m>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"text-xs text-text-3 truncate"[31m
+              [36m>[31m
+                [0mIncome[0m
+              [36m</p>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"text-lg font-semibold text-text leading-tight mt-0.5 truncate"[31m
+              [36m>[31m
+                [0m₹50,000[0m
+              [36m</p>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"text-[11px] mt-0.5 truncate text-income"[31m
+              [36m>[31m
+                [0m+0% vs last month[0m
+              [36m</p>[31m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"glass-surface bg-card border border-card-border rounded-2xl p-4 flex items-start gap-3 shadow-[var(--shadow)] "[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center text-accent shrink-0"[31m
+            [36m>[31m
+              [36m<svg[31m
+                [33maria-hidden[31m=[32m"true"[31m
+                [33mclass[31m=[32m"lucide lucide-trending-down w-5 h-5"[31m
+                [33mfill[31m=[32m"none"[31m
+                [33mheight[31m=[32m"24"[31m
+                [33mstroke[31m=[32m"currentColor"[31m
+                [33mstroke-linecap[31m=[32m"round"[31m
+                [33mstroke-linejoin[31m=[32m"round"[31m
+                [33mstroke-width[31m=[32m"2"[31m
+                [33mviewBox[31m=[32m"0 0 24 24"[31m
+                [33mwidth[31m=[32m"24"[31m
+                [33mxmlns[31m=[32m"http://www.w3.org/2000/svg"[31m
+              [36m>[31m
+                [36m<path[31m
+                  [33md[31m=[32m"M16 17h6v-6"[31m
+                [36m/>[31m
+                [36m<path[31m
+                  [33md[31m=[32m"m22 17-8.5-8.5-5 5L2 7"[31m
+                [36m/>[31m
+              [36m</svg>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"min-w-0 flex-1"[31m
+            [36m>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"text-xs text-text-3 truncate"[31m
+              [36m>[31m
+                [0mExpense[0m
+              [36m</p>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"text-lg font-semibold text-text leading-tight mt-0.5 truncate"[31m
+              [36m>[31m
+                [0m₹250[0m
+              [36m</p>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"text-[11px] mt-0.5 truncate text-income"[31m
+              [36m>[31m
+                [0m+0% vs last month[0m
+              [36m</p>[31m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"glass-surface bg-card border border-card-border rounded-2xl p-4 flex items-start gap-3 shadow-[var(--shadow)] "[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center text-accent shrink-0"[31m
+            [36m>[31m
+              [36m<svg[31m
+                [33maria-hidden[31m=[32m"true"[31m
+                [33mclass[31m=[32m"lucide lucide-piggy-bank w-5 h-5"[31m
+                [33mfill[31m=[32m"none"[31m
+                [33mheight[31m=[32m"24"[31m
+                [33mstroke[31m=[32m"currentColor"[31m
+                [33mstroke-linecap[31m=[32m"round"[31m
+                [33mstroke-linejoin[31m=[32m"round"[31m
+                [33mstroke-width[31m=[32m"2"[31m
+                [33mviewBox[31m=[32m"0 0 24 24"[31m
+                [33mwidth[31m=[32m"24"[31m
+                [33mxmlns[31m=[32m"http://www.w3.org/2000/svg"[31m
+              [36m>[31m
+                [36m<path[31m
+                  [33md[31m=[32m"M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z"[31m
+                [36m/>[31m
+                [36m<path[31m
+                  [33md[31m=[32m"M16 10h.01"[31m
+                [36m/>[31m
+                [36m<path[31m
+                  [33md[31m=[32m"M2 8v1a2 2 0 0 0 2 2h1"[31m
+                [36m/>[31m
+              [36m</svg>[31m
+            [36m</div>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"min-w-0 flex-1"[31m
+            [36m>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"text-xs text-text-3 truncate"[31m
+              [36m>[31m
+                [0mBalance[0m
+              [36m</p>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"text-lg font-semibold text-text leading-tight mt-0.5 truncate"[31m
+              [36m>[31m
+                [0m₹49,750[0m
+              [36m</p>[31m
+              [36m<p[31m
+                [33mclass[31m=[32m"text-[11px] mt-0.5 truncate text-income"[31m
+        ...[39m
+ [32m✓[39m src/app/debug/page.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 727[2mms[22m[39m
+   [33m[2m✓[22m[39m /debug page[2m > [22mrenders all four section headings [33m456[2mms[22m[39m
+ [32m✓[39m src/components/layout/ThemeToggle.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 503[2mms[22m[39m
+   [33m[2m✓[22m[39m ThemeToggle[2m > [22mstarts on dark and flips to light on click [33m340[2mms[22m[39m
+ [32m✓[39m src/lib/api/profile.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 15[2mms[22m[39m
+ [32m✓[39m src/components/layout/AppShell.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 702[2mms[22m[39m
+   [33m[2m✓[22m[39m AppShell[2m > [22mhamburger toggles mobile sidebar via data-mobile-open [33m404[2mms[22m[39m
+ [32m✓[39m src/components/ErrorBoundary.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[90m 204[2mms[22m[39m
+ [32m✓[39m src/app/page.test.tsx [2m([22m[2m1 test[22m[2m)[22m[90m 8[2mms[22m[39m
+ [32m✓[39m src/app/(app)/compare/compare.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[90m 273[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m26 passed[39m[22m[90m (29)[39m
+[2m      Tests [22m [1m[31m7 failed[39m[22m[2m | [22m[1m[32m302 passed[39m[22m[90m (309)[39m
+[2m   Start at [22m 21:59:58
+[2m   Duration [22m 32.41s[2m (transform 4.33s, setup 37.81s, collect 38.22s, tests 16.07s, environment 84.88s, prepare 8.65s)[22m
+

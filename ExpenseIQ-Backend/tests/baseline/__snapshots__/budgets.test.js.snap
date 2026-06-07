@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Budgets API GET filters by month: list-filtered 1`] = `
+[
+  {
+    "__v": "<__v>",
+    "_id": "<_id>",
+    "amount": 5000,
+    "category": "Food",
+    "createdAt": "<createdAt>",
+    "month": "2026-05",
+    "profileId": "default",
+    "updatedAt": "<updatedAt>",
+  },
+]
+`;
+
+exports[`Budgets API POST upserts (creates): create 1`] = `
+{
+  "__v": "<__v>",
+  "_id": "<_id>",
+  "amount": 5000,
+  "category": "Food",
+  "createdAt": "<createdAt>",
+  "month": "2026-05",
+  "profileId": "default",
+  "updatedAt": "<updatedAt>",
+}
+`;

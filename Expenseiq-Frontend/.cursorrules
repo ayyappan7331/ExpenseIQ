@@ -1,0 +1,107 @@
+# ExpenseIQ Development Rules
+
+## Mandatory Workflow
+Before making ANY code change:
+1. Read and understand:
+   * ARCHITECTURE.md
+   * RELEASE_CHECKLIST.md
+   * Relevant module architecture
+   * Existing tests
+   * Related services, hooks, components, and APIs
+   * MIGRATION_CONTEXT.md
+
+2. Do NOT start implementation immediately.
+3. Document every new implementation in MIGRATION_CONTEXT.md AFTER completion.
+   Every entry MUST include:
+   * Section heading matching the feature/fix name
+   * Files changed (frontend and backend)
+   * What changed and why
+   * Architecture rules introduced or enforced
+   * Any formulas, patterns, or invariants future developers must not break
+   * Validation results (typecheck / lint / test counts)
+   This is NOT optional. No implementation is considered complete until MIGRATION_CONTEXT.md has been updated.
+
+4. First provide:
+### Architecture Findings
+* Current architecture, existing patterns, relevant dependencies
+### Root Cause Analysis
+* What is causing the issue, evidence supporting the conclusion, alternative hypotheses
+### Impact Analysis
+* Affected modules, APIs, database collections, tests
+### Risks
+* Regression risks, data risks, performance risks, backward compatibility risks
+### Implementation Plan
+* Minimal-change approach, files to modify, files not to modify, test strategy
+Wait for approval before implementation.
+
+---
+
+# Architecture Rules
+## Transactions Are Source Of Truth
+Never create:
+* spend tables, balance tables, payment tables, statement tables, rewards tables, analytics persistence tables
+All calculations must derive from transactions.
+
+## FinancialConfig
+FinancialConfig owns: Categories, Subcategories, Payment Methods, Payment Apps, Templates, Favorites, Pins.
+Do not duplicate these entities. Do not create secondary persistence. Do not move ownership to Settings.
+
+## Settings
+Settings owns only: Theme, Typography, UI Preferences, Sidebar Order.
+Never store financial data in Settings.
+
+## Credit Cards
+Credit cards are linked only through: linkedPaymentMethod.
+Do not use regex matching, fuzzy matching, name matching. Existing validation and synchronization must remain intact.
+
+---
+
+# Implementation Rules
+Prefer: Reuse over rewrite, Extension over replacement, Minimal diffs, Existing patterns.
+Do NOT: Introduce new architectures without justification, Create duplicate business logic/APIs/state stores, Introduce breaking changes.
+
+---
+
+# Debugging Rules
+When investigating defects:
+1. Reproduce issue
+2. Gather evidence
+3. Identify exact failure point
+4. Confirm root cause
+5. Propose fix
+6. Implement fix
+7. Validate fix
+Never assume root cause. Never implement speculative fixes.
+
+---
+
+# Frontend Rules
+Before modifying pages check: Route registration, Layout hierarchy, App Router structure, React Query hooks, API requests, Existing providers.
+When a page returns 404 verify: Route exists, Route is registered, Layouts load, Middleware behavior, notFound() usage, Redirect behavior.
+Do not assume missing page.
+
+# React Query Rules
+Before creating a query/mutation: Check whether an equivalent already exists.
+Always: Reuse query keys, Reuse invalidation patterns, Preserve cache consistency.
+
+---
+
+# Testing Requirements
+For every change:
+1. Add or update tests
+2. Run: 
+pm run typecheck, 
+pm run lint, 
+pm test
+3. Report: Files modified, Tests added, Validation results, Remaining risks
+Never claim validation was performed unless output is available.
+
+---
+
+# Decision Priority
+Before proposing new features:
+1. Dashboard
+2. Analytics
+3. Transactions
+4. Credit Cards
+Credit Cards are considered feature-complete unless a defect or critical gap exists. Always evaluate whether Dashboard, Analytics, or Transactions provides higher ROI before expanding Credit Cards.

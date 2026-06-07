@@ -1,0 +1,8 @@
+node_modules/
+coverage/
+.mongodb-binaries/
+tests/baseline/__snapshots__/
+dist/
+# .ts files are gated by `npm run typecheck`. Adding @typescript-eslint is
+# a future micro-PR; for now ESLint stays js-only.
+*.ts

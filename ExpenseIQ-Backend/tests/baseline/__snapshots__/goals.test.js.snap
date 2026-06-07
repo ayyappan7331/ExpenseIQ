@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Goals API POST upserts (creates): create 1`] = `
+{
+  "__v": "<__v>",
+  "_id": "<_id>",
+  "amount": 10000,
+  "createdAt": "<createdAt>",
+  "month": "2026-05",
+  "profileId": "default",
+  "updatedAt": "<updatedAt>",
+}
+`;
+
+exports[`Goals API POST upserts (updates existing for same profile+month): list-after-upsert 1`] = `
+[
+  {
+    "__v": "<__v>",
+    "_id": "<_id>",
+    "amount": 15000,
+    "createdAt": "<createdAt>",
+    "month": "2026-05",
+    "profileId": "default",
+    "updatedAt": "<updatedAt>",
+  },
+]
+`;

@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Credit Cards API GET returns the card: list 1`] = `
+[
+  {
+    "__v": "<__v>",
+    "_id": "<_id>",
+    "archived": false,
+    "billDate": 1,
+    "color": "#7c6ff7",
+    "createdAt": "<createdAt>",
+    "dueDate": 15,
+    "duePeriod": 14,
+    "limit": 100000,
+    "linkedPaymentMethod": "HDFC Credit Card",
+    "name": "HDFC",
+    "openingBalance": 0,
+    "profileId": "default",
+    "updatedAt": "<updatedAt>",
+  },
+]
+`;
+
+exports[`Credit Cards API POST creates (201): create 1`] = `
+{
+  "__v": "<__v>",
+  "_id": "<_id>",
+  "archived": false,
+  "billDate": 1,
+  "color": "#7c6ff7",
+  "createdAt": "<createdAt>",
+  "dueDate": 15,
+  "limit": 100000,
+  "linkedPaymentMethod": "HDFC Credit Card",
+  "name": "HDFC",
+  "openingBalance": 0,
+  "profileId": "default",
+  "updatedAt": "<updatedAt>",
+}
+`;
+
+exports[`Credit Cards API PUT updates: update 1`] = `
+{
+  "__v": "<__v>",
+  "_id": "<_id>",
+  "archived": false,
+  "billDate": 1,
+  "color": "#000000",
+  "createdAt": "<createdAt>",
+  "dueDate": 15,
+  "limit": 200000,
+  "linkedPaymentMethod": "HDFC Credit Card",
+  "name": "HDFC",
+  "openingBalance": 0,
+  "profileId": "default",
+  "updatedAt": "<updatedAt>",
+}
+`;

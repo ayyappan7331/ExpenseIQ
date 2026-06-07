@@ -1,0 +1,196 @@
+
+> expenseiq-backend@1.0.0 dev
+> nodemon --ext js,ts,json --exec "node -r ts-node/register server.js"
+
+[33m[nodemon] 3.1.14[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,ts,json[39m
+[32m[nodemon] starting `node -r ts-node/register server.js`[39m
+Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:1897:16)
+    at listenInCluster (node:net:1945:12)
+    at Server.listen (node:net:2037:7)
+    at Function.listen (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\server.js:61:5)
+    at Module._compile (node:internal/modules/cjs/loader:1369:14)
+    at Module.m._compile (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\ts-node\src\index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1427:10)
+    at Object.require.extensions.<computed> [as .js] (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\ts-node\src\index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1206:32) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 5000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node -r ts-node/register server.js`[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node -r ts-node/register server.js`[39m
+Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:1897:16)
+    at listenInCluster (node:net:1945:12)
+    at Server.listen (node:net:2037:7)
+    at Function.listen (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\server.js:61:5)
+    at Module._compile (node:internal/modules/cjs/loader:1369:14)
+    at Module.m._compile (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\ts-node\src\index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1427:10)
+    at Object.require.extensions.<computed> [as .js] (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\ts-node\src\index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1206:32) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 5000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node -r ts-node/register server.js`[39m
+Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:1897:16)
+    at listenInCluster (node:net:1945:12)
+    at Server.listen (node:net:2037:7)
+    at Function.listen (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\server.js:61:5)
+    at Module._compile (node:internal/modules/cjs/loader:1369:14)
+    at Module.m._compile (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\ts-node\src\index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1427:10)
+    at Object.require.extensions.<computed> [as .js] (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\ts-node\src\index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1206:32) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 5000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node -r ts-node/register server.js`[39m
+Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:1897:16)
+    at listenInCluster (node:net:1945:12)
+    at Server.listen (node:net:2037:7)
+    at Function.listen (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\server.js:61:5)
+    at Module._compile (node:internal/modules/cjs/loader:1369:14)
+    at Module.m._compile (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\ts-node\src\index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1427:10)
+    at Object.require.extensions.<computed> [as .js] (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\ts-node\src\index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1206:32) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 5000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node -r ts-node/register server.js`[39m
+Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:1897:16)
+    at listenInCluster (node:net:1945:12)
+    at Server.listen (node:net:2037:7)
+    at Function.listen (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\server.js:61:5)
+    at Module._compile (node:internal/modules/cjs/loader:1369:14)
+    at Module.m._compile (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\ts-node\src\index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1427:10)
+    at Object.require.extensions.<computed> [as .js] (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\ts-node\src\index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1206:32) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 5000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node -r ts-node/register server.js`[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[21:48:08] [32mINFO[39m: [36mExpenseIQ API running[39m
+    port: "5000"
+[21:48:09] [32mINFO[39m: [36mMongoDB connected[39m
+    host: "ac-tlghveb-shard-00-00.slf0r7u.mongodb.net"
+[32m[nodemon] starting `node -r ts-node/register server.js`[39m
+Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:1897:16)
+    at listenInCluster (node:net:1945:12)
+    at Server.listen (node:net:2037:7)
+    at Function.listen (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\server.js:61:5)
+    at Module._compile (node:internal/modules/cjs/loader:1369:14)
+    at Module.m._compile (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\ts-node\src\index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1427:10)
+    at Object.require.extensions.<computed> [as .js] (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\ts-node\src\index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1206:32) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 5000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node -r ts-node/register server.js`[39m
+Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:1897:16)
+    at listenInCluster (node:net:1945:12)
+    at Server.listen (node:net:2037:7)
+    at Function.listen (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\server.js:61:5)
+    at Module._compile (node:internal/modules/cjs/loader:1369:14)
+    at Module.m._compile (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\ts-node\src\index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1427:10)
+    at Object.require.extensions.<computed> [as .js] (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\ts-node\src\index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1206:32) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 5000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node -r ts-node/register server.js`[39m
+Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:1897:16)
+    at listenInCluster (node:net:1945:12)
+    at Server.listen (node:net:2037:7)
+    at Function.listen (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\server.js:61:5)
+    at Module._compile (node:internal/modules/cjs/loader:1369:14)
+    at Module.m._compile (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\ts-node\src\index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1427:10)
+    at Object.require.extensions.<computed> [as .js] (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\ts-node\src\index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1206:32) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 5000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node -r ts-node/register server.js`[39m
+Error: listen EADDRINUSE: address already in use :::5000
+    at Server.setupListenHandle [as _listen2] (node:net:1897:16)
+    at listenInCluster (node:net:1945:12)
+    at Server.listen (node:net:2037:7)
+    at Function.listen (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\server.js:61:5)
+    at Module._compile (node:internal/modules/cjs/loader:1369:14)
+    at Module.m._compile (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\ts-node\src\index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1427:10)
+    at Object.require.extensions.<computed> [as .js] (c:\Users\ayyappan.pichumani\Downloads\ExpenseIQ-Backend\node_modules\ts-node\src\index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1206:32) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 5000
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m

@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Subscriptions API GET lists sorted by due asc: list-sorted 1`] = `
+[
+  {
+    "__v": "<__v>",
+    "_id": "<_id>",
+    "active": true,
+    "amount": 499,
+    "category": "Entertainment",
+    "createdAt": "<createdAt>",
+    "cycle": "monthly",
+    "due": "2026-05-05",
+    "name": "A",
+    "profileId": "default",
+    "updatedAt": "<updatedAt>",
+  },
+  {
+    "__v": "<__v>",
+    "_id": "<_id>",
+    "active": true,
+    "amount": 499,
+    "category": "Entertainment",
+    "createdAt": "<createdAt>",
+    "cycle": "monthly",
+    "due": "2026-05-20",
+    "name": "B",
+    "profileId": "default",
+    "updatedAt": "<updatedAt>",
+  },
+]
+`;
+
+exports[`Subscriptions API POST creates (201): create 1`] = `
+{
+  "__v": "<__v>",
+  "_id": "<_id>",
+  "active": true,
+  "amount": 499,
+  "category": "Entertainment",
+  "createdAt": "<createdAt>",
+  "cycle": "monthly",
+  "due": "2026-05-15",
+  "name": "Netflix",
+  "profileId": "default",
+  "updatedAt": "<updatedAt>",
+}
+`;
+
+exports[`Subscriptions API PUT updates: update 1`] = `
+{
+  "__v": "<__v>",
+  "_id": "<_id>",
+  "active": false,
+  "amount": 599,
+  "category": "Entertainment",
+  "createdAt": "<createdAt>",
+  "cycle": "monthly",
+  "due": "2026-05-15",
+  "name": "Netflix",
+  "profileId": "default",
+  "updatedAt": "<updatedAt>",
+}
+`;

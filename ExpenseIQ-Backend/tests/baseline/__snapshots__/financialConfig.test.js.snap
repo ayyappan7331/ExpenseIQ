@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FinancialConfig API GET auto-creates default config when none exists: auto-create 1`] = `
+{
+  "__v": "<__v>",
+  "_id": "<_id>",
+  "createdAt": "<createdAt>",
+  "customExpenseCategories": [],
+  "customIncomeCategories": [],
+  "customPaymentApps": [],
+  "customPaymentMethods": [],
+  "favoriteTransactions": [],
+  "pinnedTransactionIds": [],
+  "profileId": "default",
+  "transactionTemplates": [],
+  "updatedAt": "<updatedAt>",
+}
+`;
+
+exports[`FinancialConfig API PUT upserts financial config: update 1`] = `
+{
+  "__v": "<__v>",
+  "_id": "<_id>",
+  "createdAt": "<createdAt>",
+  "customExpenseCategories": [
+    "Food",
+    "Transport",
+  ],
+  "customIncomeCategories": [],
+  "customPaymentApps": [],
+  "customPaymentMethods": [
+    "Cash",
+    "UPI",
+  ],
+  "favoriteTransactions": [],
+  "pinnedTransactionIds": [],
+  "profileId": "default",
+  "transactionTemplates": [],
+  "updatedAt": "<updatedAt>",
+}
+`;

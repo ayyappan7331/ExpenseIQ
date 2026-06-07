@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Transactions API GET returns empty array initially 1`] = `[]`;
+
+exports[`Transactions API POST /bulk inserts many (201): bulk-create 1`] = `
+[
+  {
+    "__v": "<__v>",
+    "_id": "<_id>",
+    "amount": 1,
+    "category": "Food",
+    "createdAt": "<createdAt>",
+    "date": "2026-05-10",
+    "id": "6a256480b5c7bb82990dbe12",
+    "notes": "team lunch",
+    "paymentMethod": "card",
+    "profileId": "default",
+    "source": "Lunch",
+    "subcategory": "",
+    "type": "expense",
+    "updatedAt": "<updatedAt>",
+  },
+  {
+    "__v": "<__v>",
+    "_id": "<_id>",
+    "amount": 2,
+    "category": "Food",
+    "createdAt": "<createdAt>",
+    "date": "2026-05-10",
+    "id": "6a256480b5c7bb82990dbe13",
+    "notes": "team lunch",
+    "paymentMethod": "card",
+    "profileId": "default",
+    "source": "Lunch",
+    "subcategory": "",
+    "type": "expense",
+    "updatedAt": "<updatedAt>",
+  },
+  {
+    "__v": "<__v>",
+    "_id": "<_id>",
+    "amount": 3,
+    "category": "Food",
+    "createdAt": "<createdAt>",
+    "date": "2026-05-10",
+    "id": "6a256480b5c7bb82990dbe14",
+    "notes": "team lunch",
+    "paymentMethod": "card",
+    "profileId": "default",
+    "source": "Lunch",
+    "subcategory": "",
+    "type": "expense",
+    "updatedAt": "<updatedAt>",
+  },
+]
+`;
+
+exports[`Transactions API POST creates a transaction (201) and GET lists it: create 1`] = `
+{
+  "__v": "<__v>",
+  "_id": "<_id>",
+  "amount": 100,
+  "category": "Food",
+  "createdAt": "<createdAt>",
+  "date": "2026-05-10",
+  "id": "6a256480b5c7bb82990dbdc4",
+  "notes": "team lunch",
+  "paymentMethod": "card",
+  "profileId": "default",
+  "source": "Lunch",
+  "subcategory": "",
+  "type": "expense",
+  "updatedAt": "<updatedAt>",
+}
+`;
+
+exports[`Transactions API POST creates a transaction (201) and GET lists it: list-after-create 1`] = `
+[
+  {
+    "__v": "<__v>",
+    "_id": "<_id>",
+    "amount": 100,
+    "category": "Food",
+    "createdAt": "<createdAt>",
+    "date": "2026-05-10",
+    "id": "6a256480b5c7bb82990dbdc4",
+    "notes": "team lunch",
+    "paymentMethod": "card",
+    "profileId": "default",
+    "source": "Lunch",
+    "subcategory": "",
+    "type": "expense",
+    "updatedAt": "<updatedAt>",
+  },
+]
+`;
+
+exports[`Transactions API PUT updates a transaction: update 1`] = `
+{
+  "__v": "<__v>",
+  "_id": "<_id>",
+  "amount": 250,
+  "category": "Food",
+  "createdAt": "<createdAt>",
+  "date": "2026-05-10",
+  "id": "6a256480b5c7bb82990dbde0",
+  "notes": "updated",
+  "paymentMethod": "card",
+  "profileId": "default",
+  "source": "Lunch",
+  "subcategory": "",
+  "type": "expense",
+  "updatedAt": "<updatedAt>",
+}
+`;

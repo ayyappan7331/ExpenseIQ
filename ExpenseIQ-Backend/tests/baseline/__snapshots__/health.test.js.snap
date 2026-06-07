@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GET /api/health returns ok + ISO timestamp 1`] = `
+{
+  "status": "ok",
+  "timestamp": "<timestamp>",
+}
+`;

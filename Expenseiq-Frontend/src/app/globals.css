@@ -1,0 +1,138 @@
+@import 'tailwindcss';
+@import '../styles/themes.css';
+
+/*
+ * Tailwind v4 token map. `@theme inline` keeps the `var(--…)` reference
+ * at runtime, so changing data-theme on <html> recolors every utility
+ * (`bg-bg`, `text-text`, `text-accent`, `border-card-border`, etc.)
+ * without rebuilding the CSS. Names mirror the legacy SPA CSS vars 1:1.
+ */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-bg-3: var(--bg-3);
+  --color-card: var(--card);
+  --color-card-border: var(--card-border);
+  --color-text: var(--text);
+  --color-text-2: var(--text-2);
+  --color-text-3: var(--text-3);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-income: var(--income);
+  --color-expense: var(--expense);
+  --color-warning: var(--warning);
+
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-space-grotesk);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui, var(--font-inter)), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: var(--font-size-base, 15px);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+html {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* ── Global Surface Style ────────────────────────────────────────────────
+ * Strategy: override CSS variables on :root.
+ * --card / --bg-2 / --shadow are already consumed everywhere via
+ * Tailwind @theme tokens, so overriding them at this layer is enough.
+ * ─────────────────────────────────────────────────────────────────── */
+
+/* Glossy — glassmorphism design system
+ * Tokens per spec:
+ *   Light: surface rgba(255,255,255,0.28), blur 20px, border rgba(255,255,255,0.45), shadow 0 12px 40px rgba(0,0,0,0.08)
+ *   Dark:  surface rgba(8,12,24,0.28),     blur 20px, border rgba(255,255,255,0.12), shadow 0 12px 40px rgba(0,0,0,0.40)
+ * --glass-blur is consumed by .glass-surface utility class below.
+ * --card is overridden per light/dark so backdrop-filter actually shows through.
+ */
+:root[data-surface='glossy'] {
+  --glass-blur: blur(20px);
+  --shadow: 0 12px 40px rgba(0,0,0,0.40);
+  --card-border: rgba(255,255,255,0.12);
+  /* dark themes: semi-transparent card */
+  --card: rgba(8,12,24,0.28);
+  --bg-2: rgba(8,12,24,0.38);
+}
+
+/* Light themes need different glass surface + shadow */
+:root[data-surface='glossy'][data-theme='light'],
+:root[data-surface='glossy'][data-theme='lavender'],
+:root[data-surface='glossy'][data-theme='rose'],
+:root[data-surface='glossy'][data-theme='slate'],
+:root[data-surface='glossy'][data-theme='mint'],
+:root[data-surface='glossy'][data-theme='caramel'],
+:root[data-surface='glossy'][data-theme='sakura'],
+:root[data-surface='glossy'][data-theme='teal'],
+:root[data-surface='glossy'][data-theme='glacier'],
+:root[data-surface='glossy'][data-theme='paper'],
+:root[data-surface='glossy'][data-theme='amber'] {
+  --shadow: 0 12px 40px rgba(0,0,0,0.08);
+  --card-border: rgba(255,255,255,0.45);
+  --card: rgba(255,255,255,0.28);
+  --bg-2: rgba(255,255,255,0.38);
+}
+
+/* .glass-surface — opt-in backdrop blur for any component that needs it.
+ * Applied to: Modal panel, Drawer panel, Card, SectionCard, StatCard,
+ *   Toast, Topbar header. NOT applied to: tables, inputs, data grids.
+ * The [data-surface='glossy'] guard means flat/frozen themes are unaffected.
+ */
+[data-surface='glossy'] .glass-surface {
+  backdrop-filter: var(--glass-blur, none);
+  -webkit-backdrop-filter: var(--glass-blur, none);
+}
+
+/* Frozen — make card/surface backgrounds semi-transparent so page bg
+   bleeds through, creating the frosted look without backdrop-filter on *  */
+:root[data-surface='frozen'] {
+  --shadow: 0 8px 40px rgba(0,0,0,0.24);
+  --card-border: rgba(255,255,255,0.14);
+}
+/* Override the actual color tokens used by bg-card / bg-bg-2 */
+:root[data-surface='frozen'][data-theme='dark'],
+:root[data-surface='frozen']:not([data-theme]) {
+  --card: rgba(21,24,37,0.55);
+  --bg-2: rgba(17,20,32,0.62);
+}
+:root[data-surface='frozen'][data-theme='ocean'] { --card: rgba(19,34,56,0.55); --bg-2: rgba(15,31,53,0.62); }
+:root[data-surface='frozen'][data-theme='forest'] { --card: rgba(21,42,24,0.55); --bg-2: rgba(18,33,22,0.62); }
+:root[data-surface='frozen'][data-theme='sunset'] { --card: rgba(34,20,32,0.55); --bg-2: rgba(36,21,32,0.62); }
+:root[data-surface='frozen'][data-theme='nord'] { --card: rgba(59,66,82,0.60); --bg-2: rgba(46,52,64,0.65); }
+:root[data-surface='frozen'][data-theme='monokai'] { --card: rgba(30,31,28,0.55); --bg-2: rgba(30,31,28,0.62); }
+:root[data-surface='frozen'][data-theme='dracula'] { --card: rgba(33,34,44,0.55); --bg-2: rgba(40,42,54,0.62); }
+:root[data-surface='frozen'][data-theme='light'],
+:root[data-surface='frozen'][data-theme='lavender'],
+:root[data-surface='frozen'][data-theme='rose'],
+:root[data-surface='frozen'][data-theme='slate'],
+:root[data-surface='frozen'][data-theme='mint'],
+:root[data-surface='frozen'][data-theme='caramel'],
+:root[data-surface='frozen'][data-theme='sakura'],
+:root[data-surface='frozen'][data-theme='teal'],
+:root[data-surface='frozen'][data-theme='glacier'],
+:root[data-surface='frozen'][data-theme='paper'] {
+  /* light themes: white cards go semi-opaque */
+  --card: rgba(255,255,255,0.62);
+  --bg-2: rgba(255,255,255,0.72);
+}
+/* All remaining dark custom themes share the dark frozen treatment */
+:root[data-surface='frozen'] {
+  /* fallback for any theme not listed above */
+  backdrop-filter: none;
+}
+/* Topbar gets extra blur for frozen */
+:root[data-surface='frozen'] header.sticky {
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+}

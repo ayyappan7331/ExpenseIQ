@@ -1,0 +1,5 @@
+node_modules/
+coverage/
+.mongodb-binaries/
+package-lock.json
+tests/baseline/__snapshots__/
