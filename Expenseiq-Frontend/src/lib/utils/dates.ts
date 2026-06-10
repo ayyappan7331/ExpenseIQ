@@ -26,8 +26,11 @@ export function monthLabel(ym: string): string {
   });
 }
 
-export function dateLabel(ds: string): string {
-  return new Date(ds + 'T00:00:00').toLocaleDateString('en-IN', {
+export function dateLabel(ds: string | null | undefined): string {
+  if (!ds) return '';
+  const d = new Date(ds + 'T00:00:00');
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('en-IN', {
     day: 'numeric',
     month: 'short',
   });

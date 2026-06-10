@@ -581,14 +581,20 @@ const isLoading = metaLoading || txnsLoading;
                     return (
                       <div className="pt-1 border-t border-card-border/50 space-y-1.5">
                         {/* Bill / due info */}
-                        {offset === 0 && (
+                        {offset === 0 && activeCard.meta.billDate && (
                           <div className="flex items-center gap-3">
                             <span className="flex items-center gap-1 text-[11px] text-text-3">
                               <Calendar className="w-3 h-3" />
-                              Bill in {daysUntil(activeCard.meta.billDate)}d
+                              Bill in {daysUntil(activeCard.meta.billDate)} {daysUntil(activeCard.meta.billDate) === 1 ? 'day' : 'days'}
                             </span>
-                            {activeCard.nextDueDate && (
-                              <span className="flex items-center gap-1 text-[11px] font-medium text-warning">
+                            {activeCard.nextDueDate && dateLabel(activeCard.nextDueDate) && (
+                              <span className={`flex items-center gap-1 text-[11px] font-medium ${
+                                activeCard.paymentStatus === 'paid' || activeCard.paymentStatus === 'no_payment_due'
+                                  ? 'text-text-3'
+                                  : activeCard.daysUntilDue !== null && activeCard.daysUntilDue < 0
+                                  ? 'text-expense'
+                                  : 'text-warning'
+                              }`}>
                                 <Calendar className="w-3 h-3" />
                                 Due {dateLabel(activeCard.nextDueDate)}
                               </span>
