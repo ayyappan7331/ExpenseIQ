@@ -27,43 +27,31 @@ export default function DashboardPage() {
   const prevMo = prevMonth(currentMonth);
   const months = last6Months().reverse(); // oldest → newest for chart
 
-  // Fetch current month + previous month transactions
-  const { data: txns, isLoading: txnLoading, isError, refetch } = useTransactions({ month: currentMonth });
-  const { data: prevTxns } = useTransactions({ month: prevMo });
+  // Fetch ALL transactions once to avoid N+1 queries
+  const { data: allTxns, isLoading: txnLoading, isError, refetch } = useTransactions();
   const { data: goals, isLoading: goalLoading } = useGoals();
-
-  // Fetch last 6 months for trend chart
-  const m0 = useTransactions({ month: months[0] });
-  const m1 = useTransactions({ month: months[1] });
-  const m2 = useTransactions({ month: months[2] });
-  const m3 = useTransactions({ month: months[3] });
-  const m4 = useTransactions({ month: months[4] });
-  const m5 = useTransactions({ month: months[5] });
 
   const isLoading = txnLoading || goalLoading;
 
+  // Filter transactions locally
+  const txns = useMemo(() => allTxns?.filter((t) => t.date.startsWith(currentMonth)) || [], [allTxns, currentMonth]);
+  const prevTxns = useMemo(() => allTxns?.filter((t) => t.date.startsWith(prevMo)) || [], [allTxns, prevMo]);
+
   // Derive stats
-  const stats = useMemo(() => computeStats(txns || []), [txns]);
-  const prevStats = useMemo(() => (prevTxns ? computeStats(prevTxns) : undefined), [prevTxns]);
-  const categories = useMemo(() => computeCategoryBreakdown(txns || []), [txns]);
+  const stats = useMemo(() => computeStats(txns), [txns]);
+  const prevStats = useMemo(() => computeStats(prevTxns), [prevTxns]);
+  const categories = useMemo(() => computeCategoryBreakdown(txns), [txns]);
   const insights = useMemo(() => generateInsights(stats, prevStats), [stats, prevStats]);
   const goal = useMemo(() => getGoalForMonth(goals || [], currentMonth), [goals, currentMonth]);
 
-  // Build trend data from the 6 month queries
-  const m0Data = m0.data;
-  const m1Data = m1.data;
-  const m2Data = m2.data;
-  const m3Data = m3.data;
-  const m4Data = m4.data;
-  const m5Data = m5.data;
+  // Build trend data from local filtering
   const trends = useMemo(() => {
     const byMonth: Record<string, typeof txns> = {};
-    const monthData = [m0Data, m1Data, m2Data, m3Data, m4Data, m5Data];
-    months.forEach((mo, i) => {
-      byMonth[mo] = monthData[i] || [];
+    months.forEach((mo) => {
+      byMonth[mo] = allTxns?.filter((t) => t.date.startsWith(mo)) || [];
     });
-    return computeMonthTrends(byMonth as Record<string, NonNullable<typeof txns>>, months);
-  }, [m0Data, m1Data, m2Data, m3Data, m4Data, m5Data, months]);
+    return computeMonthTrends(byMonth, months);
+  }, [allTxns, months]);
 
   if (isLoading) return <DashboardSkeleton />;
 

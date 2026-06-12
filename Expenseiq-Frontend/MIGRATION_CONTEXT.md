@@ -10708,3 +10708,15 @@ login/register pages, and no route guard. App was broken when `AUTH_ENABLED=true
     *   Why: When Profile Theme Sync was enabled, clicking a new theme triggered a local update followed by an asynchronous API call. The `AppShell` instantly detected the local update, compared it against the *old* un-updated API cache, and aggressively reverted the theme back to the old one (defaulting to 'light' / daylight). Removing the `theme` dependency allows the user to manually click themes without the sync listener fighting back.
 *   **Validation Results:**
     *   `npm run typecheck` passed successfully (`tsc --noEmit`).
+
+## Performance Optimization: Dashboard Initial Load 
+
+*   **Files Changed:**
+    *   `src/app/(app)/dashboard/page.tsx`
+*   **What Changed and Why:**
+    *   Previously, the dashboard fired 8 separate, concurrent requests to `useTransactions({ month })` to fetch the current month, previous month, and 6 trend months. This created a massive "N+1 query" bottleneck on the network layer and database, causing severe loading delays as the browser queued the requests.
+    *   I consolidated these 8 requests into a single `useTransactions()` hook that fetches the profile's full transaction history in one round-trip.
+    *   The transactions are then efficiently filtered locally in the browser into their respective months using `useMemo()`.
+*   **Validation Results:**
+    *   `npm run typecheck` passed successfully.
+    *   Dashboard load time significantly reduced by avoiding 7 extra HTTP round-trips to the backend.
