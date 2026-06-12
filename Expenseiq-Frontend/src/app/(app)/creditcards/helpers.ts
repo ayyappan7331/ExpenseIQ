@@ -213,6 +213,44 @@ export function computePaymentStatus(
 }
 
 /**
+ * Given the end of the CURRENT billing cycle, computes the due date for the
+ * NEXT (upcoming) billing cycle.  Used when the current cycle is already
+ * paid so we show a forward-looking due date instead of a past one.
+ */
+export function computeNextCycleDueDate(
+  currentCycleEnd: string,   // YYYY-MM-DD
+  billDate: number,
+  duePeriod: number | undefined,
+  legacyDueDate?: number
+): string | null {
+  if (!billDate || (!duePeriod && !legacyDueDate)) return null;
+
+  // Next cycle end = billDate of the calendar month AFTER currentCycleEnd
+  const [y, m] = currentCycleEnd.split('-').map(Number); // m is 1-indexed
+  const nextMonth0 = m % 12;                              // 0-indexed next month
+  const nextYear   = nextMonth0 === 0 ? y + 1 : y;
+  const nextCycleEndDay  = clampDay(nextYear, nextMonth0, billDate);
+  const nextCycleEndDate = new Date(nextYear, nextMonth0, nextCycleEndDay);
+
+  if (duePeriod) {
+    const dueDateObj = new Date(nextCycleEndDate);
+    dueDateObj.setDate(dueDateObj.getDate() + duePeriod);
+    return `${dueDateObj.getFullYear()}-${pad(dueDateObj.getMonth() + 1)}-${pad(dueDateObj.getDate())}`;
+  }
+
+  // Legacy: legacyDueDate is a day-of-month number
+  const dueDay = legacyDueDate!;
+  const dueDayClamped = clampDay(nextYear, nextMonth0, dueDay);
+  let dueDateObj = new Date(nextYear, nextMonth0, dueDayClamped);
+  if (dueDateObj <= nextCycleEndDate) {
+    const m2 = nextMonth0 + 1;
+    const y2 = m2 > 11 ? nextYear + 1 : nextYear;
+    dueDateObj  = new Date(y2, m2 % 12, clampDay(y2, m2 % 12, dueDay));
+  }
+  return `${dueDateObj.getFullYear()}-${pad(dueDateObj.getMonth() + 1)}-${pad(dueDateObj.getDate())}`;
+}
+
+/**
  * Computes spend statistics for each detected credit card.
  * Uses the payment method name as the exact join key against transactions.
  *
@@ -351,6 +389,33 @@ export function computeCardStats(
         paymentsAfterCycle,
         daysUntilDue
       );
+    }
+
+    // ── Advance nextDueDate for paid/no_payment_due cards ──────────────────
+    // When the current cycle is already settled, show the NEXT cycle's due
+    // date so users always see a forward-looking date, not a past one.
+    if (
+      (paymentStatus === 'paid' || paymentStatus === 'no_payment_due') &&
+      cycleEnd && meta?.billDate
+    ) {
+      const advanced = computeNextCycleDueDate(
+        cycleEnd,
+        meta.billDate,
+        hasDuePeriod ? meta.duePeriod : undefined,
+        !hasDuePeriod ? meta.dueDate  : undefined
+      );
+      if (advanced) {
+        nextDueDate = advanced;
+        // Recompute daysUntilDue against the new forward-looking date
+        const todayStr2 = (() => {
+          const d = new Date();
+          return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+        })();
+        const msPerDay2 = 1000 * 60 * 60 * 24;
+        daysUntilDue = Math.round(
+          (new Date(advanced + 'T00:00:00').getTime() - new Date(todayStr2 + 'T00:00:00').getTime()) / msPerDay2
+        );
+      }
     }
 
     return {
