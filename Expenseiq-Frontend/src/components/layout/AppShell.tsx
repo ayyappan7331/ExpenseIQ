@@ -31,7 +31,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     if (!settings?.theme) return;
     if (typeof window === 'undefined') return;
     if (localStorage.getItem('expenseiq.syncTheme') === '1') {
-      const current = localStorage.getItem('expenseiq-theme') ?? document.documentElement.getAttribute('data-theme');
+      const current = localStorage.getItem('expenseiq.theme') ?? document.documentElement.getAttribute('data-theme');
       if (current !== settings.theme) {
         setTheme(settings.theme);
       }
