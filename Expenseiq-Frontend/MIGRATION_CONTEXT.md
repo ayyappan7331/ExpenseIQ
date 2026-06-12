@@ -10720,3 +10720,8 @@ login/register pages, and no route guard. App was broken when `AUTH_ENABLED=true
 *   **Validation Results:**
     *   `npm run typecheck` passed successfully.
     *   Dashboard load time significantly reduced by avoiding 7 extra HTTP round-trips to the backend.
+
+## Fix Profile Theme Sync and Custom Theme Initialization
+* **Files changed**: `src/components/ThemeInitScript.tsx`, `src/components/layout/AppShell.tsx`
+* **What changed and why**: Updated ThemeInitScript to allow parsing custom themes from local storage and injecting minimal CSS instantly to avoid FOUC. Fixed a typo in AppShell where it was syncing using the old legacy key instead of the current one, preventing redundant theme resets.
+* **Validation**: Manually verified no FOUC and test validation running.

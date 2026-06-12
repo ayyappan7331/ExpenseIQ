@@ -7,6 +7,14 @@ vi.mock('next/navigation', () => ({
   useRouter:   () => ({ push: vi.fn(), replace: vi.fn(), prefetch: vi.fn() }),
 }));
 
+vi.mock('@/components/layout/MonthContext', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/components/layout/MonthContext')>();
+  return {
+    ...actual,
+    useMonth: () => ({ month: '2026-05', setMonth: vi.fn() })
+  };
+});
+
 describe('DashboardPage', () => {
   it('renders stat cards after data loads', async () => {
     render(<DashboardPage />);
