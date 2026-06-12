@@ -51,6 +51,10 @@ function notify(): void {
 }
 
 function getClientSnapshot(): string {
+  if (typeof window !== 'undefined') {
+    const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+    if (stored) return stored;
+  }
   return document.documentElement.getAttribute('data-theme') ?? DEFAULT_THEME;
 }
 function getServerSnapshot(): string {

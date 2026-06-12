@@ -10680,3 +10680,19 @@ login/register pages, and no route guard. App was broken when `AUTH_ENABLED=true
 *   **Validation Results:**
     *   `npm run typecheck` passed successfully (`tsc --noEmit`).
     *   Visual typing lag completely eliminated.
+
+## Feature: Profile Theme Sync & Hydration Bug Fix
+
+*   **Files Changed:**
+    *   `src/components/ThemeProvider.tsx`
+    *   `src/app/(app)/themes/page.tsx`
+    *   `src/components/layout/AppShell.tsx`
+*   **What Changed and Why:**
+    *   Fixed a bug in `ThemeProvider.tsx`'s `getClientSnapshot` where the HTML `data-theme` (forced by the login page) was prioritizing over the saved `expenseiq-theme` in localStorage during client-side navigation. Now, localStorage is checked first.
+    *   Added a toggle switch in `themes/page.tsx` for "Profile Theme Sync", saving to local storage key `expenseiq.syncTheme`.
+    *   Added a `useEffect` hook in `AppShell.tsx` that detects if `expenseiq.syncTheme === '1'` and applies the `settings.theme` fetched from the API backend.
+    *   Why: Users were losing their selected dashboard themes after logging in because the login page forcefully reset the DOM, and there was no syncing logic linking the backend profile `Settings.theme` to the frontend local storage. This new feature fixes the reset bug while adding a persistent "Account Theme Sync" feature.
+*   **Architecture Rules Introduced or Enforced:**
+    *   Local Storage Precedence Rule: The `ThemeProvider` must prioritize `window.localStorage` over the fallback HTML `data-theme` to prevent theme bleed from decoupled pages (like `/login`).
+*   **Validation Results:**
+    *   `npm run typecheck` passed successfully (`tsc --noEmit`).

@@ -7,6 +7,9 @@ import { useTypography, FONT_OPTIONS, FONT_SIZE_OPTIONS, type FontFamily, type F
 import { THEME_KEYS, LIGHT_THEMES, type ThemeKey } from '@/lib/themes';
 import { ThemeCustomizerModal } from '@/components/ThemeCustomizerModal';
 import type { CustomTheme, SurfaceStyle } from '@/lib/customThemes';
+import { api } from '@/lib/api/client';
+import { getActiveProfileId } from '@/lib/api/profile';
+import { useMutation } from '@tanstack/react-query';
 
 const GFONTS_URL =
   'https://fonts.googleapis.com/css2?family=' +
@@ -40,6 +43,31 @@ export default function ThemesPage() {
   const [customizerOpen, setCustomizerOpen] = useState(false);
   const [editingTheme, setEditingTheme] = useState<CustomTheme | undefined>();
 
+  const [syncTheme, setSyncThemeState] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('expenseiq.syncTheme') === '1';
+  });
+
+  const { mutate: updateSettings } = useMutation({
+    mutationFn: (t: string) => api.updateSettings({ theme: t, profileId: getActiveProfileId() }),
+  });
+
+  function toggleSyncTheme() {
+    const next = !syncTheme;
+    setSyncThemeState(next);
+    if (next) {
+      localStorage.setItem('expenseiq.syncTheme', '1');
+      updateSettings(theme);
+    } else {
+      localStorage.removeItem('expenseiq.syncTheme');
+    }
+  }
+
+  function handleSetTheme(t: string) {
+    setTheme(t);
+    if (syncTheme) updateSettings(t);
+  }
+
   function setSurface(s: SurfaceStyle) {
     setSurfaceStyleState(s);
     applySurfaceStyle(s);
@@ -71,7 +99,7 @@ export default function ThemesPage() {
                 type="button"
                 aria-pressed={active}
                 data-testid={`theme-card-${key}`}
-                onClick={() => setTheme(key as ThemeKey)}
+                onClick={() => handleSetTheme(key as ThemeKey)}
                 className="theme-card group relative overflow-hidden rounded-xl border-2 p-0 focus:outline-none"
                 style={{
                   borderColor: active ? meta.accent : 'transparent',
@@ -211,6 +239,32 @@ export default function ThemesPage() {
           </div>
           <ThemeGroup keys={darkThemes} label="Dark & Vibrant" />
           <ThemeGroup keys={lightThemes} label="Light & Clean" />
+
+          {/* Sync Toggle */}
+          <div className="pt-4 border-t border-card-border mt-4 flex items-center justify-between">
+            <div>
+              <p className="text-sm font-semibold text-text">Profile Theme Sync</p>
+              <p className="text-xs text-text-3 mt-0.5 max-w-sm">Automatically restore your selected theme when logging into new devices.</p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={syncTheme}
+              onClick={toggleSyncTheme}
+              className={[
+                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2',
+                syncTheme ? 'bg-accent' : 'bg-bg-3'
+              ].join(' ')}
+            >
+              <span
+                aria-hidden="true"
+                className={[
+                  'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                  syncTheme ? 'translate-x-5' : 'translate-x-0'
+                ].join(' ')}
+              />
+            </button>
+          </div>
         </section>
 
         {/* ── My Themes ──────────────────────────────────────────────── */}
@@ -256,7 +310,7 @@ export default function ThemesPage() {
                       boxShadow: active ? `0 0 0 1px ${ct.accent}, 0 4px 16px -4px ${ct.accent}66` : 'none',
                       '--tc-accent': ct.accent,
                     } as React.CSSProperties}
-                    onClick={() => setTheme(ct.key)}
+                    onClick={() => handleSetTheme(ct.key)}
                   >
                     <div className="p-2 space-y-1.5" style={{ background: ct.bg }}>
                       <div className="h-1.5 w-3/4 rounded-full opacity-40" style={{ background: ct.text }} />

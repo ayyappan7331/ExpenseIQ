@@ -11,15 +11,31 @@ import { migrateUnscopedPersistence } from '@/lib/utils/settingsMigrations';
 import { getActiveProfileId } from '@/lib/api/profile';
 import { OfflineBanner } from '@/components/ui/OfflineBanner';
 import { MonthProvider } from './MonthContext';
+import { useSettings } from '@/lib/hooks/queries/useSettings';
+import { useTheme } from '@/components/ThemeProvider';
 
 export function AppShell({ children }: { children: ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
+  const { data: settings } = useSettings();
+  const { theme, setTheme } = useTheme();
+
   // Run localStorage migration once on mount — idempotent, non-blocking
   useEffect(() => {
     migrateUnscopedPersistence(getActiveProfileId());
   }, []);
+
+  // Profile Theme Sync
+  useEffect(() => {
+    if (!settings?.theme) return;
+    if (typeof window === 'undefined') return;
+    if (localStorage.getItem('expenseiq.syncTheme') === '1') {
+      if (theme !== settings.theme) {
+        setTheme(settings.theme);
+      }
+    }
+  }, [settings?.theme, setTheme, theme]);
 
   return (
     <MonthProvider>
