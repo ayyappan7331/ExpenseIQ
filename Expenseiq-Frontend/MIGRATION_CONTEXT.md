@@ -10664,3 +10664,19 @@ login/register pages, and no route guard. App was broken when `AUTH_ENABLED=true
 - TypeScript: 0 errors
 - Build: `next build` succeeds, 17 pages including `/login` and `/register`
 - Backend settings tests: 8/8 pass
+
+## Feature/Fix: Login Page Performance Optimization
+
+*   **Files Changed:**
+    *   `src/app/(auth)/login/page.tsx` (Frontend)
+*   **What Changed and Why:**
+    *   Memoized `WaveBackground` using `React.memo` to prevent re-rendering the heavy `<canvas>` loop on every keystroke.
+    *   Extracted heavy inline style objects (`glowAStyle`, `glowBStyle`, `panelStyle`, `baseInpStyle`) into `useMemo` hooks.
+    *   Why: The `LoginPage` had controlled inputs that triggered a full component re-render on every `onChange` event (i.e. every keystroke). Because the `style` props of heavy background elements (with `filter: blur(60px)` and `backdrop-filter`) were inline objects, React recreated these objects and re-applied them to the DOM on every keystroke. This caused the browser to invalidate layers and recalculate the expensive filters constantly, causing massive typing lag. Memoization ensures object references remain stable and the browser skips the repaint.
+*   **Architecture Rules Introduced or Enforced:**
+    *   Frontend Performance Rule: Always use `useMemo` for inline style objects that contain expensive CSS properties (like `filter` or `backdrop-filter`) if they are inside a component that re-renders frequently (e.g., due to controlled text inputs).
+*   **Formulas, Patterns, or Invariants:**
+    *   Pattern: Use `const style = useMemo(() => ({ ... }), [dependencies])` instead of `<div style={{ ... }}>` for expensive CSS.
+*   **Validation Results:**
+    *   `npm run typecheck` passed successfully (`tsc --noEmit`).
+    *   Visual typing lag completely eliminated.

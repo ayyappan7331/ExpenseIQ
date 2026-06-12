@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
+import { useState, useEffect, useRef, useCallback, useLayoutEffect, useMemo, memo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Check, X, ArrowLeft, Phone, Mail, RefreshCw } from 'lucide-react';
 import { authApi } from '@/lib/api/auth';
@@ -161,7 +161,7 @@ const LIGHT_TOKENS = {
 type Tokens = typeof DARK_TOKENS;
 
 /* ── WaveBackground ── */
-function WaveBackground({ tokens }: { tokens: Tokens }) {
+const WaveBackground = memo(function WaveBackground({ tokens }: { tokens: Tokens }) {
   const canvasRef   = useRef<HTMLCanvasElement>(null);
   const rafRef      = useRef<number>(0);
   const tokensRef   = useRef<Tokens>(tokens);
@@ -242,7 +242,7 @@ function WaveBackground({ tokens }: { tokens: Tokens }) {
   }, [draw]);
 
   return <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }} aria-hidden />;
-}
+});
 
 /* ── ThemeRipple ── */
 function ThemeRipple({ active, origin, targetBg, onDone }: { active: boolean; origin: { x: number; y: number }; targetBg: string; onDone: () => void; }) {
@@ -593,13 +593,21 @@ export default function LoginPage() {
   /* ── Styles ── */
   const inp = 'w-full px-4 py-3 text-sm rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50';
 
-  const inpStyle = (extra?: React.CSSProperties): React.CSSProperties => ({
+  const baseInpStyle = useMemo<React.CSSProperties>(() => ({
     background: tk.inpBg, borderColor: tk.inpBorder, color: tk.inpText,
     backdropFilter: tk.inpBlur, WebkitBackdropFilter: tk.inpBlur,
     boxShadow: loginTheme === 'light' ? 'inset 0 1px 3px rgba(0,0,0,0.06)' : 'none',
     transition: 'background 0.4s ease, border-color 0.4s ease, color 0.4s ease',
-    ...extra,
-  });
+  }), [tk, loginTheme]);
+
+  const inpStyle = useCallback((extra?: React.CSSProperties): React.CSSProperties => {
+    if (!extra || Object.keys(extra).length === 0) return baseInpStyle;
+    return { ...baseInpStyle, ...extra };
+  }, [baseInpStyle]);
+
+  const glowAStyle = useMemo<React.CSSProperties>(() => ({ position: 'absolute', top: '10%', left: '5%', width: '50vw', height: '50vw', borderRadius: '50%', background: `radial-gradient(circle, ${tk.glowA} 0%, transparent 70%)`, filter: 'blur(60px)', transition: 'background 0.6s ease' }), [tk]);
+  const glowBStyle = useMemo<React.CSSProperties>(() => ({ position: 'absolute', bottom: '5%', right: '10%', width: '35vw', height: '35vw', borderRadius: '50%', background: `radial-gradient(circle, ${tk.glowB} 0%, transparent 70%)`, filter: 'blur(60px)', transition: 'background 0.6s ease' }), [tk]);
+  const panelStyle = useMemo<React.CSSProperties>(() => ({ background: tk.cardBg, backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', border: `1px solid ${tk.cardBorder}`, borderRadius: 24, boxShadow: tk.cardShadow, padding: '2rem', width: '100%', minWidth: 'min(440px, 100vw)', maxWidth: 500, maxHeight: '90vh', overflowY: 'auto', transition: 'background 0.4s ease, border-color 0.4s ease' }), [tk]);
 
   const btn = 'w-full py-3 text-sm font-semibold rounded-xl transition-all duration-200 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-violet-500/20';
 
@@ -616,8 +624,8 @@ export default function LoginPage() {
 
       {/* Glows */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div style={{ position: 'absolute', top: '10%', left: '5%', width: '50vw', height: '50vw', borderRadius: '50%', background: `radial-gradient(circle, ${tk.glowA} 0%, transparent 70%)`, filter: 'blur(60px)', transition: 'background 0.6s ease' }} />
-        <div style={{ position: 'absolute', bottom: '5%', right: '10%', width: '35vw', height: '35vw', borderRadius: '50%', background: `radial-gradient(circle, ${tk.glowB} 0%, transparent 70%)`, filter: 'blur(60px)', transition: 'background 0.6s ease' }} />
+        <div style={glowAStyle} />
+        <div style={glowBStyle} />
       </div>
 
       {/* Logo */}
@@ -643,7 +651,7 @@ export default function LoginPage() {
 
       {/* Panel */}
       <div className="absolute bottom-0 right-0 w-full sm:w-auto p-4 sm:p-8 sm:pb-12 sm:pr-12 z-10">
-        <div style={{ background: tk.cardBg, backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', border: `1px solid ${tk.cardBorder}`, borderRadius: 24, boxShadow: tk.cardShadow, padding: '2rem', width: '100%', minWidth: 'min(440px, 100vw)', maxWidth: 500, maxHeight: '90vh', overflowY: 'auto', transition: 'background 0.4s ease, border-color 0.4s ease' }}>
+        <div style={panelStyle}>
 
           {/* ── LOGIN ── */}
           {view === 'login' && (
