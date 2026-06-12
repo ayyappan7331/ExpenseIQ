@@ -464,7 +464,7 @@ const isLoading = metaLoading || txnsLoading;
                           <div className="text-center">
                             <p className="text-[10px] text-text-3">{moLabel}</p>
                             <p className={`text-sm font-semibold ${moSpend > 0 ? 'text-expense' : 'text-text-3'}`}>
-                              {moSpend > 0 ? formatCurrency(moSpend) : '—'}
+                              {formatCurrency(moSpend)}
                             </p>
                           </div>
                           <button type="button" onClick={() => shiftCardMonth(card.name, 1)}
@@ -524,7 +524,7 @@ const isLoading = metaLoading || txnsLoading;
                         <p className="text-sm font-semibold text-text">
                           {formatCurrency(activeCard.statementBalance)}
                           <span className="text-[10px] text-text-3 font-normal ml-1">
-                            (cycle to {dateLabel(activeCard.cycleEnd)})
+                            (closed {dateLabel(activeCard.cycleEnd)})
                           </span>
                         </p>
                       </div>
