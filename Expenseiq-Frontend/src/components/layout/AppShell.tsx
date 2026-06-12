@@ -31,11 +31,12 @@ export function AppShell({ children }: { children: ReactNode }) {
     if (!settings?.theme) return;
     if (typeof window === 'undefined') return;
     if (localStorage.getItem('expenseiq.syncTheme') === '1') {
-      if (theme !== settings.theme) {
+      const current = localStorage.getItem('expenseiq-theme') ?? document.documentElement.getAttribute('data-theme');
+      if (current !== settings.theme) {
         setTheme(settings.theme);
       }
     }
-  }, [settings?.theme, setTheme, theme]);
+  }, [settings?.theme, setTheme]);
 
   return (
     <MonthProvider>

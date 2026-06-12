@@ -9,7 +9,8 @@ import { ThemeCustomizerModal } from '@/components/ThemeCustomizerModal';
 import type { CustomTheme, SurfaceStyle } from '@/lib/customThemes';
 import { api } from '@/lib/api/client';
 import { getActiveProfileId } from '@/lib/api/profile';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@/lib/hooks/queries/keys';
 
 const GFONTS_URL =
   'https://fonts.googleapis.com/css2?family=' +
@@ -48,8 +49,31 @@ export default function ThemesPage() {
     return localStorage.getItem('expenseiq.syncTheme') === '1';
   });
 
+  const qc = useQueryClient();
+
   const { mutate: updateSettings } = useMutation({
     mutationFn: (t: string) => api.updateSettings({ theme: t, profileId: getActiveProfileId() }),
+    onMutate: async (newTheme) => {
+      await qc.cancelQueries({ queryKey: queryKeys.settings.all });
+      const queryKey = queryKeys.settings.one(getActiveProfileId());
+      const previousSettings: any = qc.getQueryData(queryKey);
+      
+      qc.setQueryData(queryKey, (old: any) => {
+        if (!old) return old;
+        return { ...old, theme: newTheme };
+      });
+      
+      return { previousSettings };
+    },
+    onError: (err, newTheme, context) => {
+      if (context?.previousSettings) {
+        qc.setQueryData(queryKeys.settings.one(getActiveProfileId()), context.previousSettings);
+        setTheme(context.previousSettings.theme);
+      }
+    },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: queryKeys.settings.all });
+    }
   });
 
   function toggleSyncTheme() {
