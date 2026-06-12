@@ -10696,3 +10696,15 @@ login/register pages, and no route guard. App was broken when `AUTH_ENABLED=true
     *   Local Storage Precedence Rule: The `ThemeProvider` must prioritize `window.localStorage` over the fallback HTML `data-theme` to prevent theme bleed from decoupled pages (like `/login`).
 *   **Validation Results:**
     *   `npm run typecheck` passed successfully (`tsc --noEmit`).
+
+## Bug Fix: Aggressive Theme Sync Race Condition
+
+*   **Files Changed:**
+    *   `src/app/(app)/themes/page.tsx`
+    *   `src/components/layout/AppShell.tsx`
+*   **What Changed and Why:**
+    *   Removed the `theme` dependency from the `AppShell.tsx` theme sync `useEffect`.
+    *   Added optimistic updates to the `updateSettings` mutation in `themes/page.tsx` to instantly write the new theme to the React Query cache.
+    *   Why: When Profile Theme Sync was enabled, clicking a new theme triggered a local update followed by an asynchronous API call. The `AppShell` instantly detected the local update, compared it against the *old* un-updated API cache, and aggressively reverted the theme back to the old one (defaulting to 'light' / daylight). Removing the `theme` dependency allows the user to manually click themes without the sync listener fighting back.
+*   **Validation Results:**
+    *   `npm run typecheck` passed successfully (`tsc --noEmit`).
