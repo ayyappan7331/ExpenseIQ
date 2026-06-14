@@ -150,7 +150,7 @@ export function RegisterForm({
           <input
             type="text" value={regName}
             onChange={e => { setRegName(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.regName; return n; }); }}
-            onFocus={e => showTooltip(e.currentTarget, 'regName')} onBlur={hideTooltip}
+            onBlur={hideTooltip}
             className={inpBase} style={inpStyle} placeholder="John Doe" disabled={loading}
           />
           {fieldErrs.regName && <FieldError msg={fieldErrs.regName} theme={theme} />}
@@ -161,7 +161,7 @@ export function RegisterForm({
             <input
               type="email" value={regEmail}
               onChange={e => { setRegEmail(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.regEmail; delete n.regMobile; return n; }); }}
-              onFocus={e => showTooltip(e.currentTarget, 'regEmail')} onBlur={hideTooltip}
+              onBlur={hideTooltip}
               className={inpBase} style={inpStyle} placeholder="name@company.com" disabled={loading}
             />
             {fieldErrs.regEmail && <FieldError msg={fieldErrs.regEmail} theme={theme} />}
@@ -171,7 +171,7 @@ export function RegisterForm({
             <input
               type="tel" value={regMobile}
               onChange={e => { setRegMobile(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.regMobile; delete n.regEmail; return n; }); }}
-              onFocus={e => showTooltip(e.currentTarget, 'regMobile')} onBlur={hideTooltip}
+              onBlur={hideTooltip}
               className={inpBase} style={inpStyle} placeholder="9876543210" disabled={loading}
             />
             {fieldErrs.regMobile && <FieldError msg={fieldErrs.regMobile} theme={theme} />}
@@ -191,7 +191,7 @@ export function RegisterForm({
             <select
               value={regPurpose}
               onChange={e => { setRegPurpose(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.regPurpose; return n; }); }}
-              onFocus={e => showTooltip(e.currentTarget, 'regPurpose')} onBlur={hideTooltip}
+              onBlur={hideTooltip}
               className={inpBase} style={{ ...inpStyle, appearance: 'none', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em', backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='${isDark ? '%23ffffff' : '%23000000'}' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")` }}
               disabled={loading}
             >
@@ -208,10 +208,10 @@ export function RegisterForm({
               type={showRegPw ? 'text' : 'password'} value={regPw}
               onChange={e => { setRegPw(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.regPw; return n; }); }}
               onKeyDown={handleKeyEvent} onKeyUp={handleKeyEvent}
-              onFocus={e => showTooltip(e.currentTarget, 'regPw')} onBlur={hideTooltip}
+              onBlur={hideTooltip}
               className={inpBase} style={inpStyle} placeholder="••••••••" disabled={loading}
             />
-            <button type="button" onClick={() => setShowRegPw(!showRegPw)} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity" tabIndex={-1}>
+            <button type="button" onClick={() => setShowRegPw(!showRegPw)} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity cursor-pointer" tabIndex={-1}>
               {showRegPw ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
@@ -255,10 +255,10 @@ export function RegisterForm({
             <input
               type={showRegCf ? 'text' : 'password'} value={regCf}
               onChange={e => { setRegCf(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.regCf; return n; }); }}
-              onFocus={e => showTooltip(e.currentTarget, 'regCf')} onBlur={hideTooltip}
+              onBlur={hideTooltip}
               className={inpBase} style={{ ...inpStyle, borderColor: touched && regCf && !regPwMatch ? '#ef4444' : inpStyle.borderColor }} placeholder="••••••••" disabled={loading}
             />
-            <button type="button" onClick={() => setShowRegCf(!showRegCf)} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity" tabIndex={-1}>
+            <button type="button" onClick={() => setShowRegCf(!showRegCf)} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity cursor-pointer" tabIndex={-1}>
               {showRegCf ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
@@ -266,7 +266,7 @@ export function RegisterForm({
         </div>
         <button
           type="submit" disabled={loading}
-          className="w-full py-3 mt-2 text-sm font-semibold rounded-xl text-white transition-all duration-200 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-violet-500/20"
+          className="w-full py-3 mt-2 text-sm font-semibold rounded-xl text-white transition-all duration-200 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-violet-500/20 cursor-pointer"
         >
           {loading ? 'Creating Account...' : 'Create Account'}
         </button>

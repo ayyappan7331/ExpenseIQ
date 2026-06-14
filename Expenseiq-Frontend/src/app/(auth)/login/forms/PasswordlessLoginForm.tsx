@@ -88,12 +88,12 @@ export function PasswordlessLoginForm({
             <input
               type="text" value={otpLoginId}
               onChange={e => { setOtpLoginId(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.otpLoginId; return n; }); }}
-              onFocus={e => showTooltip(e.currentTarget, 'otpLoginId')} onBlur={hideTooltip}
+              onBlur={hideTooltip}
               className={inpBase} style={inpStyle} placeholder="Email or Mobile Number" disabled={loading}
             />
             {fieldErrs.otpLoginId && <FieldError msg={fieldErrs.otpLoginId} theme={theme} />}
           </div>
-          <button type="submit" disabled={loading} className="w-full py-3 mt-2 text-sm font-semibold rounded-xl text-white transition-all duration-200 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-violet-500/20">
+          <button type="submit" disabled={loading} className="w-full py-3 mt-2 text-sm font-semibold rounded-xl text-white transition-all duration-200 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-violet-500/20 cursor-pointer">
             {loading ? 'Sending...' : 'Send Login Code'}
           </button>
         </form>
@@ -111,7 +111,7 @@ export function PasswordlessLoginForm({
       </p>
       <form onSubmit={handleOtpLoginVerify} className="space-y-6" noValidate>
         <div>
-          <div onFocus={e => showTooltip(e.currentTarget, 'otpLoginCode')} onBlur={hideTooltip}>
+          <div onBlur={hideTooltip}>
             <OtpInput value={otpLoginCode} onChange={v => { setOtpLoginCode(v); setFieldErrs(p => { const n = { ...p }; delete n.otpLoginCode; return n; }); }} theme={theme} />
           </div>
           {fieldErrs.otpLoginCode && <div className="flex justify-center mt-2"><FieldError msg={fieldErrs.otpLoginCode} theme={theme} /></div>}

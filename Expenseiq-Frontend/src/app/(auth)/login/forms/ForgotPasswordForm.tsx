@@ -141,12 +141,12 @@ export function ForgotPasswordForm({
             <input
               type="text" value={fpIdentifier}
               onChange={e => { setFpIdentifier(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.fpIdentifier; return n; }); }}
-              onFocus={e => showTooltip(e.currentTarget, 'forgotIdentifier')} onBlur={hideTooltip}
+              onBlur={hideTooltip}
               className={inpBase} style={inpStyle} placeholder="Email or Mobile Number" disabled={loading}
             />
             {fieldErrs.fpIdentifier && <FieldError msg={fieldErrs.fpIdentifier} theme={theme} />}
           </div>
-          <button type="submit" disabled={loading} className="w-full py-3 mt-2 text-sm font-semibold rounded-xl text-white transition-all duration-200 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-violet-500/20">
+          <button type="submit" disabled={loading} className="w-full py-3 mt-2 text-sm font-semibold rounded-xl text-white transition-all duration-200 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-violet-500/20 cursor-pointer">
             {loading ? 'Sending...' : 'Send Reset Code'}
           </button>
         </form>
@@ -165,7 +165,7 @@ export function ForgotPasswordForm({
         </p>
         <form onSubmit={handleFpVerifyOtp} className="space-y-6" noValidate>
           <div>
-            <div onFocus={e => showTooltip(e.currentTarget, 'forgotOtp')} onBlur={hideTooltip}>
+            <div onBlur={hideTooltip}>
               <OtpInput value={fpOtp} onChange={v => { setFpOtp(v); setFieldErrs(p => { const n = { ...p }; delete n.fpOtp; return n; }); }} theme={theme} />
             </div>
             {fieldErrs.fpOtp && <div className="flex justify-center mt-2"><FieldError msg={fieldErrs.fpOtp} theme={theme} /></div>}
@@ -192,10 +192,10 @@ export function ForgotPasswordForm({
               type={showFpPw ? 'text' : 'password'} value={fpNewPw}
               onChange={e => { setFpNewPw(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.fpNewPw; return n; }); }}
               onKeyDown={handleKeyEvent} onKeyUp={handleKeyEvent}
-              onFocus={e => showTooltip(e.currentTarget, 'forgotNewPw')} onBlur={hideTooltip}
+              onBlur={hideTooltip}
               className={inpBase} style={inpStyle} placeholder="••••••••" disabled={loading}
             />
-            <button type="button" onClick={() => setShowFpPw(!showFpPw)} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity" tabIndex={-1}>
+            <button type="button" onClick={() => setShowFpPw(!showFpPw)} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity cursor-pointer" tabIndex={-1}>
               {showFpPw ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
@@ -219,16 +219,16 @@ export function ForgotPasswordForm({
             <input
               type={showFpCf ? 'text' : 'password'} value={fpCfPw}
               onChange={e => { setFpCfPw(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.fpCfPw; return n; }); }}
-              onFocus={e => showTooltip(e.currentTarget, 'forgotCfPw')} onBlur={hideTooltip}
+              onBlur={hideTooltip}
               className={inpBase} style={inpStyle} placeholder="••••••••" disabled={loading}
             />
-            <button type="button" onClick={() => setShowFpCf(!showFpCf)} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity" tabIndex={-1}>
+            <button type="button" onClick={() => setShowFpCf(!showFpCf)} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity cursor-pointer" tabIndex={-1}>
               {showFpCf ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
           {fieldErrs.fpCfPw && <FieldError msg={fieldErrs.fpCfPw} theme={theme} />}
         </div>
-        <button type="submit" disabled={loading} className="w-full py-3 mt-2 text-sm font-semibold rounded-xl text-white transition-all duration-200 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-violet-500/20">
+        <button type="submit" disabled={loading} className="w-full py-3 mt-2 text-sm font-semibold rounded-xl text-white transition-all duration-200 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-violet-500/20 cursor-pointer">
           {loading ? 'Resetting...' : 'Reset Password'}
         </button>
       </form>

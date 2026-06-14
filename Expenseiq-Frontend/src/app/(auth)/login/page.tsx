@@ -66,7 +66,7 @@ export default function LoginPage() {
   }
 
   // State shared across forms
-  const [view, setView] = useState<ViewState>('login');
+  const [view, setView] = useState<ViewState>('passwordless-login');
   const [fieldErrs, setFieldErrs] = useState<Record<string, string>>({});
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);

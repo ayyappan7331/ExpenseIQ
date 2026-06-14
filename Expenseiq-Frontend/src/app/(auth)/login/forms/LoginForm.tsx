@@ -81,28 +81,23 @@ export function LoginForm({
           type="text"
           value={identifier}
           onChange={e => { setIdentifier(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.loginIdentifier; return n; }); }}
-          onFocus={e => showTooltip(e.currentTarget, 'loginIdentifier')}
           onBlur={hideTooltip}
           className={inpBase}
           style={inpStyle}
-          placeholder="name@company.com or 9876543210"
+          placeholder="Enter your email or mobile"
           autoComplete="username"
           disabled={loading}
         />
         {fieldErrs.loginIdentifier && <FieldError msg={fieldErrs.loginIdentifier} theme={theme} />}
       </div>
       <div>
-        <div className="flex justify-between items-end mb-1 ml-1">
-          <label className="block text-xs font-semibold" style={{ color: isDark ? 'rgba(255,255,255,0.7)' : '#333' }}>Password</label>
-          <button type="button" onClick={() => onSwitchView('forgot-password')} className="text-xs font-medium hover:underline" style={{ color: isDark ? '#a78bfa' : '#6d52d8' }}>Forgot password?</button>
-        </div>
+        <label className="block text-xs font-semibold mb-1 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.7)' : '#333' }}>Password</label>
         <div className="relative">
           <input
             type={showPw ? 'text' : 'password'}
             value={password}
             onChange={e => { setPassword(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.loginPw; return n; }); }}
             onKeyDown={handleKeyEvent} onKeyUp={handleKeyEvent}
-            onFocus={e => showTooltip(e.currentTarget, 'loginPw')}
             onBlur={hideTooltip}
             className={inpBase}
             style={inpStyle}
@@ -110,18 +105,22 @@ export function LoginForm({
             autoComplete="current-password"
             disabled={loading}
           />
-          <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity" tabIndex={-1}>
+          <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity cursor-pointer" tabIndex={-1}>
             {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
         </div>
         {capsLock && <p className="text-xs text-orange-400 mt-1 ml-1">Caps Lock is ON</p>}
         {fieldErrs.loginPw && <FieldError msg={fieldErrs.loginPw} theme={theme} />}
+        
+        <div className="flex justify-end mt-2">
+          <button type="button" onClick={() => onSwitchView('forgot-password')} className="text-xs font-medium hover:underline cursor-pointer" style={{ color: isDark ? '#a78bfa' : '#6d52d8' }}>Forgot password?</button>
+        </div>
       </div>
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3 mt-2 text-sm font-semibold rounded-xl text-white transition-all duration-200 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-violet-500/20"
+        className="w-full py-3 mt-2 text-sm font-semibold rounded-xl text-white transition-all duration-200 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-violet-500/20 cursor-pointer"
       >
         {loading ? 'Signing in...' : 'Sign In'}
       </button>
