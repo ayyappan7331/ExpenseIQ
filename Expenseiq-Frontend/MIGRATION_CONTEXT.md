@@ -10662,6 +10662,22 @@ login/register pages, and no route guard. App was broken when `AUTH_ENABLED=true
     * **Why**: To greatly improve maintainability, separation of concerns, and type-safety without changing any of the visual UI or UX.
 * **Validation**: Code compiled successfully (`npm run typecheck` passed without a single error). Visually inspected to ensure the login page still functions and renders identically.
 
+## Login Page: UI and UX Tweaks
+* **Files changed**: `src/app/(auth)/login/page.tsx`, `src/app/(auth)/login/forms/*.tsx`
+* **What changed and why**: 
+    * Changed default login view to Passwordless (OTP) instead of Password.
+    * Removed hover tooltips (`onFocus` handlers) across all forms to reduce cognitive load and let users explore.
+    * Relocated "Forgot password?" from above the input field to below it.
+    * Added explicit `cursor-pointer` to all submit buttons and eye icons.
+    * Updated the placeholder for identifier fields to "Enter your email or mobile".
+* **Validation**: Code pushed and deployed successfully.
+
+## Backend OTP Flow & Profile Scope Bug Fix
+* **Files changed**: `ExpenseIQ-Backend/middleware/profileScope.js`, `ExpenseIQ-Backend/utils/emailService.js`, `ExpenseIQ-Backend/services/otpService.js`
+* **What changed and why**:
+    * **Profile Scope Fix**: The `profileScope` middleware was enforcing strict profile-ownership validation on the `/profiles` endpoints. This prevented newly registered users from hitting `GET /api/profiles`, which is the very endpoint responsible for creating their initial default profile (throwing the `Profile "default" does not belong to your account` error). Fixed by exempting `/profiles` routes from the scope check so new users can correctly seed their profiles.
+    * **OTP Flow**: Installed `nodemailer` and implemented `emailService.js`. Hooked it up in `otpService.js` to dispatch standard verification and login codes via SMTP. Added standard SMTP config variables to `.env.example`.
+* **Validation**: `npm run lint` passing.
 
 **Architecture rules enforced:**
 - Token store pattern mirrors `src/lib/api/profile.ts` (existing pattern)
