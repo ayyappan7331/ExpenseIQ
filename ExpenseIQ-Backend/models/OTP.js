@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const otpSchema = new mongoose.Schema({
   identifier: { type: String, required: true },    // email or mobile
   code: { type: String, required: true },
-  purpose: { type: String, enum: ['verify', 'reset'], default: 'verify' },
+  purpose: { type: String, enum: ['verify', 'reset', 'login'], default: 'verify' },
   createdAt: { type: Date, default: Date.now, expires: 600 },   // 10 min TTL
 });
 

@@ -16,13 +16,13 @@ const login = Joi.object({
 
 const sendOtp = Joi.object({
   identifier: Joi.string().required(),
-  purpose: Joi.string().valid('verify', 'reset').required(),
+  purpose: Joi.string().valid('verify', 'reset', 'login').required(),
 });
 
 const verifyOtp = Joi.object({
   identifier: Joi.string().required(),
   code: Joi.string().length(6).required(),
-  purpose: Joi.string().valid('verify', 'reset').required(),
+  purpose: Joi.string().valid('verify', 'reset', 'login').required(),
 });
 
 const resetPassword = Joi.object({
@@ -30,4 +30,11 @@ const resetPassword = Joi.object({
   newPassword: Joi.string().min(8).required(),
 });
 
-module.exports = { register, login, sendOtp, verifyOtp, resetPassword };
+// Validator for OTP-based login (two steps reuse sendOtp + verifyOtp; this
+// covers the final step where verifyOtp returns a full session token)
+const loginOtp = Joi.object({
+  identifier: Joi.string().required(),
+  code: Joi.string().length(6).required(),
+});
+
+module.exports = { register, login, sendOtp, verifyOtp, resetPassword, loginOtp };

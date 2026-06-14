@@ -79,3 +79,41 @@ exports.resetPassword = asyncHandler(async (req, res) => {
   await service.resetPassword(payload.userId, newPassword);
   res.json({ message: 'Password reset successfully' });
 });
+
+// ── OTP Login (passwordless) ─────────────────────────────────────────────────
+
+/**
+ * POST /api/auth/login-otp
+ * Step 2 of OTP login: verify the code and issue a full session JWT.
+ * Step 1 is handled by POST /send-otp with purpose='login'.
+ */
+exports.loginWithOtp = asyncHandler(async (req, res) => {
+  const { identifier, code } = req.body;
+
+  // Verify the OTP (consumes it on success)
+  const valid = await otpService.verifyOtp(identifier.toLowerCase().trim(), code, 'login');
+  if (!valid) return res.status(400).json({ error: 'Invalid or expired OTP' });
+
+  // Look up the user
+  const user = await service.findByIdentifier(identifier);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+
+  // Issue a full-duration session token (same shape as password login)
+  const token = jwt.sign(
+    { userId: user._id.toString(), email: user.email || '' },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRY || '7d' }
+  );
+
+  res.json({
+    token,
+    user: {
+      id: user._id.toString(),
+      email: user.email || '',
+      mobile: user.mobile || '',
+      name: user.name,
+      dob: user.dob,
+      purpose: user.purpose,
+    },
+  });
+});

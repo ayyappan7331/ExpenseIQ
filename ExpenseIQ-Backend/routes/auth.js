@@ -13,6 +13,11 @@ router.post('/send-otp', validate(schemas.sendOtp), ctrl.sendOtp);
 router.post('/verify-otp', validate(schemas.verifyOtp), ctrl.verifyOtp);
 router.post('/reset-password', validate(schemas.resetPassword), ctrl.resetPassword);
 
+// OTP-based passwordless login
+// Step 1: POST /send-otp  { identifier, purpose: 'login' }  → sends OTP
+// Step 2: POST /login-otp { identifier, code }              → verifies OTP + returns JWT
+router.post('/login-otp', validate(schemas.loginOtp), ctrl.loginWithOtp);
+
 // Protected routes (require valid JWT)
 router.get('/me', authMiddleware, ctrl.me);
 router.put('/me', authMiddleware, ctrl.updateMe);
