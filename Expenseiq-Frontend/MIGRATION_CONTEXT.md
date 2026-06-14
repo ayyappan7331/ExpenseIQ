@@ -10647,6 +10647,11 @@ login/register pages, and no route guard. App was broken when `AUTH_ENABLED=true
 - `src/components/layout/Topbar.tsx` — logout button (visible only when auth enabled): clears token, clears query cache, redirects to `/login`
 - `.env.example` — added `NEXT_PUBLIC_AUTH_ENABLED=false`
 
+### Login UI Aesthetic Update: Simplify Background Spirals
+* **Files changed**: `src/app/(auth)/login/page.tsx`
+* **What changed and why**: Reduced the number of animated background spirals (wave bands) in the `WaveBackground` component from 5 to 2 based on user feedback. The 5 spirals were too busy and occupied too much of the screen.
+* **Validation**: Code compiled successfully without errors. Visually inspected that the background now renders exactly 2 waves instead of 5, providing a cleaner look while maintaining the dynamic feel.
+
 **Architecture rules enforced:**
 - Token store pattern mirrors `src/lib/api/profile.ts` (existing pattern)
 - Auth flag defaults `false` — app works without login unchanged

@@ -200,11 +200,8 @@ const WaveBackground = memo(function WaveBackground({ tokens }: { tokens: Tokens
     prevColorsRef.current = [lerpedC0, lerpedC1];
     const [c0, c1] = [lerpedC0, lerpedC1];
     const bands = [
-      { yFrac: 0.18, freq: 1.3, speed: 0.055, amp: 0.045, phase: 0.0, color: c0, boost: 1.0 },
-      { yFrac: 0.42, freq: 1.6, speed: 0.040, amp: 0.060, phase: 1.2, color: c1, boost: 2.2 },
-      { yFrac: 0.60, freq: 1.2, speed: 0.048, amp: 0.055, phase: 2.0, color: c0, boost: 2.5 },
-      { yFrac: 0.75, freq: 1.1, speed: 0.060, amp: 0.050, phase: 2.4, color: c1, boost: 2.0 },
-      { yFrac: 0.90, freq: 1.4, speed: 0.045, amp: 0.040, phase: 0.8, color: c0, boost: 1.0 },
+      { yFrac: 0.35, freq: 1.4, speed: 0.045, amp: 0.065, phase: 0.0, color: c0, boost: 2.0 },
+      { yFrac: 0.70, freq: 1.2, speed: 0.050, amp: 0.060, phase: 2.0, color: c1, boost: 2.2 },
     ];
     const LINES_PER_BAND = 18; const BAND_SPREAD = 0.07;
     const baseAlpha = tk.waveAlphaBase;
