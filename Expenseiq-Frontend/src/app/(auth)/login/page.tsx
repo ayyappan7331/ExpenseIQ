@@ -198,10 +198,13 @@ const WaveBackground = memo(function WaveBackground({ tokens }: { tokens: Tokens
     const lerpedC0 = lerp(colorFromRef.current[0], colorToRef.current[0], eased);
     const lerpedC1 = lerp(colorFromRef.current[1], colorToRef.current[1], eased);
     prevColorsRef.current = [lerpedC0, lerpedC1];
+    // Use Tiranga colors explicitly regardless of theme
     const [c0, c1] = [lerpedC0, lerpedC1];
+    const saffron = [255, 153, 51];
+    const green = [19, 136, 8];
     const bands = [
-      { yFrac: 0.35, freq: 1.4, speed: 0.045, amp: 0.065, phase: 0.0, color: c0, boost: 2.0 },
-      { yFrac: 0.70, freq: 1.2, speed: 0.050, amp: 0.060, phase: 2.0, color: c1, boost: 2.2 },
+      { yFrac: 0.35, freq: 1.4, speed: 0.045, amp: 0.065, phase: 0.0, color: saffron, boost: 2.0 },
+      { yFrac: 0.70, freq: 1.2, speed: 0.050, amp: 0.060, phase: 2.0, color: green, boost: 2.2 },
     ];
     const LINES_PER_BAND = 18; const BAND_SPREAD = 0.07;
     const baseAlpha = tk.waveAlphaBase;
@@ -217,14 +220,17 @@ const WaveBackground = memo(function WaveBackground({ tokens }: { tokens: Tokens
         const [r, g, b] = band.color;
         ctx.beginPath();
         for (let x = 0; x <= W; x += 6) {
-          const y = yBase + Math.sin((x / W) * Math.PI * 2 * band.freq + t * band.speed * Math.PI * 2 + linePhase) * band.amp * H;
+          // Dynamic phase adds an organic, random wobble to the spinning
+          const dynamicPhase = linePhase + Math.sin(t * 0.6 + (x / W) * 3) * 1.5;
+          const y = yBase + Math.sin((x / W) * Math.PI * 2 * band.freq + t * band.speed * Math.PI * 2 + dynamicPhase) * band.amp * H;
           x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
         }
         ctx.strokeStyle = `rgba(${r},${g},${b},${alpha * 0.3})`; ctx.lineWidth = strokeW * 6;
         ctx.shadowColor = `rgba(${r},${g},${b},0.12)`; ctx.shadowBlur = 10; ctx.stroke();
         ctx.beginPath();
         for (let x = 0; x <= W; x += 3) {
-          const y = yBase + Math.sin((x / W) * Math.PI * 2 * band.freq + t * band.speed * Math.PI * 2 + linePhase) * band.amp * H;
+          const dynamicPhase = linePhase + Math.sin(t * 0.6 + (x / W) * 3) * 1.5;
+          const y = yBase + Math.sin((x / W) * Math.PI * 2 * band.freq + t * band.speed * Math.PI * 2 + dynamicPhase) * band.amp * H;
           x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
         }
         ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`; ctx.lineWidth = strokeW; ctx.shadowBlur = 0; ctx.stroke();
@@ -354,8 +360,8 @@ export default function LoginPage() {
   }, [router]);
 
   const [loginTheme, setLoginTheme] = useState<'dark' | 'light'>(() => {
-    if (typeof window === 'undefined') return 'dark';
-    return (localStorage.getItem(LOGIN_THEME_KEY) as 'dark' | 'light') ?? 'dark';
+    if (typeof window === 'undefined') return 'light';
+    return (localStorage.getItem(LOGIN_THEME_KEY) as 'dark' | 'light') ?? 'light';
   });
   const tk = loginTheme === 'light' ? LIGHT_TOKENS : DARK_TOKENS;
 

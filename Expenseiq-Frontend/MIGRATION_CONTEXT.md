@@ -10652,6 +10652,14 @@ login/register pages, and no route guard. App was broken when `AUTH_ENABLED=true
 * **What changed and why**: Reduced the number of animated background spirals (wave bands) in the `WaveBackground` component from 5 to 2 based on user feedback. The 5 spirals were too busy and occupied too much of the screen.
 * **Validation**: Code compiled successfully without errors. Visually inspected that the background now renders exactly 2 waves instead of 5, providing a cleaner look while maintaining the dynamic feel.
 
+## Login Page: Tiranga Spirals, Random Spin, and Default Light Mode
+* **Files changed**: `src/app/(auth)/login/page.tsx`
+* **What changed and why**: 
+    * Changed the default `loginTheme` from 'dark' to 'light' on initial load to fulfill the user's request, while preserving the ability for users to manually toggle back to dark mode.
+    * Hardcoded the 2 background spirals (`WaveBackground`) to use Tiranga colors (Saffron: RGB 255,153,51 and Green: RGB 19,136,8) in both light and dark mode. 
+    * Added a `dynamicPhase` calculation using multiple layered sine waves based on the screen x-coordinate and time, making the spirals randomly and organically "wobble" and spin instead of following a uniform repetitive pattern.
+* **Validation**: Code compiled successfully without errors. Visually inspected that the background spirals use the intended colors and randomly animate instead of uniformly spinning, and confirmed the default load state is light mode.
+
 **Architecture rules enforced:**
 - Token store pattern mirrors `src/lib/api/profile.ts` (existing pattern)
 - Auth flag defaults `false` — app works without login unchanged
