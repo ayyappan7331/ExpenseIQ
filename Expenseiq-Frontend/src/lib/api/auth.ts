@@ -4,6 +4,8 @@ import type {
   RegisterResponse,
   LoginRequest,
   LoginResponse,
+  LoginOtpRequest,
+  LoginOtpResponse,
   SendOtpRequest,
   SendOtpResponse,
   VerifyOtpRequest,
@@ -24,6 +26,10 @@ export const authApi = {
 
   login: (data: LoginRequest) =>
     request<LoginResponse>('/auth/login', { method: 'POST', body: data }),
+
+  /** Passwordless login — Step 2: verify OTP and receive a full session JWT. */
+  loginWithOtp: (data: LoginOtpRequest) =>
+    request<LoginOtpResponse>('/auth/login-otp', { method: 'POST', body: data }),
 
   me: () =>
     request<LoginResponse['user']>('/auth/me'),

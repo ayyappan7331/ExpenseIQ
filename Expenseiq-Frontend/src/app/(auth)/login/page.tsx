@@ -21,6 +21,8 @@ const FIELD_HINTS: Record<string, string[]> = {
   forgotOtp:       ['Enter the 6-digit OTP sent to your identifier.', 'OTP expires in 10 minutes.'],
   forgotNewPw:     ['Create a new password.', 'Min 8 characters — mix letters, numbers, symbols.'],
   forgotCfPw:      ['Re-enter your new password to confirm.'],
+  otpLoginId:      ['Enter your registered email or mobile number.', 'We will send a one-time code to log you in.'],
+  otpLoginCode:    ['Enter the 6-digit code sent to your account.', 'Check server console (dev mode — no SMS/email yet).'],
 };
 
 /* ── ValidationTooltip ── */
@@ -407,8 +409,12 @@ export default function LoginPage() {
     setLoginTheme(next); localStorage.setItem(LOGIN_THEME_KEY, next); setRipple(null); rippling.current = false;
   }
 
-  // ── Views: login | register | forgot-1 | forgot-2 | forgot-3
-  const [view, setView] = useState<'login' | 'register' | 'forgot-1' | 'forgot-2' | 'forgot-3'>('login');
+  // ── Views: login | register | forgot-1 | forgot-2 | forgot-3 | otp-login-1 | otp-login-2
+  const [view, setView] = useState<'login' | 'register' | 'forgot-1' | 'forgot-2' | 'forgot-3' | 'otp-login-1' | 'otp-login-2'>('login');
+
+  // OTP Login state
+  const [otpLoginId,  setOtpLoginId]  = useState('');
+  const [otpLoginCode, setOtpLoginCode] = useState('');
 
   // Login state
   const [password, setPassword] = useState('');
@@ -475,7 +481,49 @@ export default function LoginPage() {
     setError(''); setPassword(''); setRegPw(''); setRegCf('');
     setShowPw(false); setShowRegPw(false); setShowRegCf(false);
     setTouched(false); setFe({}); setFpOtp(''); setFpNewPw(''); setFpCfPw('');
+    setOtpLoginCode('');
     setView(v);
+  }
+
+  /* ── OTP Login: Step 1 — send OTP ── */
+  async function handleOtpLoginSend(ev: React.FormEvent) {
+    ev.preventDefault();
+    if (!otpLoginId.trim()) { fieldErr('otpLoginId', 'Enter your email or mobile number.'); return; }
+    setFe({}); setError(''); setLoading(true);
+    try {
+      await authApi.sendOtp({ identifier: otpLoginId.trim(), purpose: 'login' });
+      setView('otp-login-2');
+    } catch (err: unknown) { setError(err instanceof Error ? err.message : 'Failed to send OTP'); }
+    finally { setLoading(false); }
+  }
+
+  async function handleOtpLoginResend() {
+    try { await authApi.sendOtp({ identifier: otpLoginId.trim(), purpose: 'login' }); }
+    catch { /* silent — ResendTimer UI handles feedback */ }
+  }
+
+  /* ── OTP Login: Step 2 — verify OTP → issue JWT ── */
+  async function handleOtpLoginVerify(ev: React.FormEvent) {
+    ev.preventDefault();
+    if (otpLoginCode.replace(/\D/g, '').length < 6) { fieldErr('otpLoginCode', 'Enter all 6 digits.'); return; }
+    setFe({}); setError(''); setLoading(true);
+    try {
+      const res = await authApi.loginWithOtp({ identifier: otpLoginId.trim(), code: otpLoginCode.trim() });
+      try { localStorage.setItem(LAST_IDENTIFIER_KEY, otpLoginId.trim()); } catch { /* ignore */ }
+      setToken(res.token);
+      setStoredUser({ id: res.user.id, email: res.user.email, name: res.user.name, dob: res.user.dob, purpose: res.user.purpose });
+      qc.clear();
+      const { api } = await import('@/lib/api/client');
+      const { setActiveProfileId, clearActiveProfileId } = await import('@/lib/api/profile');
+      clearActiveProfileId();
+      const profiles = await api.getProfiles();
+      if (profiles.length > 0) {
+        const def = profiles.find(p => p.isDefault) ?? profiles[0];
+        setActiveProfileId(def.profileId);
+      }
+      router.push('/dashboard');
+    } catch (err: unknown) { setError(err instanceof Error ? err.message : 'Invalid or expired OTP'); }
+    finally { setLoading(false); }
   }
 
   /* ── Login ── */
@@ -733,6 +781,32 @@ export default function LoginPage() {
                   ) : 'Sign In'}
                 </button>
               </form>
+
+              {/* Divider */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '4px 0' }}>
+                <div style={{ flex: 1, height: 1, background: tk.cardBorder }} />
+                <span style={{ fontSize: '0.65rem', color: tk.subtitle, whiteSpace: 'nowrap' }}>or</span>
+                <div style={{ flex: 1, height: 1, background: tk.cardBorder }} />
+              </div>
+
+              {/* OTP login shortcut */}
+              <button
+                type="button"
+                id="otp-login-btn"
+                onClick={() => { setOtpLoginId(identifier); switchView('otp-login-1'); }}
+                style={{
+                  width: '100%', padding: '10px 0', borderRadius: 12, fontSize: '0.8rem', fontWeight: 600,
+                  border: `1.5px solid ${tk.cardBorder}`, background: 'transparent',
+                  color: tk.linkColor, cursor: 'pointer', transition: 'background 0.2s, border-color 0.2s',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = loginTheme === 'dark' ? 'rgba(124,111,247,0.08)' : 'rgba(109,82,216,0.06)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                Login with OTP
+              </button>
+
               <p style={{ textAlign: 'center', fontSize: '0.75rem', color: tk.subtitle, transition: 'color 0.4s ease' }}>
                 No account?{' '}
                 <button type="button" onClick={() => switchView('register')}
@@ -740,6 +814,117 @@ export default function LoginPage() {
                   Create one
                 </button>
               </p>
+            </div>
+          )}
+
+          {/* ── OTP LOGIN — Step 1: Enter identifier ── */}
+          {view === 'otp-login-1' && (
+            <div className="space-y-5">
+              <div className="flex items-center gap-2">
+                <button type="button" onClick={() => switchView('login')}
+                  style={{ color: tk.subtitle, background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 8, display: 'flex', transition: 'color 0.4s ease' }}>
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+                <div>
+                  <h2 style={{ fontSize: '1.125rem', fontWeight: 700, color: tk.color, transition: 'color 0.4s ease' }}>Login with OTP</h2>
+                  <p style={{ fontSize: '0.7rem', color: tk.subtitle, transition: 'color 0.4s ease' }}>We&apos;ll send a one-time code to your account</p>
+                </div>
+              </div>
+              <form onSubmit={handleOtpLoginSend} noValidate className="space-y-3">
+                <div>
+                  <div className="relative">
+                    <input
+                      id="otp-login-identifier"
+                      type="text"
+                      inputMode={otpLoginId.trim() && looksLikeMobile(otpLoginId.trim()) ? 'numeric' : 'email'}
+                      value={otpLoginId}
+                      onChange={e => { setOtpLoginId(e.target.value); clearFe('otpLoginId'); }}
+                      onFocus={e => showTooltip(e.currentTarget, 'otpLoginId')}
+                      onMouseEnter={e => showTooltip(e.currentTarget, 'otpLoginId')}
+                      onMouseLeave={hideTooltip}
+                      onBlur={() => { if (!otpLoginId.trim()) fieldErr('otpLoginId', 'Enter your email or mobile number.'); hideTooltip(); }}
+                      placeholder="Email or mobile number"
+                      autoFocus disabled={loading}
+                      className={`${inp} pr-11`}
+                      style={inpStyle(fe.otpLoginId ? { borderColor: 'rgba(239,68,68,0.5)' } : {})}
+                    />
+                    <span style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: tk.inpPh, pointerEvents: 'none' }}>
+                      {otpLoginId.trim() && looksLikeMobile(otpLoginId.trim()) ? <Phone style={{ width: 14, height: 14 }} /> : <Mail style={{ width: 14, height: 14 }} />}
+                    </span>
+                  </div>
+                  {fe.otpLoginId && <FieldError msg={fe.otpLoginId} theme={loginTheme} />}
+                </div>
+
+                {/* Dev notice */}
+                <p style={{ fontSize: '0.65rem', color: tk.subtitle, textAlign: 'center', lineHeight: 1.5 }}>
+                  📋 OTP will be printed to the server console (no SMS/email in dev mode)
+                </p>
+
+                {error && <FieldError msg={error} theme={loginTheme} />}
+                <button type="submit" disabled={loading} className={btn} style={{ color: '#fff' }}>
+                  {loading ? (
+                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
+                      <svg style={{ animation: 'spin 0.8s linear infinite', width: 14, height: 14 }} viewBox="0 0 24 24" fill="none" aria-hidden>
+                        <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" strokeWidth="3"/>
+                        <path d="M12 2a10 10 0 0 1 10 10" stroke="white" strokeWidth="3" strokeLinecap="round"/>
+                      </svg>
+                      Sending OTP...
+                    </span>
+                  ) : 'Send OTP'}
+                </button>
+              </form>
+              <p style={{ textAlign: 'center', fontSize: '0.7rem', color: tk.subtitle }}>
+                Have a password?{' '}
+                <button type="button" onClick={() => switchView('login')}
+                  style={{ color: tk.linkColor, fontWeight: 600, cursor: 'pointer', background: 'none', border: 'none', padding: 0 }}>
+                  Sign in with password
+                </button>
+              </p>
+            </div>
+          )}
+
+          {/* ── OTP LOGIN — Step 2: Enter OTP ── */}
+          {view === 'otp-login-2' && (
+            <div className="space-y-5">
+              <div className="flex items-center gap-2">
+                <button type="button" onClick={() => switchView('otp-login-1')}
+                  style={{ color: tk.subtitle, background: 'none', border: 'none', cursor: 'pointer', padding: 4, borderRadius: 8, display: 'flex' }}>
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+                <div>
+                  <h2 style={{ fontSize: '1.125rem', fontWeight: 700, color: tk.color }}>Enter OTP</h2>
+                  <p style={{ fontSize: '0.7rem', color: tk.subtitle }}>
+                    Code sent to <span style={{ color: tk.color, fontWeight: 600 }}>{otpLoginId}</span>
+                  </p>
+                </div>
+              </div>
+
+              <form onSubmit={handleOtpLoginVerify} noValidate className="space-y-5">
+                <OtpInput value={otpLoginCode} onChange={v => { setOtpLoginCode(v); clearFe('otpLoginCode'); }} theme={loginTheme} />
+                {fe.otpLoginCode && <FieldError msg={fe.otpLoginCode} theme={loginTheme} />}
+
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <ResendTimer onResend={handleOtpLoginResend} theme={loginTheme} />
+                </div>
+
+                {error && <FieldError msg={error} theme={loginTheme} />}
+                <button
+                  type="submit"
+                  disabled={loading || otpLoginCode.replace(/\D/g, '').length < 6}
+                  className={btn}
+                  style={{ color: '#fff' }}
+                >
+                  {loading ? (
+                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
+                      <svg style={{ animation: 'spin 0.8s linear infinite', width: 14, height: 14 }} viewBox="0 0 24 24" fill="none" aria-hidden>
+                        <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" strokeWidth="3"/>
+                        <path d="M12 2a10 10 0 0 1 10 10" stroke="white" strokeWidth="3" strokeLinecap="round"/>
+                      </svg>
+                      Verifying...
+                    </span>
+                  ) : 'Verify & Sign In'}
+                </button>
+              </form>
             </div>
           )}
 

@@ -328,7 +328,7 @@ export interface LoginResponse {
 
 export interface SendOtpRequest {
   identifier: string;   // email or mobile
-  purpose: 'verify' | 'reset';
+  purpose: 'verify' | 'reset' | 'login';
 }
 
 export interface SendOtpResponse {
@@ -338,8 +338,19 @@ export interface SendOtpResponse {
 export interface VerifyOtpRequest {
   identifier: string;
   code: string;         // 6-digit numeric string
-  purpose: 'verify' | 'reset';
+  purpose: 'verify' | 'reset' | 'login';
 }
+
+// ---------- OTP Login (passwordless) ----------
+
+/** Step 1 uses SendOtpRequest with purpose='login'. Step 2 is below. */
+export interface LoginOtpRequest {
+  identifier: string;  // email or mobile
+  code: string;        // 6-digit OTP
+}
+
+/** Same shape as LoginResponse — drop-in replacement so afterLogin() works unchanged. */
+export type LoginOtpResponse = LoginResponse;
 
 export interface VerifyOtpResponse {
   valid: boolean;
