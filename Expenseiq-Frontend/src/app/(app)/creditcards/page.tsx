@@ -449,11 +449,6 @@ const isLoading = metaLoading || txnsLoading;
                   {(() => {
                     const moLabel = new Date(cardMo + '-01T00:00:00').toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
 
-                    // All stats for the selected month via the canonical helper
-                    const moStats = offset === 0 ? card : computeCardStatsForMonth(card.name, cardMo);
-                    const moSpend = moStats?.monthlySpend ?? 0;
-                    const moOutstanding = moStats?.outstandingBalance ?? 0;
-
                     return (
                       <div className="bg-bg-2 rounded-lg p-2 space-y-2">
                         <div className="flex items-center justify-between">
@@ -463,8 +458,8 @@ const isLoading = metaLoading || txnsLoading;
                           </button>
                           <div className="text-center">
                             <p className="text-[10px] text-text-3">{moLabel}</p>
-                            <p className={`text-sm font-semibold ${moSpend > 0 ? 'text-expense' : 'text-text-3'}`}>
-                              {formatCurrency(moSpend)}
+                            <p className={`text-sm font-semibold ${activeCard.monthlySpend > 0 ? 'text-expense' : 'text-text-3'}`}>
+                              {formatCurrency(activeCard.monthlySpend)}
                             </p>
                           </div>
                           <button type="button" onClick={() => shiftCardMonth(card.name, 1)}
@@ -473,14 +468,6 @@ const isLoading = metaLoading || txnsLoading;
                             <ChevronRight className="w-3.5 h-3.5" />
                           </button>
                         </div>
-                        {offset !== 0 && (
-                          <div className="flex items-center justify-between text-[10px] text-text-3 border-t border-card-border/30 pt-1">
-                            <span>Outstanding</span>
-                            <span className={moOutstanding > 0 ? 'text-expense font-medium' : 'text-income'}>
-                              {formatCurrency(moOutstanding)}
-                            </span>
-                          </div>
-                        )}
                       </div>
                     );
                   })()}
@@ -829,7 +816,11 @@ const isLoading = metaLoading || txnsLoading;
                 cardTxns,
                 card.meta!.dueDate
               );
-              const yearGroups = groupStatementsByYear(allStatements);
+              // allStatements[0] is the live current cycle — already shown on the card grid.
+              // Slice it off for the history view to avoid duplication. CSV export
+              // (below) still includes all statements so nothing is lost.
+              const historicalStatements = allStatements.slice(1);
+              const yearGroups = groupStatementsByYear(historicalStatements);
               const cardExpanded = isCardExpanded(card.name);
               const cardPinned   = pinnedStatements.has(card.name);
               const accentColor  = card.meta?.color ?? '#7c6ff7';
@@ -1263,56 +1254,57 @@ const isLoading = metaLoading || txnsLoading;
                 </div>
               )}
 
-              {/* Summary: purchases vs payments */}
-              <div className="grid grid-cols-3 gap-2 p-3 rounded-xl bg-bg-2 border border-card-border">
-                <div className="text-center">
-                  <p className="text-[10px] text-text-3 uppercase tracking-wider">Purchases</p>
-                  <p className="text-xs font-semibold text-expense">{formatCurrency(totalPurchases)}</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-[10px] text-text-3 uppercase tracking-wider">Payments</p>
-                  <p className="text-xs font-semibold text-income">{formatCurrency(totalPayments)}</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-[10px] text-text-3 uppercase tracking-wider">Net</p>
-                  <p className={`text-xs font-semibold ${
-                    detailCard.outstandingBalance > 0 ? 'text-expense' : 'text-income'
-                  }`}>{formatCurrency(detailCard.outstandingBalance)}</p>
-                </div>
-              </div>
+              {/* Lifetime summary + Billing Cycle — merged to avoid the two look-alike
+                  3-column grids that previously appeared back-to-back */}
+              <div className="space-y-2 pt-1 border-t border-card-border/50">
+                <p className="text-xs font-semibold text-text-2 uppercase tracking-wider">Spend Summary</p>
 
-              {/* Billing Cycle Summary */}
-              {detailCard.cycleStart && detailCard.cycleEnd && (
-                <div className="space-y-2 pt-1 border-t border-card-border/50">
-                  <p className="text-xs font-semibold text-text-2 uppercase tracking-wider">Billing Cycle</p>
-                  <div className="flex items-center justify-between text-[11px] text-text-3">
-                    <span>{dateLabel(detailCard.cycleStart)}</span>
-                    <span className="text-text-3">→</span>
-                    <span>{dateLabel(detailCard.cycleEnd)}</span>
+                {/* Lifetime row */}
+                <div className="grid grid-cols-3 gap-2 p-3 rounded-xl bg-bg-2 border border-card-border">
+                  <div className="text-center">
+                    <p className="text-[10px] text-text-3 uppercase tracking-wider">Lifetime Spend</p>
+                    <p className="text-xs font-semibold text-expense">{formatCurrency(totalPurchases)}</p>
                   </div>
-                  <div className="grid grid-cols-3 gap-2 p-3 rounded-xl bg-bg-2 border border-card-border">
-                    <div className="text-center">
-                      <p className="text-[10px] text-text-3 uppercase tracking-wider">Purchases</p>
-                      <p className="text-xs font-semibold text-expense">{formatCurrency(detailCard.cyclePurchases)}</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-[10px] text-text-3 uppercase tracking-wider">Payments</p>
-                      <p className="text-xs font-semibold text-income">{formatCurrency(detailCard.cyclePayments)}</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-[10px] text-text-3 uppercase tracking-wider">Statement</p>
-                      <p className={`text-xs font-semibold ${
-                        detailCard.statementBalance > 0 ? 'text-expense' : 'text-income'
-                      }`}>{formatCurrency(detailCard.statementBalance)}</p>
-                    </div>
+                  <div className="text-center">
+                    <p className="text-[10px] text-text-3 uppercase tracking-wider">Total Paid</p>
+                    <p className="text-xs font-semibold text-income">{formatCurrency(totalPayments)}</p>
                   </div>
-                  {detailCard.nextDueDate && (
-                    <p className="text-[11px] text-warning font-medium">
-                      Payment due: {dateLabel(detailCard.nextDueDate)}
-                    </p>
-                  )}
+                  <div className="text-center">
+                    <p className="text-[10px] text-text-3 uppercase tracking-wider">Outstanding</p>
+                    <p className={`text-xs font-semibold ${
+                      detailCard.outstandingBalance > 0 ? 'text-expense' : 'text-income'
+                    }`}>{formatCurrency(detailCard.outstandingBalance)}</p>
+                  </div>
                 </div>
-              )}
+
+                {/* Current billing cycle */}
+                {detailCard.cycleStart && detailCard.cycleEnd && (
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <p className="text-[11px] font-semibold text-text-3 uppercase tracking-wider">Current Cycle</p>
+                      <span className="text-[11px] text-text-3">
+                        {dateLabel(detailCard.cycleStart)} → {dateLabel(detailCard.cycleEnd)}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 p-3 rounded-xl bg-bg-2 border border-card-border">
+                      <div className="text-center">
+                        <p className="text-[10px] text-text-3 uppercase tracking-wider">Purchases</p>
+                        <p className="text-xs font-semibold text-expense">{formatCurrency(detailCard.cyclePurchases)}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-[10px] text-text-3 uppercase tracking-wider">Payments</p>
+                        <p className="text-xs font-semibold text-income">{formatCurrency(detailCard.cyclePayments)}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-[10px] text-text-3 uppercase tracking-wider">Statement</p>
+                        <p className={`text-xs font-semibold ${
+                          detailCard.statementBalance > 0 ? 'text-expense' : 'text-income'
+                        }`}>{formatCurrency(detailCard.statementBalance)}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
 
               {/* Payment Status */}
               {detailCard.paymentStatus && (

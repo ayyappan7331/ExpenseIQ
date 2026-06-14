@@ -55,8 +55,12 @@ export function AttentionCenter({ cards, onRecordPayment }: AttentionCenterProps
     .sort((a, b) => STATUS_PRIORITY[a.paymentStatus] - STATUS_PRIORITY[b.paymentStatus]);
 
   // Additional attention items
+  // Cards already in the actionable list (overdue/due_soon/partially_paid) are
+  // excluded from highUtilization to prevent the same card appearing twice.
+  const actionableNames = new Set(actionable.map((c) => c.name));
   const highUtilizationCards = cards.filter(c => {
     if (!c.meta?.limit) return false;
+    if (actionableNames.has(c.name)) return false; // already surfaced above — don't repeat
     const utilization = (c.outstandingBalance / c.meta.limit) * 100;
     return utilization >= 75;
   });

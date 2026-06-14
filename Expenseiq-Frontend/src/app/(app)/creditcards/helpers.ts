@@ -487,6 +487,11 @@ export function computeMonthlyStatements(
 
   const statements: MonthlyStatement[] = [];
   let ref = new Date();
+  // Upper bound for paymentsAfterCycle attribution.
+  // The most recent cycle has no upper bound (payments up to today are valid).
+  // Each older cycle's upper bound is the close date of the next-newer cycle,
+  // so payments don't bleed across statement periods.
+  let prevCycleEnd = '9999-12-31';
 
   for (let i = 0; i < maxCycles; i++) {
     const cycle = computeBillingCycle(billDate, duePeriodValue, ref, isLegacy);
@@ -518,8 +523,13 @@ export function computeMonthlyStatements(
 
     const statementBalance = Math.max(0, purchases - credits);
 
+    // FIX: Scope payments to between this cycleEnd and prevCycleEnd (exclusive/inclusive).
+    // Previously this was unbounded (t.date > cycleEnd), so all future months' payments
+    // appeared as paid against every older statement. Now each cycle only claims payments
+    // made within its own settlement window.
+    const upperBound = prevCycleEnd;
     const paymentsAfterCycle = billPaymentTxns
-      .filter((t) => t.date > cycleEnd)
+      .filter((t) => t.date > cycleEnd && t.date <= upperBound)
       .reduce((s, t) => s + t.amount, 0);
 
     const remainingDue = Math.max(0, statementBalance - paymentsAfterCycle);
@@ -540,6 +550,9 @@ export function computeMonthlyStatements(
     const monthLabel = new Date(cy, cm - 1, 1).toLocaleDateString('en-IN', { month: 'long' });
 
     statements.push({ label, monthLabel, year: cy, cycleStart, cycleEnd, dueDate: nextDueDate, purchases, credits, statementBalance, paymentsAfterCycle, remainingDue, status });
+
+    // Advance the upper bound for the next (older) cycle
+    prevCycleEnd = cycleEnd;
 
     // Step back one cycle
     ref = new Date(cycleStart + 'T00:00:00');
