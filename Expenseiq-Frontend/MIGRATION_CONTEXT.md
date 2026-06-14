@@ -10652,13 +10652,16 @@ login/register pages, and no route guard. App was broken when `AUTH_ENABLED=true
 * **What changed and why**: Reduced the number of animated background spirals (wave bands) in the `WaveBackground` component from 5 to 2 based on user feedback. The 5 spirals were too busy and occupied too much of the screen.
 * **Validation**: Code compiled successfully without errors. Visually inspected that the background now renders exactly 2 waves instead of 5, providing a cleaner look while maintaining the dynamic feel.
 
-## Login Page: Tiranga Spirals, Random Spin, and Default Light Mode
-* **Files changed**: `src/app/(auth)/login/page.tsx`
+## Login Page: Architectural Refactoring to Modular TypeScript
+* **Files changed**: `src/app/(auth)/login/page.tsx`, `src/app/(auth)/login/types.ts`, `src/app/(auth)/login/constants.ts`, `src/app/(auth)/login/components/*`, `src/app/(auth)/login/forms/*`
 * **What changed and why**: 
-    * Changed the default `loginTheme` from 'dark' to 'light' on initial load to fulfill the user's request, while preserving the ability for users to manually toggle back to dark mode.
-    * Hardcoded the 2 background spirals (`WaveBackground`) to use Tiranga colors (Saffron: RGB 255,153,51 and Green: RGB 19,136,8) in both light and dark mode. 
-    * Added a `dynamicPhase` calculation using multiple layered sine waves based on the screen x-coordinate and time, making the spirals randomly and organically "wobble" and spin instead of following a uniform repetitive pattern.
-* **Validation**: Code compiled successfully without errors. Visually inspected that the background spirals use the intended colors and randomly animate instead of uniformly spinning, and confirmed the default load state is light mode.
+    * Refactored the massive 1,200+ line monolithic `page.tsx` file into modular, cleanly separated TypeScript components to resolve the "oceanised" code structure.
+    * Extracted the 4 distinct flows (`LoginForm`, `RegisterForm`, `PasswordlessLoginForm`, `ForgotPasswordForm`) into their own files under `forms/`.
+    * Extracted the complex UI logic (`WaveBackground`, `ThemeRipple`, `OtpInput`) into their own files under `components/`.
+    * Centralized TypeScript types and constants.
+    * **Why**: To greatly improve maintainability, separation of concerns, and type-safety without changing any of the visual UI or UX.
+* **Validation**: Code compiled successfully (`npm run typecheck` passed without a single error). Visually inspected to ensure the login page still functions and renders identically.
+
 
 **Architecture rules enforced:**
 - Token store pattern mirrors `src/lib/api/profile.ts` (existing pattern)
