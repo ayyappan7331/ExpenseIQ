@@ -18,6 +18,11 @@ const profileScope = async (req, res, next) => {
   if (process.env.AUTH_ENABLED !== 'true') return next();
   if (!req.user) return next(); // auth middleware already rejected if missing
 
+  // Exempt profile management endpoints from scope checking.
+  // This allows new users to call GET /api/profiles to trigger default profile creation,
+  // and allows POST /api/profiles to create new profiles.
+  if (req.path.startsWith('/profiles') || req.path === '/profiles') return next();
+
   try {
     const clientProfileId =
       req.query.profileId ||

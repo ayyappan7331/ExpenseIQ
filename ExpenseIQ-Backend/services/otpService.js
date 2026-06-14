@@ -1,9 +1,9 @@
 const OTP = require('../models/OTP');
 const logger = require('../utils/logger');
+const emailService = require('../utils/emailService');
 
 /**
- * Generate a 6-digit OTP, persist it, and log it to the console.
- * In production you would integrate Twilio / SendGrid here.
+ * Generate a 6-digit OTP, persist it, and send it via email.
  */
 const generateOtp = async (identifier, purpose = 'verify') => {
   // Delete any existing OTP for this identifier+purpose
@@ -12,8 +12,14 @@ const generateOtp = async (identifier, purpose = 'verify') => {
   const code = String(Math.floor(100000 + Math.random() * 900000));
   await OTP.create({ identifier, code, purpose });
 
-  // Log to console (replace with SMS/email provider in production)
+  // Log to console
   logger.info({ identifier, purpose, code }, '📩 OTP generated');
+  
+  // Send via email if it's an email address
+  if (identifier.includes('@')) {
+    await emailService.sendOtpEmail(identifier, code, purpose);
+  }
+
   return code;
 };
 
