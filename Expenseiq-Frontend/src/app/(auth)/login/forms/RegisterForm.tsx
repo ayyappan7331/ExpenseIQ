@@ -76,14 +76,7 @@ export function RegisterForm({
     setToken(res.token);
     setStoredUser({ id: res.user.id, email: res.user.email, name: res.user.name, dob: res.user.dob, purpose: res.user.purpose });
     qc.clear();
-    const { api } = await import('@/lib/api/client');
-    const { setActiveProfileId, clearActiveProfileId } = await import('@/lib/api/profile');
-    clearActiveProfileId();
-    const profiles = await api.getProfiles();
-    if (profiles.length > 0) {
-      const def = profiles.find(p => p.isDefault) ?? profiles[0];
-      setActiveProfileId(def.profileId);
-    }
+    // Profile logic removed
     router.push('/dashboard');
   }
 

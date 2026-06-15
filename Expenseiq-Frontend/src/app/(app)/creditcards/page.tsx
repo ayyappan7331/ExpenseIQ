@@ -4,7 +4,6 @@ import { useMemo, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, Calendar, ChevronRight, ChevronDown, ChevronLeft, Archive, RotateCcw, Download, BarChart2 } from 'lucide-react';
 import { useCreditCards, useTransactions, useArchivedCreditCards } from '@/lib/hooks/queries';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { dateLabel, monthLabel, todayMonth } from '@/lib/utils/dates';
 import { Button, SectionCard, Modal, Input, ConfirmDialog, EmptyState, PageError } from '@/components/ui';
 import { Drawer } from '@/components/ui/Drawer';
@@ -45,8 +44,8 @@ function PaymentStatusBadge({ status }: { status: PaymentStatus | null }) {
 
 export default function CreditCardsPage() {
   const router = useRouter();
-  const profileId = getActiveProfileId();
-  void profileId; // used by ConfigureCardsModal internally
+  const context = 'Personal';
+  void context; // used by ConfigureCardsModal internally
   const { month: currentMonth, setDisabled, setMonth } = useMonth();
   const currentYear = currentMonth.slice(0, 4);
 

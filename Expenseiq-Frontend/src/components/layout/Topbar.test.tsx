@@ -12,27 +12,26 @@ vi.mock('next/navigation', () => ({
 describe('Topbar', () => {
   it('renders the page title derived from pathname', () => {
     mockUsePathname.mockReturnValueOnce('/transactions');
-    render(<Topbar onMenuClick={() => {}} onProfileClick={() => {}} />);
+    render(<Topbar onMenuClick={() => {}} />);
     expect(screen.getByTestId('page-title').textContent).toBe('Transaction');
   });
 
   it('falls back to "ExpenseIQ" on an unknown path', () => {
     mockUsePathname.mockReturnValueOnce('/something');
-    render(<Topbar onMenuClick={() => {}} onProfileClick={() => {}} />);
+    render(<Topbar onMenuClick={() => {}} />);
     expect(screen.getByTestId('page-title').textContent).toBe('ExpenseIQ');
   });
 
-  it('renders month filter, theme toggle, and profile affordances', () => {
-    render(<Topbar onMenuClick={() => {}} onProfileClick={() => {}} />);
+  it('renders month filter and theme toggle affordances', () => {
+    render(<Topbar onMenuClick={() => {}} />);
     expect(screen.getByLabelText('Month filter')).toBeInTheDocument();
     expect(screen.getByLabelText('Toggle theme')).toBeInTheDocument();
-    expect(screen.getByLabelText('Manage Profiles')).toBeInTheDocument();
   });
 
   it('hamburger fires onMenuClick', async () => {
     const onMenuClick = vi.fn();
     const user = userEvent.setup();
-    render(<Topbar onMenuClick={onMenuClick} onProfileClick={() => {}} />);
+    render(<Topbar onMenuClick={onMenuClick} />);
     await user.click(screen.getByLabelText('Open menu'));
     expect(onMenuClick).toHaveBeenCalledTimes(1);
   });

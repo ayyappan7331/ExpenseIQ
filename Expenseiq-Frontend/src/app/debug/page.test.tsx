@@ -8,7 +8,6 @@ describe('/debug page', () => {
     expect(screen.getByRole('heading', { name: /API debug/i })).toBeInTheDocument();
     expect(screen.getByText('GET /api/health')).toBeInTheDocument();
     expect(screen.getByText('GET /api/version')).toBeInTheDocument();
-    expect(screen.getByText('GET /api/profiles')).toBeInTheDocument();
     expect(screen.getByText(/GET \/api\/transactions/)).toBeInTheDocument();
   });
 
@@ -19,9 +18,7 @@ describe('/debug page', () => {
       expect(screen.getByText(/"status": "ok"/)).toBeInTheDocument();
     });
     await waitFor(() => {
-      // Profiles fixture contains Personal + Work
-      expect(screen.getByText(/"name": "Personal"/)).toBeInTheDocument();
-      expect(screen.getByText(/"name": "Work"/)).toBeInTheDocument();
+      expect(screen.getByText(/"amount": 250/)).toBeInTheDocument();
     });
   });
 });

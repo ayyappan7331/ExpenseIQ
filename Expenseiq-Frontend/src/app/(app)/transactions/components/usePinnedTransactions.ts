@@ -3,17 +3,16 @@
 import { useCallback, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { financialConfigApi } from '@/lib/api/financialConfig';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { queryKeys } from '@/lib/hooks/queries/keys';
 import { useFinancialConfig } from '@/lib/hooks/useFinancialConfig';
 import { loadPinnedIds } from './pinnedStorage';
 import type { FinancialConfig } from '@/lib/types/api';
 
 export function usePinnedTransactions() {
-  const profileId = getActiveProfileId();
+  const context = 'Personal';
   const qc = useQueryClient();
   const { data: config } = useFinancialConfig();
-  const fcKey = queryKeys.financialConfig.one(profileId);
+  const fcKey = queryKeys.financialConfig.one(context);
 
   // Prefer FinancialConfig; fall back to localStorage for first render before query resolves
   const pinnedIds = useMemo(
@@ -35,19 +34,19 @@ export function usePinnedTransactions() {
       old ? { ...old, pinnedTransactionIds: next } : old
     );
 
-    financialConfigApi.patch({ profileId, pinnedTransactionIds: next })
+    financialConfigApi.patch({ context, pinnedTransactionIds: next })
       .then(() => qc.invalidateQueries({ queryKey: fcKey }))
       .catch(() => qc.invalidateQueries({ queryKey: fcKey }));
-  }, [profileId, qc, fcKey]);
+  }, [context, qc, fcKey]);
 
   const clearPins = useCallback(() => {
     qc.setQueryData<FinancialConfig>(fcKey, (old) =>
       old ? { ...old, pinnedTransactionIds: [] } : old
     );
-    financialConfigApi.patch({ profileId, pinnedTransactionIds: [] })
+    financialConfigApi.patch({ context, pinnedTransactionIds: [] })
       .then(() => qc.invalidateQueries({ queryKey: fcKey }))
       .catch(() => qc.invalidateQueries({ queryKey: fcKey }));
-  }, [profileId, qc, fcKey]);
+  }, [context, qc, fcKey]);
 
   return { pinnedIds, isPinned, togglePin, clearPins, pinnedCount: pinnedIds.size };
 }

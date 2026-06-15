@@ -3,7 +3,6 @@
 import { useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { settingsApi } from '@/lib/api/settings';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { queryKeys } from '@/lib/hooks/queries/keys';
 import { useSettings } from '@/lib/hooks/queries/useSettings';
 import { NAV_ITEMS } from '@/components/layout/nav';
@@ -15,10 +14,10 @@ import type { Settings } from '@/lib/types/api';
  * Falls back to the canonical NAV_ITEMS order when no preference is saved.
  */
 export function useNavOrder() {
-  const profileId = getActiveProfileId();
-  const { data: settings } = useSettings({ profileId });
+  const context = 'Personal';
+  const { data: settings } = useSettings({ context });
   const qc = useQueryClient();
-  const key = queryKeys.settings.one(profileId);
+  const key = queryKeys.settings.one(context);
 
   // Apply saved order on top of canonical items so new items added to NAV_ITEMS
   // always appear (appended at the end) even if navOrder is stale.
@@ -40,11 +39,11 @@ export function useNavOrder() {
 
   const mutation = useMutation({
     mutationFn: (navOrder: string[]) =>
-      settingsApi.update({ profileId, navOrder }),
+      settingsApi.update({ context, navOrder }),
     onMutate: async (navOrder) => {
       await qc.cancelQueries({ queryKey: key });
       const previous = qc.getQueryData<Settings>(key);
-      qc.setQueryData<Settings>(key, (old) => ({ ...old, profileId, navOrder }));
+      qc.setQueryData<Settings>(key, (old) => ({ ...old, context, navOrder }));
       return { previous };
     },
     onError: (_err, _vars, ctx) => {

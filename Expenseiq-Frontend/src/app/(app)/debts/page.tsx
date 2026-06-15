@@ -3,7 +3,6 @@
 import { useMemo, useState } from 'react';
 import { Plus, HandCoins, Handshake } from 'lucide-react';
 import { useDebts } from '@/lib/hooks/queries';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { Button, StatCard, SectionCard, Tabs, Modal, Input, Select, ConfirmDialog, EmptyState, Badge } from '@/components/ui';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 import { formatCurrency } from '@/components/charts';
@@ -18,13 +17,13 @@ const TYPES = [
 
 // ── Self-contained form — state lives HERE, not in the page ──────────────
 interface DebtFormProps {
-  profileId: string;
+  context: string;
   initialType?: 'lent' | 'borrowed';
   onSuccess: () => void;
   onCancel: () => void;
 }
 
-function DebtForm({ profileId, initialType = 'lent', onSuccess, onCancel }: DebtFormProps) {
+function DebtForm({ context, initialType = 'lent', onSuccess, onCancel }: DebtFormProps) {
   const create = useCreateDebt();
 
   const [type, setType]     = useState<'lent' | 'borrowed'>(initialType);
@@ -36,7 +35,7 @@ function DebtForm({ profileId, initialType = 'lent', onSuccess, onCancel }: Debt
   function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
     const payload: NewDebt = {
-      profileId,
+      context,
       type,
       person: person.trim(),
       amount: Number(amount),
@@ -97,7 +96,7 @@ function DebtForm({ profileId, initialType = 'lent', onSuccess, onCancel }: Debt
 
 // ── Page ─────────────────────────────────────────────────────────────────
 export default function DebtsPage() {
-  const profileId = getActiveProfileId();
+  const context = 'Personal';
   const { data: debts, isLoading } = useDebts();
 
   const [tab, setTab]           = useState('lent');
@@ -186,7 +185,7 @@ export default function DebtsPage() {
       <Modal open={modalOpen} onClose={closeModal} title="Add Debt" size="sm">
         <DebtForm
           key={modalOpen ? 'open' : 'closed'}
-          profileId={profileId}
+          context={context}
           initialType={tab === 'borrowed' ? 'borrowed' : 'lent'}
           onSuccess={closeModal}
           onCancel={closeModal}

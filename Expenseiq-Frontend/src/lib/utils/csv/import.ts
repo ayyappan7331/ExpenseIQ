@@ -1,4 +1,4 @@
-import type { NewTransaction, ProfileId, TransactionSubtype } from '@/lib/types/api';
+import type { NewTransaction, TransactionSubtype } from '@/lib/types/api';
 import { isValidSubtype } from '@/lib/types/api';
 
 export interface ImportResult {
@@ -36,7 +36,7 @@ const VALID_SUBTYPES = new Set([
   'purchase', 'fee', 'interest', 'transfer_out', 'emi', 'other',
 ]);
 
-export function parseTransactionsCSV(csv: string, profileId: ProfileId): ImportResult {
+export function parseTransactionsCSV(csv: string): ImportResult {
   const lines = csv.split(/\r?\n/).filter((l) => l.trim());
   if (lines.length === 0) return { valid: [], errors: [{ row: 0, message: 'Empty file' }], total: 0 };
 
@@ -104,7 +104,7 @@ export function parseTransactionsCSV(csv: string, profileId: ProfileId): ImportR
       : undefined;
 
     valid.push({
-      profileId,
+      
       date,
       time: (time && TIME_RE.test(time)) ? time : undefined,
       type,

@@ -1,9 +1,9 @@
 import { getList, postOne, putOne, del } from './http';
-import type { Debt, NewDebt, DebtUpdate, ProfileId } from '@/lib/types/api';
+import type { Debt, NewDebt, DebtUpdate } from '@/lib/types/api';
 
 export const debtsApi = {
-  getAll: (opts: { profileId?: ProfileId } = {}) =>
-    getList<Debt>('/debts', { profileId: opts.profileId }),
+  getAll: (opts: { context?: string } = {}) =>
+    getList<Debt>('/debts', { context: opts.context }),
 
   create: (data: NewDebt) =>
     postOne<Debt>('/debts', data),

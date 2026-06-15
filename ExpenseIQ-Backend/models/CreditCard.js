@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
 const creditCardSchema = new mongoose.Schema({
-  profileId: { type: String, default: 'default' },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  context: { type: String, enum: ['Personal', 'Business'], default: 'Personal' },
   name: { type: String, required: true },
   billDate: { type: Number, required: true },
   dueDate: { type: Number },          // legacy: day-of-month. Kept for migration only.
@@ -17,21 +18,21 @@ const creditCardSchema = new mongoose.Schema({
   openingBalance: { type: Number, default: 0 },
   color: { type: String, default: '#7c6ff7' },
   /** Explicit link to the payment method name used in transactions.
-   *  Unique per profile when present — prevents two cards sharing the same method. */
+   *  Unique per context when present — prevents two cards sharing the same method. */
   linkedPaymentMethod: { type: String, default: undefined },
   /** Soft delete — archived cards are hidden from the main view but recoverable. */
   archived: { type: Boolean, default: false },
 }, { timestamps: true });
 
-// Fast lookup by profile (existing)
-creditCardSchema.index({ profileId: 1 });
+// Fast lookup by user+context
+creditCardSchema.index({ userId: 1, context: 1 });
 
-// Uniqueness: one card per (profileId, linkedPaymentMethod).
+// Uniqueness: one card per (userId, context, linkedPaymentMethod).
 // partialFilterExpression ensures the index only applies when
 // linkedPaymentMethod is present and non-null — legacy cards without
 // the field are completely unaffected.
 creditCardSchema.index(
-  { profileId: 1, linkedPaymentMethod: 1 },
+  { userId: 1, context: 1, linkedPaymentMethod: 1 },
   { unique: true, partialFilterExpression: { linkedPaymentMethod: { $type: 'string' } } }
 );
 

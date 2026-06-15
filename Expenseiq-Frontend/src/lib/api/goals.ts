@@ -1,9 +1,9 @@
 import { getList, postOne, del } from './http';
-import type { Goal, NewGoal, ProfileId } from '@/lib/types/api';
+import type { Goal, NewGoal } from '@/lib/types/api';
 
 export const goalsApi = {
-  getAll: (opts: { profileId?: ProfileId } = {}) =>
-    getList<Goal>('/goals', { profileId: opts.profileId }),
+  getAll: (opts: { context?: string } = {}) =>
+    getList<Goal>('/goals', { context: opts.context }),
 
   upsert: (data: NewGoal) =>
     postOne<Goal>('/goals', data),

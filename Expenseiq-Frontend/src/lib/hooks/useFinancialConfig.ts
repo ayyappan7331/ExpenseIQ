@@ -2,7 +2,6 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { financialConfigApi } from '@/lib/api/financialConfig';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { queryKeys } from '@/lib/hooks/queries/keys';
 import { useToast } from '@/components/ui/Toast';
 import type { FinancialConfig } from '@/lib/types/api';
@@ -13,11 +12,11 @@ import type { FinancialConfig } from '@/lib/types/api';
  * Settings fallback for financial fields removed — Settings now owns only theme/widgets.
  */
 export function useFinancialConfig() {
-  const profileId = getActiveProfileId();
+  const context = 'Personal';
 
   const query = useQuery({
-    queryKey: queryKeys.financialConfig.one(profileId),
-    queryFn: () => financialConfigApi.get({ profileId }),
+    queryKey: queryKeys.financialConfig.one(context),
+    queryFn: () => financialConfigApi.get({ context }),
     // Retry once on failure; 404 means no config yet (will be created on next write)
     retry: (failureCount, error) => {
       if (error instanceof Error && 'status' in error && (error as { status: number }).status === 404) return false;
@@ -40,21 +39,21 @@ export function useFinancialConfig() {
 export function useUpdateFinancialConfig() {
   const qc = useQueryClient();
   const { toast } = useToast();
-  const profileId = getActiveProfileId();
+  const context = 'Personal';
 
   return useMutation({
     mutationFn: (data: Partial<FinancialConfig>) =>
-      financialConfigApi.patch({ ...data, profileId }),
+      financialConfigApi.patch({ ...data, context }),
     onMutate: async (data) => {
-      const key = queryKeys.financialConfig.one(profileId);
+      const key = queryKeys.financialConfig.one(context);
       await qc.cancelQueries({ queryKey: key });
       const previous = qc.getQueryData<FinancialConfig>(key);
-      qc.setQueryData<FinancialConfig>(key, (old) => ({ ...old, profileId, ...data }));
+      qc.setQueryData<FinancialConfig>(key, (old) => ({ ...old, context, ...data }));
       return { previous };
     },
     onError: (_err, _vars, ctx) => {
       const prev = (ctx as { previous?: FinancialConfig } | undefined)?.previous;
-      if (prev) qc.setQueryData(queryKeys.financialConfig.one(profileId), prev);
+      if (prev) qc.setQueryData(queryKeys.financialConfig.one(context), prev);
       toast('Failed to save configuration', 'error');
     },
     onSuccess: () => {

@@ -1,17 +1,17 @@
 const Goal = require('../models/Goal');
 const httpError = require('../utils/httpError');
 
-const findAll = ({ profileId = 'default' } = {}) => Goal.find({ profileId });
+const findAll = ({ userId, context = 'Personal' } = {}) => Goal.find({ userId, context });
 
-const upsert = ({ profileId = 'default', month, amount } = {}) =>
+const upsert = ({ userId, context = 'Personal', month, amount } = {}) =>
   Goal.findOneAndUpdate(
-    { profileId, month },
-    { profileId, month, amount },
+    { userId, context, month },
+    { userId, context, month, amount },
     { upsert: true, new: true }
   );
 
-const remove = async (id, profileId) => {
-  const filter = profileId ? { _id: id, profileId } : { _id: id };
+const remove = async (id, userId) => {
+  const filter = userId ? { _id: id, userId } : { _id: id };
   const goal = await Goal.findOneAndDelete(filter);
   if (!goal) throw httpError(404, 'Not found');
   return goal;

@@ -3,7 +3,6 @@
 import { useMemo, useState } from 'react';
 import { Plus, Target, TrendingUp } from 'lucide-react';
 import { useGoals, useTransactions } from '@/lib/hooks/queries';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { last6Months } from '@/lib/utils/dates';
 import { Button, StatCard, Modal, ConfirmDialog, EmptyState } from '@/components/ui';
 import { SkeletonCard } from '@/components/ui/Skeleton';
@@ -16,7 +15,7 @@ import { useMonth } from '@/components/layout/MonthContext';
 
 export default function GoalsPage() {
   const { month: currentMonth } = useMonth();
-  const profileId = getActiveProfileId();
+  const context = 'Personal';
   const months = last6Months();
 
   const { data: goals, isLoading: goalsLoading } = useGoals();
@@ -128,7 +127,7 @@ export default function GoalsPage() {
 
       {/* Modal */}
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={currentGoal ? 'Update Goal' : 'Set Goal'} size="sm">
-        <GoalForm month={currentMonth} profileId={profileId} initialAmount={currentGoal?.amount} onSubmit={handleSubmit} onCancel={() => setModalOpen(false)} loading={upsert.isPending} />
+        <GoalForm month={currentMonth} context={context} initialAmount={currentGoal?.amount} onSubmit={handleSubmit} onCancel={() => setModalOpen(false)} loading={upsert.isPending} />
       </Modal>
 
       {/* Delete confirm */}

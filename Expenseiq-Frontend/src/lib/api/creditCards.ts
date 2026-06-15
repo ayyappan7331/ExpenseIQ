@@ -1,12 +1,12 @@
 import { getList, postOne, putOne, del, request, normalizeOne } from './http';
-import type { CreditCard, NewCreditCard, CreditCardUpdate, ProfileId } from '@/lib/types/api';
+import type { CreditCard, NewCreditCard, CreditCardUpdate } from '@/lib/types/api';
 
 export const creditCardsApi = {
-  getAll: (opts: { profileId?: ProfileId } = {}) =>
-    getList<CreditCard>('/creditcards', { profileId: opts.profileId }),
+  getAll: (opts: { context?: string } = {}) =>
+    getList<CreditCard>('/creditcards', { context: opts.context }),
 
-  getArchived: (opts: { profileId?: ProfileId } = {}) =>
-    getList<CreditCard>('/creditcards/archived', { profileId: opts.profileId }),
+  getArchived: (opts: { context?: string } = {}) =>
+    getList<CreditCard>('/creditcards/archived', { context: opts.context }),
 
   create: (data: NewCreditCard) =>
     postOne<CreditCard>('/creditcards', data),

@@ -2,7 +2,6 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { financialConfigApi } from '@/lib/api/financialConfig';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { queryKeys } from '@/lib/hooks/queries/keys';
 import { useFinancialConfig } from '@/lib/hooks/useFinancialConfig';
 import { useToast } from '@/components/ui/Toast';
@@ -17,16 +16,16 @@ export function usePaymentMethods() {
 export function usePaymentMethodMutations() {
   const qc = useQueryClient();
   const { toast } = useToast();
-  const profileId = getActiveProfileId();
-  const key = queryKeys.financialConfig.one(profileId);
+  const context = 'Personal';
+  const key = queryKeys.financialConfig.one(context);
 
   return useMutation({
     mutationFn: (customPaymentMethods: string[]) =>
-      financialConfigApi.patch({ customPaymentMethods, profileId }),
+      financialConfigApi.patch({ customPaymentMethods, context }),
     onMutate: async (customPaymentMethods) => {
       await qc.cancelQueries({ queryKey: key });
       const previous = qc.getQueryData<FinancialConfig>(key);
-      qc.setQueryData<FinancialConfig>(key, (old) => ({ ...old, profileId, customPaymentMethods }));
+      qc.setQueryData<FinancialConfig>(key, (old) => ({ ...old, context, customPaymentMethods }));
       return { previous };
     },
     onError: (_err, _vars, ctx) => {

@@ -3,7 +3,6 @@
 import { useMemo, useState } from 'react';
 import { Plus, PiggyBank, AlertTriangle, BarChart3 } from 'lucide-react';
 import { useTransactions, useBudgets } from '@/lib/hooks/queries';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { Button, StatCard, Modal, ConfirmDialog, EmptyState, PageError } from '@/components/ui';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 import { formatCurrency } from '@/components/charts';
@@ -16,7 +15,7 @@ import { useMonth } from '@/components/layout/MonthContext';
 
 export default function BudgetsPage() {
   const { month } = useMonth();
-  const profileId = getActiveProfileId();
+  const context = 'Personal';
   const { data: budgets, isLoading: budgetLoading, isError: budgetError, error: budgetErrorObj, refetch } = useBudgets({ month });
   const { data: txns, isLoading: txnLoading } = useTransactions({ month });
 
@@ -81,7 +80,7 @@ export default function BudgetsPage() {
 
       {/* Modal */}
       <Modal open={modalOpen} onClose={closeModal} title={editBudget ? 'Edit Budget' : 'Set Budget'} size="sm">
-        <BudgetForm initial={editBudget} month={month} profileId={profileId} onSubmit={handleSubmit} onCancel={closeModal} loading={upsert.isPending} />
+        <BudgetForm initial={editBudget} month={month} context={context} onSubmit={handleSubmit} onCancel={closeModal} loading={upsert.isPending} />
       </Modal>
 
       {/* Delete confirm */}

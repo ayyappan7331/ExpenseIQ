@@ -5,17 +5,17 @@ const httpError = require('../utils/httpError');
 // Atlas free tier (M0) cap
 const FREE_TIER_LIMIT_BYTES = 512 * 1024 * 1024;
 
-const get = async ({ profileId = 'default' } = {}) => {
-  let settings = await Settings.findOne({ profileId });
+const get = async ({ userId } = {}) => {
+  let settings = await Settings.findOne({ userId });
   if (!settings) {
-    settings = await Settings.create({ profileId });
+    settings = await Settings.create({ userId });
   }
   return settings;
 };
 
 const update = (data) => {
-  const { profileId = 'default' } = data || {};
-  return Settings.findOneAndUpdate({ profileId }, data, { upsert: true, new: true });
+  const { userId } = data || {};
+  return Settings.findOneAndUpdate({ userId }, data, { upsert: true, new: true });
 };
 
 const dbStats = async () => {

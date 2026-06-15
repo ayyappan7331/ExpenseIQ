@@ -51,9 +51,9 @@ export function resetTransactionForm(): TransactionFormData {
   };
 }
 
-export function formatTransactionForSubmission(data: TransactionFormData, profileId: string) {
+export function formatTransactionForSubmission(data: TransactionFormData, context: string) {
   return {
-    profileId,
+    context,
     type: data.type,
     subtype: data.subtype || undefined,
     amount: Number(data.amount),

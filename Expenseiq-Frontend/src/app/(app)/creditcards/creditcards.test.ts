@@ -4,7 +4,7 @@ import type { Transaction, CreditCard } from '@/lib/types/api';
 
 const makeTxn = (overrides: Partial<Transaction>): Transaction => ({
   id: 'x',
-  profileId: 'default',
+  context: 'default',
   type: 'expense',
   amount: 100,
   date: '2026-05-10',
@@ -13,7 +13,7 @@ const makeTxn = (overrides: Partial<Transaction>): Transaction => ({
 
 const makeCard = (overrides: Partial<CreditCard>): CreditCard => ({
   id: 'c1',
-  profileId: 'default',
+  context: 'default',
   name: 'HDFC Credit Card',
   billDate: 19,
   duePeriod: 20,

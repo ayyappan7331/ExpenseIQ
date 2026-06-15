@@ -20,7 +20,6 @@ import {
   validateTransactionForm,
 } from './primitives';
 import { transactionsApi } from '@/lib/api/transactions';
-import { getActiveProfileId } from '@/lib/api/profile';
 import type { Transaction } from '@/lib/types/api';
 
 interface Props {
@@ -132,7 +131,7 @@ export function InlineTransactionRowEnhanced({ onClose, duplicateFrom, isEditMod
       const data = formDataRef.current;
       const validation = validateTransactionForm(data);
       if (!validation.isValid) return;
-      const payload = formatTransactionForSubmission(data, getActiveProfileId());
+      const payload = formatTransactionForSubmission(data, 'Personal');
       // Fire-and-forget: best-effort auto-save on unmount
       transactionsApi.update(duplicateFrom.id, payload).catch(() => {/* silent */});
     };

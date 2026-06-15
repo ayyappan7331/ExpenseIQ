@@ -11,7 +11,6 @@ import { useGroupCollapse } from './useGroupCollapse';
 import { InlineTransactionRowEnhanced } from './InlineTransactionRowEnhanced';
 import type { QuickAddRow } from './useMultiRowOrchestration';
 import { lsGetOne, lsSetOne, lsProfileKey } from '@/lib/utils/localStorage';
-import { getActiveProfileId } from '@/lib/api/profile';
 
 function SortIcon({ sortKey, col, dir }: { sortKey: string; col: string; dir: string }) {
   if (sortKey !== col) return null;
@@ -84,7 +83,7 @@ function GlossyCheckbox({
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100, 200];
 const PAGE_SIZE_KEY = 'expenseiq_page_size';
-function pageSizeKey() { return lsProfileKey(PAGE_SIZE_KEY, getActiveProfileId()); }
+function pageSizeKey() { return lsProfileKey(PAGE_SIZE_KEY, 'Personal'); }
 
 interface Props {
   transactions: Transaction[];

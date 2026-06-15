@@ -3,12 +3,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api/client';
 import { queryKeys } from '@/lib/hooks/queries/keys';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { useToast } from '@/components/ui/Toast';
 import type { NewBudget, Budget } from '@/lib/types/api';
 
 function listKey(month?: string) {
-  return queryKeys.budgets.list(getActiveProfileId(), month);
+  return queryKeys.budgets.list('Personal', month);
 }
 
 export function useUpsertBudget() {

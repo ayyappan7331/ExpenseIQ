@@ -39,7 +39,8 @@ const favoriteTransactionSchema = new mongoose.Schema(
 
 const financialConfigSchema = new mongoose.Schema(
   {
-    profileId: { type: String, required: true, unique: true, default: 'default' },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    context: { type: String, enum: ['Personal', 'Business'], default: 'Personal' },
     customExpenseCategories: { type: [String], default: [] },
     customIncomeCategories: { type: [String], default: [] },
     customPaymentMethods: { type: [String], default: [] },
@@ -51,5 +52,7 @@ const financialConfigSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+financialConfigSchema.index({ userId: 1, context: 1 }, { unique: true });
 
 module.exports = mongoose.model('FinancialConfig', financialConfigSchema);

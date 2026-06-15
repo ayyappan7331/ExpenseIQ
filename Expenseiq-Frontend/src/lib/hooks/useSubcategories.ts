@@ -2,7 +2,6 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { financialConfigApi } from '@/lib/api/financialConfig';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { queryKeys } from '@/lib/hooks/queries/keys';
 import { useFinancialConfig } from '@/lib/hooks/useFinancialConfig';
 import { useToast } from '@/components/ui/Toast';
@@ -18,16 +17,16 @@ export function useSubcategories() {
 export function useSubcategoryMutations() {
   const qc = useQueryClient();
   const { toast } = useToast();
-  const profileId = getActiveProfileId();
-  const key = queryKeys.financialConfig.one(profileId);
+  const context = 'Personal';
+  const key = queryKeys.financialConfig.one(context);
 
   return useMutation({
     mutationFn: (subcategoryMap: Record<string, string[]>) =>
-      financialConfigApi.patch({ subcategoryMap, profileId }),
+      financialConfigApi.patch({ subcategoryMap, context }),
     onMutate: async (subcategoryMap) => {
       await qc.cancelQueries({ queryKey: key });
       const previous = qc.getQueryData<FinancialConfig>(key);
-      qc.setQueryData<FinancialConfig>(key, (old) => ({ ...old, profileId, subcategoryMap }));
+      qc.setQueryData<FinancialConfig>(key, (old) => ({ ...old, context, subcategoryMap }));
       return { previous };
     },
     onError: (_err, _vars, ctx) => {

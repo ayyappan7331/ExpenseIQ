@@ -2,8 +2,6 @@
 
 import { useState, useCallback } from 'react';
 import { lsGetOne, lsSetOne, lsProfileKey } from '@/lib/utils/localStorage';
-import { getActiveProfileId } from '@/lib/api/profile';
-
 /** 'grouped' = date-grouped view; 'flat' = plain sorted table */
 export type ViewMode = 'grouped' | 'flat';
 
@@ -13,13 +11,13 @@ export type DensityMode = ViewMode;
 const VIEW_MODE_BASE_KEY = 'expenseiq_view_mode';
 
 function viewModeKey(): string {
-  return lsProfileKey(VIEW_MODE_BASE_KEY, getActiveProfileId());
+  return lsProfileKey(VIEW_MODE_BASE_KEY, 'Personal');
 }
 
 export type GroupPeriod = 'day' | 'week' | 'month' | 'quarter' | 'halfyear' | 'year';
 
 const GROUP_PERIOD_KEY = 'expenseiq_group_period';
-function groupPeriodKey(): string { return lsProfileKey(GROUP_PERIOD_KEY, getActiveProfileId()); }
+function groupPeriodKey(): string { return lsProfileKey(GROUP_PERIOD_KEY, 'Personal'); }
 
 export function useDensityMode() {
   const [mode, setModeState] = useState<ViewMode>(

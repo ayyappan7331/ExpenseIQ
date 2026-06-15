@@ -3,7 +3,6 @@ export { useTransactions } from './useTransactions';
 export { useSubscriptions } from './useSubscriptions';
 export { useDebts } from './useDebts';
 export { useGoals } from './useGoals';
-export { useProfiles } from './useProfiles';
 export { useCreditCards, useArchivedCreditCards } from './useCreditCards';
 export { useSettings, useDbStats } from './useSettings';
 export { useBudgets } from './useBudgets';

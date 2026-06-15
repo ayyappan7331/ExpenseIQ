@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useKeyboardNavigation } from '@/lib/hooks/useKeyboardNavigation';
-import { getActiveProfileId } from '@/lib/api/profile';
 import {
   validateTransactionForm,
   resetTransactionForm,
@@ -106,13 +105,13 @@ export function useTransactionRowController({
   const handleSave = useCallback(() => {
     const validation = validateTransactionForm(formData);
     if (!validation.isValid) { setError(validation.error); return; }
-    onSave?.(formatTransactionForSubmission(formData, getActiveProfileId()));
+    onSave?.(formatTransactionForSubmission(formData, 'Personal'));
   }, [formData, onSave]);
 
   const handleSaveAndAddAnother = useCallback(() => {
     const validation = validateTransactionForm(formData);
     if (!validation.isValid) { setError(validation.error); return; }
-    onSaveAndAddAnother?.(formatTransactionForSubmission(formData, getActiveProfileId()));
+    onSaveAndAddAnother?.(formatTransactionForSubmission(formData, 'Personal'));
   }, [formData, onSaveAndAddAnother]);
 
   useKeyboardNavigation({ onEscape: onClose, onEnter: handleSave, enabled: true });

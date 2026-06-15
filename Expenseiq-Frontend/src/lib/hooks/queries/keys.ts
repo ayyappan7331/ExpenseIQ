@@ -5,9 +5,6 @@
 //   qc.invalidateQueries({ queryKey: queryKeys.transactions.list(profileId, month) })  — targeted
 //
 // Domain ownership mirrors src/lib/api/* modules introduced in E4.1.
-
-import type { ProfileId } from '@/lib/types/api';
-
 export const queryKeys = {
   // ── Ops ─────────────────────────────────────────────────────
   health: ['health'] as const,
@@ -17,26 +14,26 @@ export const queryKeys = {
   // ── Transactions ────────────────────────────────────────────
   transactions: {
     all: ['transactions'] as const,
-    list: (profileId: ProfileId, month?: string) =>
-      ['transactions', 'list', profileId, month ?? null] as const,
+    list: (context: string = 'Personal', month?: string) =>
+      ['transactions', 'list', context, month ?? null] as const,
   },
 
   // ── Subscriptions ───────────────────────────────────────────
   subscriptions: {
     all: ['subscriptions'] as const,
-    list: (profileId: ProfileId) => ['subscriptions', 'list', profileId] as const,
+    list: (context: string = 'Personal') => ['subscriptions', 'list', context] as const,
   },
 
   // ── Debts ───────────────────────────────────────────────────
   debts: {
     all: ['debts'] as const,
-    list: (profileId: ProfileId) => ['debts', 'list', profileId] as const,
+    list: (context: string = 'Personal') => ['debts', 'list', context] as const,
   },
 
   // ── Goals ───────────────────────────────────────────────────
   goals: {
     all: ['goals'] as const,
-    list: (profileId: ProfileId) => ['goals', 'list', profileId] as const,
+    list: (context: string = 'Personal') => ['goals', 'list', context] as const,
   },
 
   // ── Profiles ────────────────────────────────────────────────
@@ -48,25 +45,25 @@ export const queryKeys = {
   // ── Credit Cards ────────────────────────────────────────────
   creditCards: {
     all: ['creditcards'] as const,
-    list: (profileId: ProfileId) => ['creditcards', 'list', profileId] as const,
+    list: (context: string = 'Personal') => ['creditcards', 'list', context] as const,
   },
 
   // ── Settings (categories, payment methods, subcategories) ───
   settings: {
     all: ['settings'] as const,
-    one: (profileId: ProfileId) => ['settings', 'one', profileId] as const,
+    one: (context: string = 'Personal') => ['settings', 'one', context] as const,
   },
 
   // ── FinancialConfig (E4.5 — dedicated domain endpoint) ──────
   financialConfig: {
     all: ['financialConfig'] as const,
-    one: (profileId: ProfileId) => ['financialConfig', 'one', profileId] as const,
+    one: (context: string = 'Personal') => ['financialConfig', 'one', context] as const,
   },
 
   // ── Budgets ─────────────────────────────────────────────────
   budgets: {
     all: ['budgets'] as const,
-    list: (profileId: ProfileId, month?: string) =>
-      ['budgets', 'list', profileId, month ?? null] as const,
+    list: (context: string = 'Personal', month?: string) =>
+      ['budgets', 'list', context, month ?? null] as const,
   },
 } as const;

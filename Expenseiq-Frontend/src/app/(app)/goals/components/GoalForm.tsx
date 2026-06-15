@@ -6,14 +6,14 @@ import type { NewGoal } from '@/lib/types/api';
 
 interface Props {
   month: string;
-  profileId: string;
+  context: string;
   initialAmount?: number;
   onSubmit: (data: NewGoal) => void;
   onCancel: () => void;
   loading?: boolean;
 }
 
-export function GoalForm({ month, profileId, initialAmount, onSubmit, onCancel, loading }: Props) {
+export function GoalForm({ month, context, initialAmount, onSubmit, onCancel, loading }: Props) {
   const [amount, setAmount] = useState(initialAmount?.toString() || '');
   const [error, setError] = useState('');
 
@@ -21,7 +21,7 @@ export function GoalForm({ month, profileId, initialAmount, onSubmit, onCancel, 
     ev.preventDefault();
     if (!amount || Number(amount) <= 0) { setError('Amount must be greater than 0'); return; }
     setError('');
-    onSubmit({ profileId, month, amount: Number(amount) });
+    onSubmit({ context, month, amount: Number(amount) });
   }
 
   return (

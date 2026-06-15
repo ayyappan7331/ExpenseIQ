@@ -1,9 +1,9 @@
 import { getList, postOne, del } from './http';
-import type { Budget, NewBudget, ProfileId } from '@/lib/types/api';
+import type { Budget, NewBudget } from '@/lib/types/api';
 
 export const budgetsApi = {
-  getAll: (opts: { profileId?: ProfileId; month?: string } = {}) =>
-    getList<Budget>('/budgets', { profileId: opts.profileId, month: opts.month }),
+  getAll: (opts: { context?: string; month?: string } = {}) =>
+    getList<Budget>('/budgets', { context: opts.context, month: opts.month }),
 
   upsert: (data: NewBudget) =>
     postOne<Budget>('/budgets', data),

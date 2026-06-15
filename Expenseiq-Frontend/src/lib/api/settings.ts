@@ -1,9 +1,9 @@
 import { getOne, putOne, request } from './http';
-import type { Settings, SettingsUpdate, DbStatsResponse, ProfileId } from '@/lib/types/api';
+import type { Settings, SettingsUpdate, DbStatsResponse } from '@/lib/types/api';
 
 export const settingsApi = {
-  get: (opts: { profileId?: ProfileId } = {}) =>
-    getOne<Settings>('/settings', { profileId: opts.profileId }),
+  get: (opts: { context?: string } = {}) =>
+    getOne<Settings>('/settings', { context: opts.context }),
 
   update: (data: SettingsUpdate) =>
     putOne<Settings>('/settings', data),

@@ -3,7 +3,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api/client';
 import { queryKeys } from '@/lib/hooks/queries/keys';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { useToast } from '@/components/ui/Toast';
 import type { NewTransaction, TransactionUpdate, Transaction } from '@/lib/types/api';
 
@@ -164,7 +163,7 @@ export function defaultNewTransaction(): NewTransaction {
   const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   const now = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
   return {
-    profileId: getActiveProfileId(),
+    context: 'Personal',
     type: 'expense',
     amount: 0,
     category: '',
@@ -182,7 +181,7 @@ export function defaultNewTransaction(): NewTransaction {
  */
 export function duplicateTransaction(transaction: Transaction): NewTransaction {
   return {
-    profileId: getActiveProfileId(),
+    context: 'Personal',
     type: transaction.type,
     subtype: transaction.subtype,   // preserve classification on duplicate
     amount: transaction.amount,

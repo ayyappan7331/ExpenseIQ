@@ -8,7 +8,6 @@ import { THEME_KEYS, LIGHT_THEMES, type ThemeKey } from '@/lib/themes';
 import { ThemeCustomizerModal } from '@/components/ThemeCustomizerModal';
 import type { CustomTheme, SurfaceStyle } from '@/lib/customThemes';
 import { api } from '@/lib/api/client';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/hooks/queries/keys';
 
@@ -52,10 +51,10 @@ export default function ThemesPage() {
   const qc = useQueryClient();
 
   const { mutate: updateSettings } = useMutation({
-    mutationFn: (t: string) => api.updateSettings({ theme: t, profileId: getActiveProfileId() }),
+    mutationFn: (t: string) => api.updateSettings({ theme: t, context: 'Personal' }),
     onMutate: async (newTheme) => {
       await qc.cancelQueries({ queryKey: queryKeys.settings.all });
-      const queryKey = queryKeys.settings.one(getActiveProfileId());
+      const queryKey = queryKeys.settings.one('Personal');
       const previousSettings: any = qc.getQueryData(queryKey);
       
       qc.setQueryData(queryKey, (old: any) => {
@@ -67,7 +66,7 @@ export default function ThemesPage() {
     },
     onError: (err, newTheme, context) => {
       if (context?.previousSettings) {
-        qc.setQueryData(queryKeys.settings.one(getActiveProfileId()), context.previousSettings);
+        qc.setQueryData(queryKeys.settings.one('Personal'), context.previousSettings);
         setTheme(context.previousSettings.theme);
       }
     },

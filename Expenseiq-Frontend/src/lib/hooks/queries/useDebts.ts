@@ -2,15 +2,13 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api/client';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { queryKeys } from '@/lib/hooks/queries/keys';
-import type { ProfileId } from '@/lib/types/api';
 
-export function useDebts(opts: { profileId?: ProfileId } = {}) {
-  const profileId = opts.profileId ?? getActiveProfileId();
+export function useDebts(opts: { context?: string } = {}) {
+  const context = opts.context ?? 'Personal';
   return useQuery({
-    queryKey: queryKeys.debts.list(profileId),
-    queryFn: () => api.getDebts({ profileId }),
+    queryKey: queryKeys.debts.list(context),
+    queryFn: () => api.getDebts({ context }),
     staleTime: 30 * 1000,
   });
 }

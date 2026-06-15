@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Modal, Button, Input } from '@/components/ui';
 import { LayoutTemplate, Trash2, Copy, Pencil, Star, Check, X } from 'lucide-react';
 import { financialConfigApi } from '@/lib/api/financialConfig';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { useFinancialConfig } from '@/lib/hooks/useFinancialConfig';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/hooks/queries/keys';
@@ -24,7 +23,7 @@ export function TransactionTemplatesModal({
   onUseTemplate,
   currentTransaction,
 }: TransactionTemplatesModalProps) {
-  const profileId = getActiveProfileId();
+  const context = 'Personal';
   const qc = useQueryClient();
   const { data: config } = useFinancialConfig();
   const templates = config?.transactionTemplates ?? [];
@@ -37,14 +36,14 @@ export function TransactionTemplatesModal({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
 
-  const fcKey = queryKeys.financialConfig.one(profileId);
+  const fcKey = queryKeys.financialConfig.one(context);
 
   const patchTemplates = async (next: TransactionTemplate[]) => {
     qc.setQueryData<FinancialConfig>(fcKey, (old) =>
       old ? { ...old, transactionTemplates: next } : old
     );
     try {
-      await financialConfigApi.patch({ profileId, transactionTemplates: next });
+      await financialConfigApi.patch({ context, transactionTemplates: next });
       qc.invalidateQueries({ queryKey: fcKey });
     } catch {
       qc.invalidateQueries({ queryKey: fcKey });

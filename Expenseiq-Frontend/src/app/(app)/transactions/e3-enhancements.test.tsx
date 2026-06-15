@@ -42,13 +42,13 @@ describe('E3.3 Enhancements', () => {
         paymentMethod: 'Credit Card',
         paymentApp: 'GPay',
         notes: 'Weekly shopping',
-        profileId: 'default'
+        context: 'Personal'
       };
 
       const duplicated = duplicateTransaction(originalTransaction);
       const today = new Date().toISOString().slice(0, 10);
 
-      expect(duplicated.profileId).toBe('default');
+      expect(duplicated.context).toBe('Personal');
       expect(duplicated.type).toBe('expense');
       expect(duplicated.amount).toBe(100);
       expect(duplicated.category).toBe('Food');
@@ -68,12 +68,12 @@ describe('E3.3 Enhancements', () => {
         amount: 500,
         category: 'Salary',
         date: '2024-01-01',
-        profileId: 'default'
+        context: 'Personal'
       };
 
       const duplicated = duplicateTransaction(originalTransaction);
 
-      expect(duplicated.profileId).toBe('default');
+      expect(duplicated.context).toBe('Personal');
       expect(duplicated.type).toBe('income');
       expect(duplicated.amount).toBe(500);
       expect(duplicated.category).toBe('Salary');

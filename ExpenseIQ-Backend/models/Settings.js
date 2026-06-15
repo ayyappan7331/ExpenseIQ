@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 // templates, favorites, pins) has moved to FinancialConfig (E4.6–E4.9).
 
 const settingsSchema = new mongoose.Schema({
-  profileId: { type: String, default: 'default', unique: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
   theme: { type: String, default: 'light' },
   widgets: { type: [String], default: ['chart', 'recent', 'goals'] },
   widgetOrder: { type: [String], default: [] },

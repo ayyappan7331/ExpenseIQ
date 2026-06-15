@@ -5,13 +5,13 @@ const FinancialConfig = require('../models/FinancialConfig');
  * If no FinancialConfig document exists yet, seeds from the Settings document
  * (backward compatibility for existing users).
  */
-const get = async ({ profileId = 'default' } = {}) => {
-  let config = await FinancialConfig.findOne({ profileId });
+const get = async ({ userId, context = 'Personal' } = {}) => {
+  let config = await FinancialConfig.findOne({ userId, context });
 
   if (!config) {
     // No FinancialConfig exists yet — create with empty defaults.
     // Settings no longer stores financial fields (E4.10).
-    config = await FinancialConfig.create({ profileId });
+    config = await FinancialConfig.create({ userId, context });
   }
 
   return config;
@@ -22,7 +22,7 @@ const get = async ({ profileId = 'default' } = {}) => {
  * Only updates the fields present in the payload — other fields are preserved.
  */
 const update = async (data) => {
-  const { profileId = 'default', ...fields } = data || {};
+  const { userId, context = 'Personal', ...fields } = data || {};
 
   // Only allow known FinancialConfig fields
   const allowed = {};
@@ -36,7 +36,7 @@ const update = async (data) => {
   if (fields.pinnedTransactionIds !== undefined) allowed.pinnedTransactionIds = fields.pinnedTransactionIds;
 
   return FinancialConfig.findOneAndUpdate(
-    { profileId },
+    { userId, context },
     { $set: allowed },
     { upsert: true, new: true, setDefaultsOnInsert: true }
   );

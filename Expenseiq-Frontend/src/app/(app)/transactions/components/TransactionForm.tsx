@@ -77,7 +77,7 @@ export function TransactionForm({ initial, onSubmit, onCancel, loading }: Props)
     ev.preventDefault();
     if (!validate()) return;
     onSubmit({
-      profileId: initial?.profileId || '',
+      context: initial?.context || '',
       type,
       subtype: (subtype as TransactionSubtype) || undefined,
       amount: Number(amount),

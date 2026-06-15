@@ -2,7 +2,6 @@
 
 import { useMemo } from 'react';
 import { useTransactions } from '@/lib/hooks/queries';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { todayMonth, prevMonth } from '@/lib/utils/dates';
 
 interface SmartSuggestion {
@@ -27,13 +26,13 @@ export function SmartSuggestions({
   onSelect, 
   maxSuggestions = 3 
 }: SmartSuggestionsProps) {
-  const profileId = getActiveProfileId();
+  const context = 'Personal';
   const currentMonth = todayMonth();
   const lastMonth = prevMonth(currentMonth);
   
   // Get recent transactions for analysis
-  const { data: currentTxns } = useTransactions({ profileId, month: currentMonth });
-  const { data: lastMonthTxns } = useTransactions({ profileId, month: lastMonth });
+  const { data: currentTxns } = useTransactions({ context, month: currentMonth });
+  const { data: lastMonthTxns } = useTransactions({ context, month: lastMonth });
   
   const allTransactions = useMemo(() => {
     return [...(currentTxns || []), ...(lastMonthTxns || [])];

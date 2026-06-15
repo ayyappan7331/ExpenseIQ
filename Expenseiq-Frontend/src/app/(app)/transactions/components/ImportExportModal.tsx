@@ -4,7 +4,6 @@ import { useState, useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Download, Upload, AlertCircle } from 'lucide-react';
 import { api } from '@/lib/api/client';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { queryKeys } from '@/lib/hooks/queries/keys';
 import { useToast } from '@/components/ui/Toast';
 import { Button, Modal, Badge } from '@/components/ui';
@@ -48,7 +47,7 @@ export function ImportExportModal({ open, onClose, transactions }: Props) {
     const reader = new FileReader();
     reader.onload = (e) => {
       const text = e.target?.result as string;
-      const result = parseTransactionsCSV(text, getActiveProfileId());
+      const result = parseTransactionsCSV(text);
       setImportResult(result);
     };
     reader.readAsText(file);

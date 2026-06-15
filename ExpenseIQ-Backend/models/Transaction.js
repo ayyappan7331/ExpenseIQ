@@ -3,7 +3,8 @@ const { dateFieldsToJSON } = require('../utils/dateField');
 
 const transactionSchema = new mongoose.Schema(
   {
-    profileId: { type: String, default: 'default' },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    context: { type: String, enum: ['Personal', 'Business'], default: 'Personal' },
     type: { type: String, enum: ['income', 'expense'], required: true },
     /** Optional classification within the type. Absent on pre-Phase-8 transactions. */
     subtype: { type: String, default: undefined },
@@ -32,6 +33,6 @@ const transactionSchema = new mongoose.Schema(
   }
 );
 
-transactionSchema.index({ profileId: 1, date: -1 });
+transactionSchema.index({ userId: 1, context: 1, date: -1 });
 
 module.exports = mongoose.model('Transaction', transactionSchema);

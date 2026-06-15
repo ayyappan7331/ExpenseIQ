@@ -59,9 +59,11 @@ export const WaveBackground = memo(function WaveBackground({ tokens }: { tokens:
         
         ctx.beginPath();
         for (let x = 0; x <= W; x += 6) {
-          const dynamicPhase = linePhase + Math.sin(t * 0.6 + (x / W) * 3) * 1.5;
-          const dynamicAmp = band.amp * (1 + Math.sin(t * 0.4 + li * 0.3) * 0.6);
-          const dynamicFreq = band.freq * (1 + Math.sin(t * 0.3 + (x / W)) * 0.4);
+          const r1 = Math.sin(t * 1.13 + li * 0.71);
+          const r2 = Math.cos(t * 0.87 + (x / W) * 4.3 + li * 0.47);
+          const dynamicPhase = linePhase + Math.sin(t * 0.6 + (x / W) * 3) * 1.5 + r1 * 2.5;
+          const dynamicAmp = band.amp * (1 + Math.sin(t * 0.4 + li * 0.3) * 0.6 + r2 * 0.7);
+          const dynamicFreq = band.freq * (1 + Math.sin(t * 0.3 + (x / W)) * 0.4 + (r1 * r2) * 0.5);
           const y = yBase + Math.sin((x / W) * Math.PI * 2 * dynamicFreq + t * band.speed * Math.PI * 2 + dynamicPhase) * dynamicAmp * H;
           x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
         }
@@ -70,9 +72,11 @@ export const WaveBackground = memo(function WaveBackground({ tokens }: { tokens:
         
         ctx.beginPath();
         for (let x = 0; x <= W; x += 3) {
-          const dynamicPhase = linePhase + Math.sin(t * 0.6 + (x / W) * 3) * 1.5;
-          const dynamicAmp = band.amp * (1 + Math.sin(t * 0.4 + li * 0.3) * 0.6);
-          const dynamicFreq = band.freq * (1 + Math.sin(t * 0.3 + (x / W)) * 0.4);
+          const r1 = Math.sin(t * 1.13 + li * 0.71);
+          const r2 = Math.cos(t * 0.87 + (x / W) * 4.3 + li * 0.47);
+          const dynamicPhase = linePhase + Math.sin(t * 0.6 + (x / W) * 3) * 1.5 + r1 * 2.5;
+          const dynamicAmp = band.amp * (1 + Math.sin(t * 0.4 + li * 0.3) * 0.6 + r2 * 0.7);
+          const dynamicFreq = band.freq * (1 + Math.sin(t * 0.3 + (x / W)) * 0.4 + (r1 * r2) * 0.5);
           const y = yBase + Math.sin((x / W) * Math.PI * 2 * dynamicFreq + t * band.speed * Math.PI * 2 + dynamicPhase) * dynamicAmp * H;
           x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
         }

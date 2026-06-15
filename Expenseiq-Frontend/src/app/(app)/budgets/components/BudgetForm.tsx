@@ -8,13 +8,13 @@ import type { Budget, NewBudget } from '@/lib/types/api';
 interface Props {
   initial?: Budget;
   month: string;
-  profileId: string;
+  context: string;
   onSubmit: (data: NewBudget) => void;
   onCancel: () => void;
   loading?: boolean;
 }
 
-export function BudgetForm({ initial, month, profileId, onSubmit, onCancel, loading }: Props) {
+export function BudgetForm({ initial, month, context, onSubmit, onCancel, loading }: Props) {
   const [category, setCategory] = useState(initial?.category || '');
   const [amount, setAmount] = useState(initial?.amount?.toString() || '');
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -31,7 +31,7 @@ export function BudgetForm({ initial, month, profileId, onSubmit, onCancel, load
   function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
     if (!validate()) return;
-    onSubmit({ profileId, month, category, amount: Number(amount) });
+    onSubmit({ context, month, category, amount: Number(amount) });
   }
 
   return (

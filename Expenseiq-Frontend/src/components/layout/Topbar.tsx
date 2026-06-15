@@ -12,13 +12,12 @@ import { MonthFilter } from './MonthFilter';
 import { ThemeToggle } from './ThemeToggle';
 import { pageTitleFor } from './nav';
 import { clearToken, isAuthEnabled, getStoredUser, setStoredUser } from '@/lib/api/token';
-import { clearActiveProfileId } from '@/lib/api/profile';
 import { authApi } from '@/lib/api/auth';
 import { useQueryClient } from '@tanstack/react-query';
 
 interface TopbarProps {
   onMenuClick: () => void;
-  onProfileClick: () => void;
+  
 }
 
 function IconButton({ label, onClick, children }: {
@@ -74,7 +73,7 @@ const PURPOSES = [
   { value: 'other',      label: 'Other' },
 ];
 
-export function Topbar({ onMenuClick, onProfileClick }: TopbarProps) {
+export function Topbar({ onMenuClick }: TopbarProps) {
   const pathname  = usePathname();
   const title     = pageTitleFor(pathname);
   const router    = useRouter();
@@ -123,7 +122,6 @@ export function Topbar({ onMenuClick, onProfileClick }: TopbarProps) {
 
   function handleLogout() {
     clearToken();
-    clearActiveProfileId();
     qc.clear();
     router.push('/login');
   }
@@ -164,9 +162,7 @@ export function Topbar({ onMenuClick, onProfileClick }: TopbarProps) {
       {/* Right */}
       <div className="flex items-center gap-1.5">
         <MonthFilter />
-        <IconButton label="Manage Profiles" onClick={onProfileClick}>
-          <Users className="w-4 h-4" strokeWidth={1.8} />
-        </IconButton>
+        
         <ThemeToggle />
 
         {/* User avatar / hover dropdown */}

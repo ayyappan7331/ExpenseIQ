@@ -24,13 +24,13 @@ describe('api client', () => {
     it('single-document responses are normalized', async () => {
       const settings = await api.getSettings();
       expect(settings.id).toBeDefined();
-      expect(settings.profileId).toBe('default');
+      expect(settings.context).toBe('default');
     });
 
     it('idempotent when only id is present (no _id)', async () => {
       server.use(
         http.get(`${BASE}/transactions`, () =>
-          HttpResponse.json([{ id: 'already-normalized', profileId: 'p', type: 'expense', amount: 1, date: '2026-01-01' }])
+          HttpResponse.json([{ id: 'already-normalized', context: 'p', type: 'expense', amount: 1, date: '2026-01-01' }])
         )
       );
       const list = await api.getTransactions();
@@ -77,8 +77,8 @@ describe('api client', () => {
           return HttpResponse.json([]);
         })
       );
-      await api.getTransactions({ profileId: 'work', month: undefined });
-      expect(capturedUrl).toContain('profileId=work');
+      await api.getTransactions({ context: 'work', month: undefined });
+      expect(capturedUrl).toContain('context=work');
       expect(capturedUrl).not.toContain('month=');
     });
 
@@ -90,7 +90,7 @@ describe('api client', () => {
           return HttpResponse.json([]);
         })
       );
-      await api.getTransactions({ profileId: 'default', month: '2026-05' });
+      await api.getTransactions({ context: 'default', month: '2026-05' });
       expect(capturedUrl).toContain('month=2026-05');
     });
   });
@@ -98,7 +98,7 @@ describe('api client', () => {
   describe('writes', () => {
     it('createTransaction posts the body and normalizes the response', async () => {
       const created = await api.createTransaction({
-        profileId: 'default',
+        context: 'default',
         type: 'expense',
         amount: 100,
         date: '2026-05-01',

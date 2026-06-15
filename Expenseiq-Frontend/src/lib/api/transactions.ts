@@ -3,13 +3,12 @@ import type {
   Transaction,
   NewTransaction,
   TransactionUpdate,
-  MessageResponse,
-  ProfileId,
+  MessageResponse
 } from '@/lib/types/api';
 
 export const transactionsApi = {
-  getAll: (opts: { profileId?: ProfileId; month?: string } = {}) =>
-    getList<Transaction>('/transactions', { profileId: opts.profileId, month: opts.month }),
+  getAll: (opts: { context?: string; month?: string } = {}) =>
+    getList<Transaction>('/transactions', { context: opts.context, month: opts.month }),
 
   create: (data: NewTransaction) =>
     postOne<Transaction>('/transactions', data),

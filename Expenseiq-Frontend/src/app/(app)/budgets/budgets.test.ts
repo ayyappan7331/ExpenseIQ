@@ -2,15 +2,15 @@ import { enrichBudgets, budgetSummary } from './helpers';
 import type { Budget, Transaction } from '@/lib/types/api';
 
 const budgets: Budget[] = [
-  { id: '1', profileId: 'default', month: '2026-05', category: 'Food', amount: 5000 },
-  { id: '2', profileId: 'default', month: '2026-05', category: 'Transport', amount: 2000 },
+  { id: '1', context: 'default', month: '2026-05', category: 'Food', amount: 5000 },
+  { id: '2', context: 'default', month: '2026-05', category: 'Transport', amount: 2000 },
 ];
 
 const txns: Transaction[] = [
-  { id: 't1', profileId: 'default', type: 'expense', amount: 3000, category: 'Food', date: '2026-05-01' },
-  { id: 't2', profileId: 'default', type: 'expense', amount: 2500, category: 'Food', date: '2026-05-05' },
-  { id: 't3', profileId: 'default', type: 'expense', amount: 1500, category: 'Transport', date: '2026-05-03' },
-  { id: 't4', profileId: 'default', type: 'income', amount: 75000, category: 'Salary', date: '2026-05-01' },
+  { id: 't1', context: 'default', type: 'expense', amount: 3000, category: 'Food', date: '2026-05-01' },
+  { id: 't2', context: 'default', type: 'expense', amount: 2500, category: 'Food', date: '2026-05-05' },
+  { id: 't3', context: 'default', type: 'expense', amount: 1500, category: 'Transport', date: '2026-05-03' },
+  { id: 't4', context: 'default', type: 'income', amount: 75000, category: 'Salary', date: '2026-05-01' },
 ];
 
 describe('enrichBudgets', () => {

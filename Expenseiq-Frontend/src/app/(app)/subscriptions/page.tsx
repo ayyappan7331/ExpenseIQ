@@ -3,7 +3,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { Plus, Repeat, DollarSign, Pause } from 'lucide-react';
 import { useSubscriptions } from '@/lib/hooks/queries';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { Button, StatCard, SectionCard, Modal, Input, Select, ConfirmDialog, EmptyState, Badge } from '@/components/ui';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 import { formatCurrency } from '@/components/charts';
@@ -21,12 +20,12 @@ const CYCLES = [
 // the parent's React Query data so no refetch can steal focus mid-typing.
 interface SubscriptionFormProps {
   editSub?: Subscription;
-  profileId: string;
+  context: string;
   onSuccess: () => void;
   onCancel: () => void;
 }
 
-function SubscriptionForm({ editSub, profileId, onSuccess, onCancel }: SubscriptionFormProps) {
+function SubscriptionForm({ editSub, context, onSuccess, onCancel }: SubscriptionFormProps) {
   const create = useCreateSubscription();
   const update = useUpdateSubscription();
 
@@ -48,7 +47,7 @@ function SubscriptionForm({ editSub, profileId, onSuccess, onCancel }: Subscript
   function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
     const payload: NewSubscription = {
-      profileId,
+      context,
       name: name.trim(),
       amount: Number(amount),
       cycle: cycle as 'monthly' | 'quarterly' | 'yearly',
@@ -115,7 +114,7 @@ function SubscriptionForm({ editSub, profileId, onSuccess, onCancel }: Subscript
 
 // ── Page ─────────────────────────────────────────────────────────────────
 export default function SubscriptionsPage() {
-  const profileId = getActiveProfileId();
+  const context = 'Personal';
   const { data: subs, isLoading } = useSubscriptions();
 
   // Modal state only — NO form state here
@@ -205,7 +204,7 @@ export default function SubscriptionsPage() {
         <SubscriptionForm
           key={editSub?.id ?? 'new'}
           editSub={editSub}
-          profileId={profileId}
+          context={context}
           onSuccess={closeModal}
           onCancel={closeModal}
         />

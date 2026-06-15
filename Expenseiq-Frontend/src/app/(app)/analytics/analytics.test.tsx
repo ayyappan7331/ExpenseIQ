@@ -4,10 +4,10 @@ import AnalyticsPage from './page';
 import type { Transaction } from '@/lib/types/api';
 
 const txns: Transaction[] = [
-  { id: '1', profileId: 'default', type: 'expense', amount: 3000, category: 'Food', paymentMethod: 'UPI', date: '2026-05-01' },
-  { id: '2', profileId: 'default', type: 'expense', amount: 2000, category: 'Transport', paymentMethod: 'Cash', date: '2026-05-02' },
-  { id: '3', profileId: 'default', type: 'expense', amount: 1000, category: 'Food', paymentMethod: 'UPI', date: '2026-05-03' },
-  { id: '4', profileId: 'default', type: 'income', amount: 75000, category: 'Salary', date: '2026-05-01' },
+  { id: '1', context: 'default', type: 'expense', amount: 3000, category: 'Food', paymentMethod: 'UPI', date: '2026-05-01' },
+  { id: '2', context: 'default', type: 'expense', amount: 2000, category: 'Transport', paymentMethod: 'Cash', date: '2026-05-02' },
+  { id: '3', context: 'default', type: 'expense', amount: 1000, category: 'Food', paymentMethod: 'UPI', date: '2026-05-03' },
+  { id: '4', context: 'default', type: 'income', amount: 75000, category: 'Salary', date: '2026-05-01' },
 ];
 
 describe('computePaymentBreakdown', () => {
@@ -33,10 +33,10 @@ describe('computeSavingsTrend', () => {
 
   it('excludes transfer_in from income and transfer_out from expenses', () => {
     const withTransfers: Transaction[] = [
-      { id: 't1', profileId: 'default', type: 'income', subtype: 'transfer_in', amount: 50000, category: '', date: '2026-05-01' },
-      { id: 't2', profileId: 'default', type: 'expense', subtype: 'transfer_out', amount: 30000, category: '', date: '2026-05-01' },
-      { id: 't3', profileId: 'default', type: 'income', amount: 10000, category: 'Salary', date: '2026-05-02' },
-      { id: 't4', profileId: 'default', type: 'expense', amount: 2000, category: 'Food', date: '2026-05-03' },
+      { id: 't1', context: 'default', type: 'income', subtype: 'transfer_in', amount: 50000, category: '', date: '2026-05-01' },
+      { id: 't2', context: 'default', type: 'expense', subtype: 'transfer_out', amount: 30000, category: '', date: '2026-05-01' },
+      { id: 't3', context: 'default', type: 'income', amount: 10000, category: 'Salary', date: '2026-05-02' },
+      { id: 't4', context: 'default', type: 'expense', amount: 2000, category: 'Food', date: '2026-05-03' },
     ];
     const byMonth = { '2026-05': withTransfers };
     const result = computeSavingsTrend(byMonth, ['2026-05']);
@@ -47,8 +47,8 @@ describe('computeSavingsTrend', () => {
 
 describe('computeComparison', () => {
   const txnsB: Transaction[] = [
-    { id: '5', profileId: 'default', type: 'expense', amount: 5000, category: 'Food', date: '2026-06-01' },
-    { id: '6', profileId: 'default', type: 'expense', amount: 3000, category: 'Bills', date: '2026-06-02' },
+    { id: '5', context: 'default', type: 'expense', amount: 5000, category: 'Food', date: '2026-06-01' },
+    { id: '6', context: 'default', type: 'expense', amount: 3000, category: 'Bills', date: '2026-06-02' },
   ];
 
   it('computes per-category change between two months', () => {

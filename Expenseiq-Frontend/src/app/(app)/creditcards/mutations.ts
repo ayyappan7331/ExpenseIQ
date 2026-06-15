@@ -3,7 +3,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api/client';
 import { queryKeys } from '@/lib/hooks/queries/keys';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { useToast } from '@/components/ui/Toast';
 import type { CreditCard, NewCreditCard, CreditCardUpdate } from '@/lib/types/api';
 
@@ -65,7 +64,7 @@ export function useRestoreCreditCard() {
 export function useRecordPayment() {
   const qc = useQueryClient();
   const { toast } = useToast();
-  const profileId = getActiveProfileId();
+  const context = 'Personal';
 
   return useMutation({
     mutationFn: ({
@@ -80,7 +79,7 @@ export function useRecordPayment() {
       notes?: string;
     }) =>
       api.createTransaction({
-        profileId,
+        context,
         type: 'income',
         subtype: 'payment',          // explicitly classifies as a bill payment
         amount,

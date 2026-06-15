@@ -9,7 +9,6 @@ import type {
   FinancialConfig,
   Goal,
   HealthResponse,
-  Profile,
   Settings,
   Subscription,
   Transaction,
@@ -29,14 +28,14 @@ export const fixtures = {
   } satisfies VersionResponse,
 
   profiles: [
-    { _id: OID(1), profileId: 'default', name: 'Personal', icon: '👤', isDefault: true },
-    { _id: OID(2), profileId: 'work', name: 'Work', icon: '💼', isDefault: false },
-  ] as Array<Profile & { _id: string }>,
+    { _id: OID(1), context: 'default', name: 'Personal', icon: '👤', isDefault: true },
+    { _id: OID(2), context: 'work', name: 'Work', icon: '💼', isDefault: false },
+  ] as Array<any>,
 
   transactions: [
     {
       _id: OID(10),
-      profileId: 'default',
+      context: 'default',
       type: 'expense',
       amount: 250,
       category: 'Food',
@@ -47,7 +46,7 @@ export const fixtures = {
     },
     {
       _id: OID(11),
-      profileId: 'default',
+      context: 'default',
       type: 'income',
       amount: 50000,
       category: '',
@@ -61,7 +60,7 @@ export const fixtures = {
   subscriptions: [
     {
       _id: OID(20),
-      profileId: 'default',
+      context: 'default',
       name: 'Netflix',
       amount: 499,
       cycle: 'monthly',
@@ -74,7 +73,7 @@ export const fixtures = {
   debts: [
     {
       _id: OID(30),
-      profileId: 'default',
+      context: 'default',
       type: 'lent',
       person: 'Alice',
       amount: 500,
@@ -86,13 +85,13 @@ export const fixtures = {
   ] as Array<Debt & { _id: string }>,
 
   goals: [
-    { _id: OID(40), profileId: 'default', month: '2026-05', amount: 10000 },
+    { _id: OID(40), context: 'default', month: '2026-05', amount: 10000 },
   ] as Array<Goal & { _id: string }>,
 
   creditCards: [
     {
       _id: OID(50),
-      profileId: 'default',
+      context: 'default',
       name: 'HDFC Credit Card',
       billDate: 19,
       dueDate: 8,
@@ -103,7 +102,7 @@ export const fixtures = {
 
   settings: {
     _id: OID(60),
-    profileId: 'default',
+    context: 'default',
     theme: 'dark',
     widgets: ['chart', 'recent', 'goals'],
     widgetOrder: [],
@@ -112,7 +111,7 @@ export const fixtures = {
   budgets: [
     {
       _id: OID(70),
-      profileId: 'default',
+      context: 'default',
       month: '2026-05',
       category: 'Food',
       amount: 5000,
@@ -121,7 +120,7 @@ export const fixtures = {
 
   financialConfig: {
     _id: OID(80),
-    profileId: 'default',
+    context: 'default',
     customExpenseCategories: [],
     customIncomeCategories: [],
     customPaymentMethods: ['HDFC Credit Card', 'GPay'],

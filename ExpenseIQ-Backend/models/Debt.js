@@ -6,7 +6,8 @@ const { dateFieldsToJSON } = require('../utils/dateField');
 // Transaction.date and Debt.date).
 const debtSchema = new mongoose.Schema(
   {
-    profileId: { type: String, default: 'default' },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    context: { type: String, enum: ['Personal', 'Business'], default: 'Personal' },
     type: { type: String, enum: ['lent', 'borrowed'], required: true },
     person: { type: String, required: true },
     amount: { type: Number, required: true },
@@ -21,6 +22,6 @@ const debtSchema = new mongoose.Schema(
   }
 );
 
-debtSchema.index({ profileId: 1 });
+debtSchema.index({ userId: 1, context: 1 });
 
 module.exports = mongoose.model('Debt', debtSchema);

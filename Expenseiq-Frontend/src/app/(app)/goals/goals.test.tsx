@@ -10,10 +10,10 @@ vi.mock('next/navigation', () => ({
 }));
 
 describe('enrichGoal', () => {
-  const goal: Goal = { id: '1', profileId: 'default', month: '2026-05', amount: 50000 };
+  const goal: Goal = { id: '1', context: 'default', month: '2026-05', amount: 50000 };
   const txns: Transaction[] = [
-    { id: 't1', profileId: 'default', type: 'income', amount: 75000, date: '2026-05-01', category: 'Salary' },
-    { id: 't2', profileId: 'default', type: 'expense', amount: 30000, date: '2026-05-05', category: 'Bills' },
+    { id: 't1', context: 'default', type: 'income', amount: 75000, date: '2026-05-01', category: 'Salary' },
+    { id: 't2', context: 'default', type: 'expense', amount: 30000, date: '2026-05-05', category: 'Bills' },
   ];
 
   it('computes saved = income - expense', () => {

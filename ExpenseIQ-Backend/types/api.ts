@@ -32,7 +32,8 @@ export interface HttpError extends Error {
 
 export interface Transaction {
   _id?: string;
-  profileId: ProfileId;
+  userId: string;
+  context?: 'Personal' | 'Business';
   type: 'income' | 'expense';
   amount: number;
   category?: string;
@@ -46,7 +47,8 @@ export interface Transaction {
 
 export interface Subscription {
   _id?: string;
-  profileId: ProfileId;
+  userId: string;
+  context?: 'Personal' | 'Business';
   name: string;
   amount: number;
   cycle: 'monthly' | 'quarterly' | 'yearly';
@@ -57,7 +59,8 @@ export interface Subscription {
 
 export interface Debt {
   _id?: string;
-  profileId: ProfileId;
+  userId: string;
+  context?: 'Personal' | 'Business';
   type: 'lent' | 'borrowed';
   person: string;
   amount: number;
@@ -69,34 +72,33 @@ export interface Debt {
 
 export interface Goal {
   _id?: string;
-  profileId: ProfileId;
+  userId: string;
+  context?: 'Personal' | 'Business';
   month: ISOMonth;
   amount: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export interface Profile {
-  _id?: string;
-  profileId: ProfileId;
-  name: string;
-  icon?: string;
-  isDefault?: boolean;
-}
+// Profile type removed — multi-profile architecture deprecated.
 
 export interface CreditCard {
   _id?: string;
-  profileId: ProfileId;
+  userId: string;
+  context?: 'Personal' | 'Business';
   name: string;
   billDate: number;
-  dueDate: number;
+  dueDate?: number;
+  duePeriod?: number;
   limit?: number;
   color?: string;
+  linkedPaymentMethod?: string;
+  archived?: boolean;
 }
 
 export interface Settings {
   _id?: string;
-  profileId: ProfileId;
+  userId: string;
   theme?: string;
   widgets?: string[];
   widgetOrder?: string[];
@@ -104,7 +106,8 @@ export interface Settings {
 
 export interface Budget {
   _id?: string;
-  profileId: ProfileId;
+  userId: string;
+  context?: 'Personal' | 'Business';
   month: ISOMonth;
   category: string;
   amount: number;

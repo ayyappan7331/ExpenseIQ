@@ -1,9 +1,9 @@
 import { getList, postOne, putOne, del } from './http';
-import type { Subscription, NewSubscription, SubscriptionUpdate, ProfileId } from '@/lib/types/api';
+import type { Subscription, NewSubscription, SubscriptionUpdate } from '@/lib/types/api';
 
 export const subscriptionsApi = {
-  getAll: (opts: { profileId?: ProfileId } = {}) =>
-    getList<Subscription>('/subscriptions', { profileId: opts.profileId }),
+  getAll: (opts: { context?: string } = {}) =>
+    getList<Subscription>('/subscriptions', { context: opts.context }),
 
   create: (data: NewSubscription) =>
     postOne<Subscription>('/subscriptions', data),

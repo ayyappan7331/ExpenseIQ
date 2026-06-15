@@ -3,12 +3,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api/client';
 import { queryKeys } from '@/lib/hooks/queries/keys';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { useToast } from '@/components/ui/Toast';
 import type { NewSubscription, SubscriptionUpdate, Subscription } from '@/lib/types/api';
 
 function listKey() {
-  return queryKeys.subscriptions.list(getActiveProfileId());
+  return queryKeys.subscriptions.list('Personal');
 }
 
 export function useCreateSubscription() {

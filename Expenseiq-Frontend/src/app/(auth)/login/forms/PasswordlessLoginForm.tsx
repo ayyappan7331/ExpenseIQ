@@ -53,14 +53,6 @@ export function PasswordlessLoginForm({
       setToken(res.token);
       setStoredUser({ id: res.user.id, email: res.user.email, name: res.user.name, dob: res.user.dob, purpose: res.user.purpose });
       qc.clear();
-      const { api } = await import('@/lib/api/client');
-      const { setActiveProfileId, clearActiveProfileId } = await import('@/lib/api/profile');
-      clearActiveProfileId();
-      const profiles = await api.getProfiles();
-      if (profiles.length > 0) {
-        const def = profiles.find(p => p.isDefault) ?? profiles[0];
-        setActiveProfileId(def.profileId);
-      }
       router.push('/dashboard');
     } catch (err: unknown) { setError(err instanceof Error ? err.message : 'Invalid or expired OTP'); }
     finally { setLoading(false); }
@@ -78,8 +70,8 @@ export function PasswordlessLoginForm({
   if (step === 1) {
     return (
       <>
-        <button type="button" onClick={() => onSwitchView('login')} className="mb-6 flex items-center gap-2 text-sm font-medium hover:underline opacity-80 hover:opacity-100 transition-opacity">
-          <ArrowLeft size={16} /> Back to Login
+        <button type="button" onClick={() => onSwitchView('login')} className="mb-6 flex items-center gap-2 text-sm font-medium hover:underline opacity-80 hover:opacity-100 transition-opacity cursor-pointer">
+          <ArrowLeft size={16} /> Login with Password
         </button>
         <p className="text-sm mb-6" style={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}>Login instantly without a password. We&apos;ll send a secure one-time code to your registered email or mobile.</p>
         <form onSubmit={handleOtpLoginSend} className="space-y-4" noValidate>
@@ -89,7 +81,7 @@ export function PasswordlessLoginForm({
               type="text" value={otpLoginId}
               onChange={e => { setOtpLoginId(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.otpLoginId; return n; }); }}
               onBlur={hideTooltip}
-              className={inpBase} style={inpStyle} placeholder="Email or Mobile Number" disabled={loading}
+              className={inpBase} style={inpStyle} placeholder="Enter your email or mobile" disabled={loading}
             />
             {fieldErrs.otpLoginId && <FieldError msg={fieldErrs.otpLoginId} theme={theme} />}
           </div>
@@ -103,7 +95,7 @@ export function PasswordlessLoginForm({
 
   return (
     <>
-      <button type="button" onClick={() => setStep(1)} className="mb-6 flex items-center gap-2 text-sm font-medium hover:underline opacity-80 hover:opacity-100 transition-opacity">
+      <button type="button" onClick={() => setStep(1)} className="mb-6 flex items-center gap-2 text-sm font-medium hover:underline opacity-80 hover:opacity-100 transition-opacity cursor-pointer">
         <ArrowLeft size={16} /> Change Identifier
       </button>
       <p className="text-sm mb-6 text-center" style={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}>
@@ -119,7 +111,7 @@ export function PasswordlessLoginForm({
             <ResendTimer onResend={handleOtpLoginResend} theme={theme} />
           </div>
         </div>
-        <button type="submit" disabled={loading || otpLoginCode.replace(/\D/g, '').length < 6} className="w-full py-3 mt-2 text-sm font-semibold rounded-xl text-white transition-all duration-200 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-violet-500/20">
+        <button type="submit" disabled={loading || otpLoginCode.replace(/\D/g, '').length < 6} className="w-full py-3 mt-2 text-sm font-semibold rounded-xl text-white transition-all duration-200 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-violet-500/20 cursor-pointer">
           {loading ? 'Verifying...' : 'Login Securely'}
         </button>
       </form>

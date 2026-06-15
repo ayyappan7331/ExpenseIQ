@@ -3,7 +3,6 @@
 import { Modal } from '@/components/ui';
 import { TransactionForm } from './TransactionForm';
 import { useCreateTransaction, useUpdateTransaction, defaultNewTransaction } from '../mutations';
-import { getActiveProfileId } from '@/lib/api/profile';
 import type { Transaction, NewTransaction } from '@/lib/types/api';
 
 interface Props {
@@ -18,7 +17,7 @@ export function TransactionModal({ open, onClose, editTransaction }: Props) {
   const isEdit = !!editTransaction;
 
   function handleSubmit(data: NewTransaction) {
-    const payload = { ...data, profileId: data.profileId || getActiveProfileId() };
+    const payload = { ...data, context: data.context || 'Personal' };
     if (isEdit) {
       update.mutate({ id: editTransaction.id, data: payload }, { onSuccess: onClose });
     } else {
@@ -33,7 +32,7 @@ export function TransactionModal({ open, onClose, editTransaction }: Props) {
       title={isEdit ? 'Edit Transaction' : 'Add Transaction'}
     >
       <TransactionForm
-        initial={editTransaction || ({ ...defaultNewTransaction(), profileId: getActiveProfileId() } as unknown as Transaction)}
+        initial={editTransaction || ({ ...defaultNewTransaction(), context: 'Personal' } as unknown as Transaction)}
         onSubmit={handleSubmit}
         onCancel={onClose}
         loading={create.isPending || update.isPending}

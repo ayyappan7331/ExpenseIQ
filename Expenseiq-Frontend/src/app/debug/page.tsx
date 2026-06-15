@@ -2,13 +2,12 @@
 
 // /debug — Phase F2 wiring smoke test. Exercises:
 //   • useHealth + useVersion (no profile needed)
-//   • useProfiles
 //   • useTransactions (with the active profile)
 // Renders raw JSON + simple loading/error states. No UI components migrated
 // here — this page exists to prove the API+query layer round-trips against
 // the real backend on http://localhost:5000/api.
 
-import { useHealth, useVersion, useProfiles, useTransactions } from '@/lib/hooks/queries';
+import { useTransactions, useHealth, useVersion, useSettings, useBudgets, useCreditCards } from '@/lib/hooks/queries';
 import type { UseQueryResult } from '@tanstack/react-query';
 
 function State<T>({ q, label }: { q: UseQueryResult<T>; label: string }) {
@@ -36,7 +35,6 @@ function State<T>({ q, label }: { q: UseQueryResult<T>; label: string }) {
 export default function DebugPage() {
   const health = useHealth();
   const version = useVersion();
-  const profiles = useProfiles();
   const transactions = useTransactions();
 
   return (
@@ -54,8 +52,7 @@ export default function DebugPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <State q={health} label="GET /api/health" />
         <State q={version} label="GET /api/version" />
-        <State q={profiles} label="GET /api/profiles" />
-        <State q={transactions} label="GET /api/transactions?profileId=…" />
+        <State q={transactions} label="GET /api/transactions?context=…" />
       </div>
     </main>
   );

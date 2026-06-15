@@ -9,9 +9,6 @@
 // Keep field names byte-identical to what the backend emits.
 
 // ---------- Primitives ----------
-
-export type ProfileId = string;
-
 /** YYYY-MM-DD */
 export type ISODate = string;
 
@@ -32,7 +29,7 @@ export interface MessageResponse {
 
 export interface Transaction {
   id: string;
-  profileId: ProfileId;
+  context?: string;
   type: 'income' | 'expense';
   /** Optional classification within the type.
    *  Income subtypes: payment, refund, cashback, reimbursement, transfer_in, other
@@ -117,7 +114,7 @@ export type TransactionUpdate = Partial<NewTransaction>;
 
 export interface Subscription {
   id: string;
-  profileId: ProfileId;
+  context?: string;
   name: string;
   amount: number;
   cycle: 'monthly' | 'quarterly' | 'yearly';
@@ -133,7 +130,7 @@ export type SubscriptionUpdate = Partial<NewSubscription>;
 
 export interface Debt {
   id: string;
-  profileId: ProfileId;
+  context?: string;
   type: 'lent' | 'borrowed';
   person: string;
   amount: number;
@@ -150,7 +147,7 @@ export type DebtUpdate = Partial<NewDebt>;
 
 export interface Goal {
   id: string;
-  profileId: ProfileId;
+  context?: string;
   month: ISOMonth;
   amount: number;
   createdAt?: string;
@@ -159,21 +156,9 @@ export interface Goal {
 
 export type NewGoal = Omit<Goal, 'id' | 'createdAt' | 'updatedAt'>;
 
-export interface Profile {
-  id: string;
-  profileId: ProfileId;
-  name: string;
-  icon?: string;
-  isDefault?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-export type NewProfile = Omit<Profile, 'id' | 'createdAt' | 'updatedAt'>;
-
 export interface CreditCard {
   id: string;
-  profileId: ProfileId;
+  context?: string;
   name: string;
   billDate: number;
   /** Legacy: day-of-month due date. Superseded by duePeriod. */
@@ -202,7 +187,7 @@ export type CreditCardUpdate = Partial<NewCreditCard>;
 
 export interface Settings {
   id?: string;
-  profileId: ProfileId;
+  context?: string;
   theme?: string;
   widgets?: string[];
   widgetOrder?: string[];
@@ -212,7 +197,7 @@ export interface Settings {
   updatedAt?: string;
 }
 
-export type SettingsUpdate = Partial<Settings> & { profileId: ProfileId };
+export type SettingsUpdate = Partial<Settings>;
 
 // ---------- E4.4 Domain separation types (additive, no breaking changes) ----------
 
@@ -224,7 +209,7 @@ export type SettingsUpdate = Partial<Settings> & { profileId: ProfileId };
  */
 export interface FinancialConfig {
   id?: string;
-  profileId: ProfileId;
+  context?: string;
   customExpenseCategories?: string[];
   customIncomeCategories?: string[];
   customPaymentMethods?: string[];
@@ -276,7 +261,7 @@ export interface FavoriteTransaction {
  * cross-device sync is needed.
  */
 export interface UserPreferences {
-  profileId: ProfileId;
+  context?: string;
   theme?: string;
   widgets?: string[];
   widgetOrder?: string[];
@@ -284,7 +269,7 @@ export interface UserPreferences {
 
 export interface Budget {
   id: string;
-  profileId: ProfileId;
+  context?: string;
   month: ISOMonth;
   category: string;
   amount: number;

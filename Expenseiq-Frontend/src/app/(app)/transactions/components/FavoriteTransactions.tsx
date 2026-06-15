@@ -4,7 +4,6 @@ import { useEffect, useCallback } from 'react';
 import { Heart, Plus } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { financialConfigApi } from '@/lib/api/financialConfig';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { queryKeys } from '@/lib/hooks/queries/keys';
 import { useFinancialConfig } from '@/lib/hooks/useFinancialConfig';
 import { useQueryClient } from '@tanstack/react-query';
@@ -18,10 +17,10 @@ interface FavoriteTransactionsProps {
 }
 
 export function FavoriteTransactions({ onUseTransaction, className }: FavoriteTransactionsProps) {
-  const profileId = getActiveProfileId();
+  const context = 'Personal';
   const qc = useQueryClient();
   const { data: config } = useFinancialConfig();
-  const fcKey = queryKeys.financialConfig.one(profileId);
+  const fcKey = queryKeys.financialConfig.one(context);
   const [showAll, setShowAll] = useState(false);
 
   // Prefer FinancialConfig; fall back to localStorage for first render
@@ -37,10 +36,10 @@ export function FavoriteTransactions({ onUseTransaction, className }: FavoriteTr
     qc.setQueryData<FinancialConfig>(fcKey, (old) =>
       old ? { ...old, favoriteTransactions: next } : old
     );
-    financialConfigApi.patch({ profileId, favoriteTransactions: next })
+    financialConfigApi.patch({ context, favoriteTransactions: next })
       .then(() => qc.invalidateQueries({ queryKey: fcKey }))
       .catch(() => qc.invalidateQueries({ queryKey: fcKey }));
-  }, [profileId, qc, fcKey]);
+  }, [context, qc, fcKey]);
 
   const addToFavorites = useCallback((transaction: Transaction, customName?: string) => {
     const isDuplicate = favorites.some(

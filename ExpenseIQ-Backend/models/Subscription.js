@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
 const subscriptionSchema = new mongoose.Schema({
-  profileId: { type: String, default: 'default' },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  context: { type: String, enum: ['Personal', 'Business'], default: 'Personal' },
   name: { type: String, required: true },
   amount: { type: Number, required: true },
   cycle: { type: String, enum: ['monthly', 'quarterly', 'yearly'], default: 'monthly' },
@@ -10,6 +11,6 @@ const subscriptionSchema = new mongoose.Schema({
   active: { type: Boolean, default: true },
 }, { timestamps: true });
 
-subscriptionSchema.index({ profileId: 1 });
+subscriptionSchema.index({ userId: 1, context: 1 });
 
 module.exports = mongoose.model('Subscription', subscriptionSchema);

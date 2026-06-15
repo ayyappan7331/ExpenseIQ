@@ -3,12 +3,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api/client';
 import { queryKeys } from '@/lib/hooks/queries/keys';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { useToast } from '@/components/ui/Toast';
 import type { NewDebt, DebtUpdate, Debt } from '@/lib/types/api';
 
 function listKey() {
-  return queryKeys.debts.list(getActiveProfileId());
+  return queryKeys.debts.list('Personal');
 }
 
 export function useCreateDebt() {

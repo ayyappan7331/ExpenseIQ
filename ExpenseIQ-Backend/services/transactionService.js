@@ -1,8 +1,8 @@
 const Transaction = require('../models/Transaction');
 const httpError = require('../utils/httpError');
 
-const findAll = async ({ profileId = 'default', month } = {}) => {
-  const filter = { profileId };
+const findAll = async ({ userId, context = 'Personal', month } = {}) => {
+  const filter = { userId, context };
   if (month) {
     const m = /^(\d{4})-(\d{2})$/.exec(month);
     if (!m) {
@@ -20,13 +20,13 @@ const findAll = async ({ profileId = 'default', month } = {}) => {
 const create = (data) => Transaction.create(data);
 
 const update = async (id, data) => {
-  // Scope by profileId to prevent cross-profile mutations.
-  // profileId comes from the stored document, not the update payload.
+  // Scope by userId to prevent cross-user mutations.
+  // userId comes from the stored document, not the update payload.
   const existing = await Transaction.findById(id).lean();
   if (!existing) throw httpError(404, 'Not found');
-  const profileId = data.profileId || existing.profileId;
+  const userId = data.userId || existing.userId;
   const txn = await Transaction.findOneAndUpdate(
-    { _id: id, profileId },
+    { _id: id, userId },
     data,
     { new: true }
   );
@@ -34,9 +34,9 @@ const update = async (id, data) => {
   return txn;
 };
 
-const remove = async (id, profileId) => {
-  // Scope by profileId when provided to prevent cross-profile deletion.
-  const filter = profileId ? { _id: id, profileId } : { _id: id };
+const remove = async (id, userId) => {
+  // Scope by userId when provided to prevent cross-user deletion.
+  const filter = userId ? { _id: id, userId } : { _id: id };
   const txn = await Transaction.findOneAndDelete(filter);
   if (!txn) throw httpError(404, 'Not found');
   return txn;
@@ -44,10 +44,10 @@ const remove = async (id, profileId) => {
 
 const bulkCreate = (txns) => Transaction.insertMany(txns);
 
-const bulkDelete = async (ids, profileId) => {
+const bulkDelete = async (ids, userId) => {
   if (!ids || !ids.length) throw httpError(400, 'No IDs provided');
   const filter = { _id: { $in: ids } };
-  if (profileId) filter.profileId = profileId;
+  if (userId) filter.userId = userId;
   await Transaction.deleteMany(filter);
   return ids.length;
 };

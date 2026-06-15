@@ -4,8 +4,8 @@ import { isValidSubtype } from '@/lib/types/api';
 import type { Transaction } from '@/lib/types/api';
 
 const txns: Transaction[] = [
-  { id: '1', profileId: 'default', type: 'expense', subtype: 'purchase', amount: 250, category: 'Food', subcategory: 'Groceries', date: '2026-05-10', time: '13:30', paymentMethod: 'UPI', paymentApp: 'GPay', notes: 'Lunch' },
-  { id: '2', profileId: 'default', type: 'income', amount: 50000, category: 'Salary', date: '2026-05-01', notes: '' },
+  { id: '1', context: 'default', type: 'expense', subtype: 'purchase', amount: 250, category: 'Food', subcategory: 'Groceries', date: '2026-05-10', time: '13:30', paymentMethod: 'UPI', paymentApp: 'GPay', notes: 'Lunch' },
+  { id: '2', context: 'default', type: 'income', amount: 50000, category: 'Salary', date: '2026-05-01', notes: '' },
 ];
 
 describe('transactionsToCSV', () => {
@@ -34,7 +34,7 @@ describe('transactionsToCSV', () => {
 
   it('escapes commas and quotes in fields', () => {
     const withComma: Transaction[] = [
-      { id: '3', profileId: 'default', type: 'expense', amount: 100, category: 'Food, Drink', date: '2026-05-01', notes: 'He said "hi"' },
+      { id: '3', context: 'default', type: 'expense', amount: 100, category: 'Food, Drink', date: '2026-05-01', notes: 'He said "hi"' },
     ];
     const csv = transactionsToCSV(withComma);
     expect(csv).toContain('"Food, Drink"');
@@ -45,7 +45,7 @@ describe('transactionsToCSV', () => {
 describe('parseTransactionsCSV', () => {
   it('parses new 10-column format with subtype', () => {
     const csv = 'date,time,type,subtype,amount,category,subcategory,paymentMethod,paymentApp,notes\n2026-05-10,13:30,expense,purchase,250,Food,Groceries,UPI,GPay,Lunch\n2026-05-01,,income,payment,50000,Salary,,,,';
-    const result = parseTransactionsCSV(csv, 'default');
+    const result = parseTransactionsCSV(csv);
     expect(result.valid.length).toBe(2);
     expect(result.errors.length).toBe(0);
     expect(result.valid[0].subtype).toBe('purchase');
@@ -54,7 +54,7 @@ describe('parseTransactionsCSV', () => {
 
   it('parses old 9-column format without subtype (backward compat)', () => {
     const csv = 'date,time,type,amount,category,subcategory,paymentMethod,paymentApp,notes\n2026-05-10,13:30,expense,250,Food,Groceries,UPI,GPay,Lunch\n2026-05-01,,income,50000,Salary,,,,';
-    const result = parseTransactionsCSV(csv, 'default');
+    const result = parseTransactionsCSV(csv);
     expect(result.valid.length).toBe(2);
     expect(result.errors.length).toBe(0);
     expect(result.valid[0].subtype).toBeUndefined();
@@ -66,7 +66,7 @@ describe('parseTransactionsCSV', () => {
 
   it('parses legacy 6-column format (backward compat)', () => {
     const csv = 'date,type,amount,category,paymentMethod,notes\n2026-05-10,expense,250,Food,UPI,Lunch\n2026-05-01,income,50000,Salary,,';
-    const result = parseTransactionsCSV(csv, 'default');
+    const result = parseTransactionsCSV(csv);
     expect(result.valid.length).toBe(2);
     expect(result.errors.length).toBe(0);
     expect(result.valid[0].amount).toBe(250);
@@ -77,7 +77,7 @@ describe('parseTransactionsCSV', () => {
 
   it('silently ignores unknown subtype values', () => {
     const csv = 'date,time,type,subtype,amount,category,subcategory,paymentMethod,paymentApp,notes\n2026-05-10,,expense,unknown_type,250,Food,,,,';
-    const result = parseTransactionsCSV(csv, 'default');
+    const result = parseTransactionsCSV(csv);
     expect(result.valid.length).toBe(1);
     expect(result.valid[0].subtype).toBeUndefined();
   });
@@ -85,7 +85,7 @@ describe('parseTransactionsCSV', () => {
   it('clears subtype when income + expense subtype (invalid combination)', () => {
     // income + purchase is invalid — subtype is cleared, row is still valid
     const csv = 'date,time,type,subtype,amount,category,subcategory,paymentMethod,paymentApp,notes\n2026-05-10,,income,purchase,250,Salary,,,,';
-    const result = parseTransactionsCSV(csv, 'default');
+    const result = parseTransactionsCSV(csv);
     expect(result.valid.length).toBe(1);
     expect(result.valid[0].type).toBe('income');
     expect(result.valid[0].subtype).toBeUndefined();
@@ -94,7 +94,7 @@ describe('parseTransactionsCSV', () => {
   it('clears subtype when expense + income subtype (invalid combination)', () => {
     // expense + cashback is invalid — subtype is cleared, row is still valid
     const csv = 'date,time,type,subtype,amount,category,subcategory,paymentMethod,paymentApp,notes\n2026-05-10,,expense,cashback,250,Food,,,,';
-    const result = parseTransactionsCSV(csv, 'default');
+    const result = parseTransactionsCSV(csv);
     expect(result.valid.length).toBe(1);
     expect(result.valid[0].type).toBe('expense');
     expect(result.valid[0].subtype).toBeUndefined();
@@ -102,25 +102,25 @@ describe('parseTransactionsCSV', () => {
 
   it('keeps valid income + payment combination', () => {
     const csv = 'date,time,type,subtype,amount,category,subcategory,paymentMethod,paymentApp,notes\n2026-05-10,,income,payment,250,Salary,,,,';
-    const result = parseTransactionsCSV(csv, 'default');
+    const result = parseTransactionsCSV(csv);
     expect(result.valid[0].subtype).toBe('payment');
   });
 
   it('keeps valid expense + purchase combination', () => {
     const csv = 'date,time,type,subtype,amount,category,subcategory,paymentMethod,paymentApp,notes\n2026-05-10,,expense,purchase,250,Food,,,,';
-    const result = parseTransactionsCSV(csv, 'default');
+    const result = parseTransactionsCSV(csv);
     expect(result.valid[0].subtype).toBe('purchase');
   });
 
   it('parses CSV without header', () => {
     const csv = '2026-05-10,expense,250,Food,UPI,Lunch';
-    const result = parseTransactionsCSV(csv, 'default');
+    const result = parseTransactionsCSV(csv);
     expect(result.valid.length).toBe(1);
   });
 
   it('reports errors for invalid rows', () => {
     const csv = 'date,type,amount\n2026-05-10,expense,250\nbad-date,expense,100\n2026-05-10,invalid,100\n2026-05-10,expense,-5';
-    const result = parseTransactionsCSV(csv, 'default');
+    const result = parseTransactionsCSV(csv);
     expect(result.valid.length).toBe(1);
     expect(result.errors.length).toBe(3);
     expect(result.errors[0].message).toContain('Invalid date');
@@ -129,24 +129,20 @@ describe('parseTransactionsCSV', () => {
   });
 
   it('handles empty file', () => {
-    const result = parseTransactionsCSV('', 'default');
+    const result = parseTransactionsCSV('');
     expect(result.valid.length).toBe(0);
     expect(result.errors[0].message).toBe('Empty file');
   });
 
   it('handles quoted fields with commas', () => {
     const csv = 'date,time,type,subtype,amount,category,subcategory,paymentMethod,paymentApp,notes\n2026-05-10,,expense,,250,"Food, Drink",,UPI,,"Had a ""great"" time"';
-    const result = parseTransactionsCSV(csv, 'default');
+    const result = parseTransactionsCSV(csv);
     expect(result.valid.length).toBe(1);
     expect(result.valid[0].category).toBe('Food, Drink');
     expect(result.valid[0].notes).toBe('Had a "great" time');
   });
 
-  it('assigns profileId to all valid rows', () => {
-    const csv = '2026-05-10,expense,250,Food,,';
-    const result = parseTransactionsCSV(csv, 'work');
-    expect(result.valid[0].profileId).toBe('work');
-  });
+  
 });
 
 // ── isValidSubtype ─────────────────────────────────────────────────────────────

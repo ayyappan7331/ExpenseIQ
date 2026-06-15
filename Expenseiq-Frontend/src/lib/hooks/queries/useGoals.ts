@@ -2,15 +2,13 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api/client';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { queryKeys } from '@/lib/hooks/queries/keys';
-import type { ProfileId } from '@/lib/types/api';
 
-export function useGoals(opts: { profileId?: ProfileId } = {}) {
-  const profileId = opts.profileId ?? getActiveProfileId();
+export function useGoals(opts: { context?: string } = {}) {
+  const context = opts.context ?? 'Personal';
   return useQuery({
-    queryKey: queryKeys.goals.list(profileId),
-    queryFn: () => api.getGoals({ profileId }),
+    queryKey: queryKeys.goals.list(context),
+    queryFn: () => api.getGoals({ context }),
     staleTime: 30 * 1000,
   });
 }

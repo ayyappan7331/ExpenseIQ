@@ -28,13 +28,13 @@ async function migrateDuePeriod(cards) {
   });
 }
 
-const findAll = async ({ profileId = 'default' } = {}) => {
-  const cards = await CreditCard.find({ profileId, archived: { $ne: true } });
+const findAll = async ({ userId, context = 'Personal' } = {}) => {
+  const cards = await CreditCard.find({ userId, context, archived: { $ne: true } });
   return migrateDuePeriod(cards);
 };
 
-const findArchived = async ({ profileId = 'default' } = {}) => {
-  const cards = await CreditCard.find({ profileId, archived: true });
+const findArchived = async ({ userId, context = 'Personal' } = {}) => {
+  const cards = await CreditCard.find({ userId, context, archived: true });
   return migrateDuePeriod(cards);
 };
 
@@ -50,10 +50,10 @@ const restore = async (id) => {
   return card;
 };
 
-/** Throws 400 if another card in the same profile already uses linkedPaymentMethod. */
-async function assertUniqueLink(profileId, linkedPaymentMethod, excludeId) {
+/** Throws 400 if another card in the same context already uses linkedPaymentMethod. */
+async function assertUniqueLink(userId, context, linkedPaymentMethod, excludeId) {
   if (!linkedPaymentMethod) return;
-  const query = { profileId, linkedPaymentMethod };
+  const query = { userId, context, linkedPaymentMethod };
   if (excludeId) query._id = { $ne: excludeId };
   const existing = await CreditCard.findOne(query).lean();
   if (existing) {
@@ -65,7 +65,7 @@ const create = async (data) => {
   const payload = { ...data };
   // Strip falsy linkedPaymentMethod so the sparse index treats it as absent
   if (!payload.linkedPaymentMethod) delete payload.linkedPaymentMethod;
-  await assertUniqueLink(payload.profileId || 'default', payload.linkedPaymentMethod);
+  await assertUniqueLink(payload.userId, payload.context || 'Personal', payload.linkedPaymentMethod);
   return CreditCard.create(payload);
 };
 
@@ -78,7 +78,9 @@ const update = async (id, data) => {
     delete payload.linkedPaymentMethod;
     payload.$unset = { linkedPaymentMethod: 1 };
   }
-  await assertUniqueLink(card.profileId, payload.linkedPaymentMethod, id);
+  const userId = card.userId;
+  const context = card.context;
+  await assertUniqueLink(userId, context, payload.linkedPaymentMethod, id);
   const updated = await CreditCard.findByIdAndUpdate(id, payload, { new: true });
   if (!updated) throw httpError(404, 'Not found');
   return updated;

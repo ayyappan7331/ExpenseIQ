@@ -8,7 +8,6 @@ import { SkeletonCard } from '@/components/ui/Skeleton';
 import { useCategories } from '@/lib/hooks/useCategories';
 import { usePaymentMethods } from '@/lib/hooks/usePaymentMethods';
 import { useDeleteTransaction, useBulkDeleteTransactions } from './mutations';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { parseTransactionsCSV } from '@/lib/utils/csv';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api/client';
@@ -150,7 +149,7 @@ export default function TransactionsPage() {
     const reader = new FileReader();
     reader.onload = (e) => {
       const text = e.target?.result as string;
-      const result = parseTransactionsCSV(text, getActiveProfileId());
+      const result = parseTransactionsCSV(text);
       if (result.valid.length === 0) {
         toast(`No valid rows found (${result.errors.length} errors)`, 'error');
       } else {

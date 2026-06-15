@@ -10,10 +10,10 @@ import {
 import type { Transaction, Goal, Subscription, Budget } from '@/lib/types/api';
 
 const txns: Transaction[] = [
-  { id: '1', profileId: 'default', type: 'income', amount: 75000, date: '2026-05-01', category: 'Salary' },
-  { id: '2', profileId: 'default', type: 'expense', amount: 8000, date: '2026-05-02', category: 'Food' },
-  { id: '3', profileId: 'default', type: 'expense', amount: 4000, date: '2026-05-03', category: 'Transport' },
-  { id: '4', profileId: 'default', type: 'expense', amount: 3000, date: '2026-05-04', category: 'Food' },
+  { id: '1', context: 'default', type: 'income', amount: 75000, date: '2026-05-01', category: 'Salary' },
+  { id: '2', context: 'default', type: 'expense', amount: 8000, date: '2026-05-02', category: 'Food' },
+  { id: '3', context: 'default', type: 'expense', amount: 4000, date: '2026-05-03', category: 'Transport' },
+  { id: '4', context: 'default', type: 'expense', amount: 3000, date: '2026-05-04', category: 'Food' },
 ];
 
 describe('computeStats', () => {
@@ -59,8 +59,8 @@ describe('computeMonthTrends', () => {
 
 describe('getGoalForMonth', () => {
   const goals: Goal[] = [
-    { id: '1', profileId: 'default', month: '2026-05', amount: 50000 },
-    { id: '2', profileId: 'default', month: '2026-04', amount: 40000 },
+    { id: '1', context: 'default', month: '2026-05', amount: 50000 },
+    { id: '2', context: 'default', month: '2026-04', amount: 40000 },
   ];
 
   it('finds the goal for the given month', () => {
@@ -74,9 +74,9 @@ describe('getGoalForMonth', () => {
 
 describe('computeMonthlySubscriptionCost', () => {
   const subs: Subscription[] = [
-    { id: '1', profileId: 'default', name: 'Netflix', amount: 649, cycle: 'monthly', due: '2026-05-15', active: true },
-    { id: '2', profileId: 'default', name: 'Gym', amount: 12000, cycle: 'yearly', due: '2026-01-01', active: true },
-    { id: '3', profileId: 'default', name: 'Paused', amount: 500, cycle: 'monthly', due: '2026-05-01', active: false },
+    { id: '1', context: 'default', name: 'Netflix', amount: 649, cycle: 'monthly', due: '2026-05-15', active: true },
+    { id: '2', context: 'default', name: 'Gym', amount: 12000, cycle: 'yearly', due: '2026-01-01', active: true },
+    { id: '3', context: 'default', name: 'Paused', amount: 500, cycle: 'monthly', due: '2026-05-01', active: false },
   ];
 
   it('sums monthly cost (yearly/12, excludes inactive)', () => {
@@ -87,8 +87,8 @@ describe('computeMonthlySubscriptionCost', () => {
 
 describe('computeBudgetUsage', () => {
   const budgets: Budget[] = [
-    { id: '1', profileId: 'default', month: '2026-05', category: 'Food', amount: 10000 },
-    { id: '2', profileId: 'default', month: '2026-05', category: 'Transport', amount: 5000 },
+    { id: '1', context: 'default', month: '2026-05', category: 'Food', amount: 10000 },
+    { id: '2', context: 'default', month: '2026-05', category: 'Transport', amount: 5000 },
   ];
 
   it('computes total budget and used amount', () => {

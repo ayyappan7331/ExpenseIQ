@@ -36,14 +36,7 @@ export function LoginForm({
     setToken(res.token);
     setStoredUser({ id: res.user.id, email: res.user.email, name: res.user.name, dob: res.user.dob, purpose: res.user.purpose });
     qc.clear();
-    const { api } = await import('@/lib/api/client');
-    const { setActiveProfileId, clearActiveProfileId } = await import('@/lib/api/profile');
-    clearActiveProfileId();
-    const profiles = await api.getProfiles();
-    if (profiles.length > 0) {
-      const def = profiles.find(p => p.isDefault) ?? profiles[0];
-      setActiveProfileId(def.profileId);
-    }
+    // Profile logic removed
     router.push('/dashboard');
   }
 
@@ -135,7 +128,7 @@ export function LoginForm({
         type="button"
         onClick={() => onSwitchView('passwordless-login')}
         disabled={loading}
-        className="w-full py-3 text-sm font-semibold rounded-xl transition-all duration-200"
+        className="w-full py-3 text-sm font-semibold rounded-xl transition-all duration-200 cursor-pointer"
         style={{
           background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
           border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
@@ -147,7 +140,7 @@ export function LoginForm({
 
       <p className="text-center text-sm mt-6" style={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}>
         Don&apos;t have an account?{' '}
-        <button type="button" onClick={() => onSwitchView('register')} className="font-semibold hover:underline" style={{ color: isDark ? '#a78bfa' : '#6d52d8' }}>
+        <button type="button" onClick={() => onSwitchView('register')} className="font-semibold hover:underline cursor-pointer" style={{ color: isDark ? '#a78bfa' : '#6d52d8' }}>
           Create one now
         </button>
       </p>

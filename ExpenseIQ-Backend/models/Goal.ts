@@ -1,16 +1,23 @@
-import mongoose, { Schema } from 'mongoose';
-import type { Goal as GoalShape } from '../types/api';
+import mongoose, { Schema, Document } from 'mongoose';
 
-const goalSchema = new Schema<GoalShape>(
+interface GoalDocument extends Document {
+  userId: mongoose.Types.ObjectId;
+  context: 'Personal' | 'Business';
+  month: string;
+  amount: number;
+}
+
+const goalSchema = new Schema<GoalDocument>(
   {
-    profileId: { type: String, default: 'default' },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    context: { type: String, enum: ['Personal', 'Business'], default: 'Personal' },
     month: { type: String, required: true },
     amount: { type: Number, required: true },
   },
   { timestamps: true }
 );
 
-goalSchema.index({ profileId: 1, month: 1 }, { unique: true });
+goalSchema.index({ userId: 1, context: 1, month: 1 }, { unique: true });
 
-const Goal = mongoose.model<GoalShape>('Goal', goalSchema);
+const Goal = mongoose.model<GoalDocument>('Goal', goalSchema);
 export = Goal;

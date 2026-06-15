@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: process.env.NODE_ENV === 'qa' ? '.env.qa' : '.env' });
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -7,7 +7,6 @@ const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 const { corsOptions, buildRateLimiter } = require('./middleware/security');
 const authMiddleware = require('./middleware/auth');
-const profileScope = require('./middleware/profileScope');
 const healthCtrl = require('./controllers/healthController');
 const logger = require('./utils/logger');
 
@@ -48,16 +47,11 @@ app.use('/api/auth', require('./routes/auth'));
 // Auth gate for everything else under /api. No-op unless AUTH_ENABLED=true.
 app.use('/api', authMiddleware);
 
-// Profile scope gate — validates profileId belongs to req.user when AUTH_ENABLED.
-// Runs after auth so req.user is always populated first.
-app.use('/api', profileScope);
-
 // Resource routes (gated by authMiddleware above when AUTH_ENABLED=true)
 app.use('/api/transactions', require('./routes/transactions'));
 app.use('/api/subscriptions', require('./routes/subscriptions'));
 app.use('/api/debts', require('./routes/debts'));
 app.use('/api/goals', require('./routes/goals'));
-app.use('/api/profiles', require('./routes/profiles'));
 app.use('/api/creditcards', require('./routes/creditcards'));
 app.use('/api/settings', require('./routes/settings'));
 app.use('/api/budgets', require('./routes/budgets'));

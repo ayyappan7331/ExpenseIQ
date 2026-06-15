@@ -2,24 +2,22 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api/client';
-import { getActiveProfileId } from '@/lib/api/profile';
 import { queryKeys } from '@/lib/hooks/queries/keys';
-import type { ProfileId } from '@/lib/types/api';
 
-export function useCreditCards(opts: { profileId?: ProfileId } = {}) {
-  const profileId = opts.profileId ?? getActiveProfileId();
+export function useCreditCards(opts: { context?: string } = {}) {
+  const context = opts.context ?? 'Personal';
   return useQuery({
-    queryKey: queryKeys.creditCards.list(profileId),
-    queryFn: () => api.getCreditCards({ profileId }),
+    queryKey: queryKeys.creditCards.list(context),
+    queryFn: () => api.getCreditCards({ context }),
     staleTime: 30 * 1000,
   });
 }
 
-export function useArchivedCreditCards(opts: { profileId?: ProfileId } = {}) {
-  const profileId = opts.profileId ?? getActiveProfileId();
+export function useArchivedCreditCards(opts: { context?: string } = {}) {
+  const context = opts.context ?? 'Personal';
   return useQuery({
-    queryKey: [...queryKeys.creditCards.list(profileId), 'archived'],
-    queryFn: () => api.getArchivedCreditCards({ profileId }),
+    queryKey: [...queryKeys.creditCards.list(context), 'archived'],
+    queryFn: () => api.getArchivedCreditCards({ context }),
     staleTime: 30 * 1000,
   });
 }

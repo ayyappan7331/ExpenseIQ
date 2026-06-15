@@ -6,8 +6,6 @@ import { Check, Pencil, X } from 'lucide-react';
 import { useUpdateCreditCard, useCreateCreditCard } from './mutations';
 import type { CardStats } from './helpers';
 import type { NewCreditCard } from '@/lib/types/api';
-import { getActiveProfileId } from '@/lib/api/profile';
-
 const PRESET_COLORS = [
   '#7c6ff7', // purple (default)
   '#38bdf8', // sky
@@ -93,7 +91,7 @@ function CardRow({ card, onSaved }: CardRowProps) {
 
   const update = useUpdateCreditCard();
   const create = useCreateCreditCard();
-  const profileId = getActiveProfileId();
+  const context = 'Personal';
 
   function openEdit() {
     setName(card.meta?.name ?? card.name);
@@ -128,7 +126,7 @@ function CardRow({ card, onSaved }: CardRowProps) {
       );
     } else {
       create.mutate(
-        { ...payload, profileId, name: name || card.name, billDate: Number(billDate), duePeriod: Number(duePeriod) } as NewCreditCard,
+        { ...payload, context, name: name || card.name, billDate: Number(billDate), duePeriod: Number(duePeriod) } as NewCreditCard,
         { onSuccess: () => { setEditing(false); onSaved(); } }
       );
     }

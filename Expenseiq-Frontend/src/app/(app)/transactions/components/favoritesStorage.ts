@@ -5,20 +5,19 @@
 // These helpers are used only as a fallback before the FinancialConfig query resolves.
 
 import { lsGet, lsProfileKey } from '@/lib/utils/localStorage';
-import { getActiveProfileId } from '@/lib/api/profile';
 import type { FavoriteTransaction } from '@/lib/types/api';
 
 export { type FavoriteTransaction };
 
 export const FAVORITES_BASE_KEY = 'expenseiq_favorite_transactions';
 
-export function favoritesKey(profileId?: string): string {
-  return lsProfileKey(FAVORITES_BASE_KEY, profileId ?? getActiveProfileId());
+export function favoritesKey(context?: string): string {
+  return lsProfileKey(FAVORITES_BASE_KEY, context ?? 'Personal');
 }
 
 /** Load favorites from localStorage (fallback only). */
-export function loadFavorites(profileId?: string): FavoriteTransaction[] {
-  return lsGet<FavoriteTransaction>(favoritesKey(profileId)).sort((a, b) => {
+export function loadFavorites(context?: string): FavoriteTransaction[] {
+  return lsGet<FavoriteTransaction>(favoritesKey(context)).sort((a, b) => {
     if (a.usageCount !== b.usageCount) return b.usageCount - a.usageCount;
     return new Date(b.lastUsed).getTime() - new Date(a.lastUsed).getTime();
   });
