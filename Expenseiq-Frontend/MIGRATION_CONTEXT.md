@@ -10757,3 +10757,77 @@ login/register pages, and no route guard. App was broken when `AUTH_ENABLED=true
 * **Files changed**: `src/components/ThemeInitScript.tsx`, `src/components/layout/AppShell.tsx`
 * **What changed and why**: Updated ThemeInitScript to allow parsing custom themes from local storage and injecting minimal CSS instantly to avoid FOUC. Fixed a typo in AppShell where it was syncing using the old legacy key instead of the current one, preventing redundant theme resets.
 * **Validation**: Manually verified no FOUC and test validation running.
+
+---
+
+## Cross-User Data Isolation Fix + Profile Architecture Deprecation (Phase 11)
+
+### Section: Security — Multi-Tenancy Isolation Fix
+
+**Date:** 2026-06-15
+
+### Files Changed
+
+**Backend:**
+- controllers/profileController.js — DELETED
+- middleware/profileScope.js — DELETED
+- models/Profile.js — DELETED
+- outes/profiles.js — DELETED
+- services/profileService.js — DELETED
+- server.js — removed profileScope middleware and /api/profiles route
+- models/Goal.ts — fixed TypeScript type: GoalDocument with ObjectId userId (not API DTO string)
+- 	ypes/api.ts — replaced all profileId: ProfileId with userId: string across all resource interfaces
+- scripts/repairOrphanedDocuments.js — NEW: one-time database repair migration script
+- package.json — added migrate:repair and migrate:repair:apply scripts
+
+**Frontend:**
+- src/components/layout/ProfileManager.tsx — DELETED
+- src/components/layout/ProfileManager.test.tsx — DELETED
+- src/lib/api/profile.ts, profiles.ts, profile.test.ts — DELETED
+- src/lib/hooks/queries/useProfiles.ts — DELETED
+- src/lib/hooks/queries/useTransactions.test.tsx — DELETED (stale test)
+- All remaining files: replaced profileId with context throughout
+
+### What Changed and Why
+
+**Root Cause:** The auth middleware was a feature flag (AUTH_ENABLED !== 'true' = no-op). All records created before auth was enforced have no userId field. MongoDB queries with { userId: undefined } match documents where userId is absent — making all pre-auth records appear shared across every user.
+
+**Database Migration Applied:**
+- scripts/repairOrphanedDocuments.js was run with --apply against production MongoDB
+- 510 orphaned documents across 7 collections assigned to ayyappan7331@gmail.com:
+  - Transaction: 494
+  - Budget: 8
+  - FinancialConfig: 2
+  - Settings: 2
+  - CreditCard: 2
+  - Debt: 1
+  - Goal: 1
+- Post-fix verification confirmed zero orphaned documents remain
+
+**Architecture changes:**
+- Profile entity fully removed from backend (collections, routes, middleware, service)
+- All data is now scoped strictly by userId (from JWT) + optional context (Personal/Business)
+- Frontend removed ProfileManager component, profile switcher, and all profileId API params
+- OTP-first login flow enforced (PasswordlessLoginForm is the default view)
+
+### Architecture Rules Introduced
+
+- **NEVER** leave AUTH_ENABLED as anything other than 'true' in any environment that connects to a real database
+- **ALWAYS** scope database queries with { userId, ... } — never query without userId in resource collections
+- **NEVER** create a Profile or similar tenant-grouping entity; data is scoped directly by userId
+- **userId in all resource documents is REQUIRED** — the equired: true constraint must remain on all Mongoose schemas
+
+### Formulas / Invariants
+
+- Every resource document MUST have userId (ObjectId, ref: 'User', required: true)
+- Every GET query MUST include { userId } in the MongoDB filter
+- Every mutation (update/delete) MUST scope by { _id, userId } — never by _id alone
+- context defaults to 'Personal' if not provided
+
+### Validation Results
+
+- 
+pm run migrate:repair (dry-run): 510 orphaned documents found across 7 collections
+- 
+pm run migrate:repair:apply: 510 records fixed, 0 errors, post-fix verification passed
+- git push origin main: commit ce4379e — 115 files changed, 679 insertions, 1045 deletions
