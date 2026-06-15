@@ -37,52 +37,70 @@ export const WaveBackground = memo(function WaveBackground({ tokens }: { tokens:
     const lerpedC1 = lerp(colorFromRef.current[1], colorToRef.current[1], eased);
     prevColorsRef.current = [lerpedC0, lerpedC1];
     
-    // Use Tiranga colors explicitly regardless of theme
-    const saffron = [255, 153, 51];
-    const green = [19, 136, 8];
-    const bands = [
-      { yFrac: 0.35, freq: 1.4, speed: 0.045, amp: 0.065, phase: 0.0, color: saffron, boost: 2.0 },
-      { yFrac: 0.70, freq: 1.2, speed: 0.050, amp: 0.060, phase: 2.0, color: green, boost: 2.2 },
+    const baseAlpha = tk.waveAlphaBase * 1.5; // Boost slightly for dotted visibility
+
+    // Define 3 depth layers for parallax (background, midground, foreground)
+    const layers = [
+      { z: 0.3, color: lerpedC0, blur: 12, alphaMulti: 0.3, speedMulti: 0.2, ampMulti: 0.6, lines: 8, dotSpace: 25, thickness: 8 },
+      { z: 0.6, color: lerpedC1, blur: 4, alphaMulti: 0.6, speedMulti: 0.5, ampMulti: 0.9, lines: 12, dotSpace: 15, thickness: 3.5 },
+      { z: 1.0, color: lerpedC0, blur: 0, alphaMulti: 1.0, speedMulti: 1.0, ampMulti: 1.2, lines: 16, dotSpace: 8, thickness: 2 },
     ];
-    const LINES_PER_BAND = 18; const BAND_SPREAD = 0.07;
-    const baseAlpha = tk.waveAlphaBase;
-    for (const band of bands) {
-      const yCentre = band.yFrac * H; const spread = BAND_SPREAD; const half = (spread * H) / 2;
-      for (let li = 0; li < LINES_PER_BAND; li++) {
-        const liFrac = li / (LINES_PER_BAND - 1); const yBase = yCentre - half + liFrac * half * 2;
-        const distEdge = Math.abs(liFrac - 0.5) * 2;
-        const alpha = (baseAlpha - distEdge * 0.09) * (band.boost ?? 1);
-        if (alpha <= 0) continue;
-        const strokeW = 0.4 + (1 - distEdge) * 0.4;
-        const linePhase = band.phase + li * 0.22;
-        const [r, g, b] = band.color;
+
+    const yCentre = 0.55 * H; // Center of the waves slightly lower
+    const spread = 0.25; // Vertical spread of the lines within a layer
+    
+    ctx.lineCap = 'round'; // Essential for circular dots
+    ctx.lineJoin = 'round';
+
+    // Draw layers back-to-front
+    for (const layer of layers) {
+      const half = (spread * H) * layer.z; // Scale spread by depth
+      ctx.shadowBlur = layer.blur;
+      ctx.shadowColor = `rgba(${layer.color[0]}, ${layer.color[1]}, ${layer.color[2]}, ${baseAlpha * layer.alphaMulti * 0.8})`;
+      
+      for (let li = 0; li < layer.lines; li++) {
+        const liFrac = layer.lines > 1 ? li / (layer.lines - 1) : 0.5;
+        const yBase = yCentre - half + liFrac * half * 2;
+        const distEdge = Math.abs(liFrac - 0.5) * 2; // 0 at center, 1 at edge
+        
+        // Fade out lines that are further from the center vertically
+        const alpha = (baseAlpha * layer.alphaMulti) * (1 - distEdge * 0.7);
+        if (alpha <= 0.01) continue;
+        
+        const strokeW = layer.thickness;
+        const linePhase = li * 0.4 + layer.z * 15; // offset phase
+        const [r, g, b] = layer.color;
         
         ctx.beginPath();
-        for (let x = 0; x <= W; x += 6) {
-          const r1 = Math.sin(t * 1.13 + li * 0.71);
-          const r2 = Math.cos(t * 0.87 + (x / W) * 4.3 + li * 0.47);
-          const dynamicPhase = linePhase + Math.sin(t * 0.6 + (x / W) * 3) * 1.5 + r1 * 2.5;
-          const dynamicAmp = band.amp * (1 + Math.sin(t * 0.4 + li * 0.3) * 0.6 + r2 * 0.7);
-          const dynamicFreq = band.freq * (1 + Math.sin(t * 0.3 + (x / W)) * 0.4 + (r1 * r2) * 0.5);
-          const y = yBase + Math.sin((x / W) * Math.PI * 2 * dynamicFreq + t * band.speed * Math.PI * 2 + dynamicPhase) * dynamicAmp * H;
-          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = `rgba(${r},${g},${b},${alpha * 0.3})`; ctx.lineWidth = strokeW * 6;
-        ctx.shadowColor = `rgba(${r},${g},${b},0.12)`; ctx.shadowBlur = 10; ctx.stroke();
+        // Using [0, space] with lineCap 'round' creates perfect dotted circles
+        ctx.setLineDash([0, layer.dotSpace]);
+        ctx.lineWidth = strokeW;
+        ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
         
-        ctx.beginPath();
-        for (let x = 0; x <= W; x += 3) {
-          const r1 = Math.sin(t * 1.13 + li * 0.71);
-          const r2 = Math.cos(t * 0.87 + (x / W) * 4.3 + li * 0.47);
-          const dynamicPhase = linePhase + Math.sin(t * 0.6 + (x / W) * 3) * 1.5 + r1 * 2.5;
-          const dynamicAmp = band.amp * (1 + Math.sin(t * 0.4 + li * 0.3) * 0.6 + r2 * 0.7);
-          const dynamicFreq = band.freq * (1 + Math.sin(t * 0.3 + (x / W)) * 0.4 + (r1 * r2) * 0.5);
-          const y = yBase + Math.sin((x / W) * Math.PI * 2 * dynamicFreq + t * band.speed * Math.PI * 2 + dynamicPhase) * dynamicAmp * H;
-          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        const step = Math.max(4, layer.dotSpace / 2);
+        for (let x = 0; x <= W + step; x += step) {
+          const xNorm = x / W;
+          
+          // Complex sine wave math for organic flow
+          const dynamicPhase = linePhase + Math.sin(t * 0.4 * layer.speedMulti + xNorm * 3) * 1.5;
+          const dynamicAmp = 0.1 * layer.ampMulti * (1 + Math.sin(t * 0.3 + li * 0.2) * 0.4);
+          const dynamicFreq = 1.2 * (1 + Math.sin(t * 0.2 + xNorm * 1.5) * 0.3);
+          
+          const y = yBase + Math.sin(xNorm * Math.PI * 2 * dynamicFreq + t * 0.1 * layer.speedMulti * Math.PI * 2 + dynamicPhase) * dynamicAmp * H;
+          if (x === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
         }
-        ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`; ctx.lineWidth = strokeW; ctx.shadowBlur = 0; ctx.stroke();
+        ctx.stroke();
       }
     }
+    
+    // Cleanup canvas state for next frame
+    ctx.setLineDash([]);
+    ctx.shadowBlur = 0;
+    
     rafRef.current = requestAnimationFrame(draw);
   }, []);
 

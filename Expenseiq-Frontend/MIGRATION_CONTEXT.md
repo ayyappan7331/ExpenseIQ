@@ -10831,3 +10831,26 @@ pm run migrate:repair (dry-run): 510 orphaned documents found across 7 collectio
 - 
 pm run migrate:repair:apply: 510 records fixed, 0 errors, post-fix verification passed
 - git push origin main: commit ce4379e — 115 files changed, 679 insertions, 1045 deletions
+
+## Premium Wave Background Redesign
+
+### Files Changed
+- \src/app/(auth)/login/components/WaveBackground.tsx\
+
+### What Changed and Why
+- Redesigned the login page animated wave background to a premium, dotted particle-wave mesh with distinct depth layering and parallax effects.
+- Implemented using native HTML5 Canvas API without additional dependencies.
+- Replaced solid continuous sine wave paths with dotted circles (\setLineDash\ and \lineCap = 'round'\) overlapping at different speeds and opacities.
+- Preserved existing dynamic theme integration by consuming \	okensRef.current\ and smoothly interpolating between light and dark modes.
+
+### Architecture Rules Enforced
+- Maintained usage of native Canvas API (\equestAnimationFrame\) to prevent costly React state rerenders for 60 FPS animation.
+- No standalone CSS or separate animation libraries were introduced.
+
+### Formulas / Patterns
+- Depth mapping (parallax): Layers closer to the front (z=1.0) move faster, have lower blur, and are spread more widely than background layers (z=0.3).
+- Particle dots: \ctx.setLineDash([0, spacing])\ coupled with \ctx.lineCap = 'round'\.
+
+### Validation Results
+- typecheck / lint passed.
+- Canvas animation loop correctly bounded by component lifecycle.
