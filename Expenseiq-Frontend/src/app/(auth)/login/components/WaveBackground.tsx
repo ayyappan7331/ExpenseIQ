@@ -48,8 +48,8 @@ export const WaveBackground = memo(function WaveBackground({ tokens }: { tokens:
 
     // Define 3 depth layers for parallax using Tiranga colors
     const layers = [
-      { z: 0.3, color: green, blur: 24, alphaMulti: 0.8, speedMulti: 0.2, ampMulti: 0.6, lines: 8, dotSpace: 25, thickness: 8 },
-      { z: 0.6, color: white, blur: 16, alphaMulti: 0.9, speedMulti: 0.5, ampMulti: 0.9, lines: 12, dotSpace: 15, thickness: 3.5 },
+      { z: 0.3, color: white, blur: 24, alphaMulti: 0.8, speedMulti: 0.2, ampMulti: 0.6, lines: 8, dotSpace: 25, thickness: 8 },
+      { z: 0.6, color: green, blur: 16, alphaMulti: 0.9, speedMulti: 0.5, ampMulti: 0.9, lines: 12, dotSpace: 15, thickness: 3.5 },
       { z: 1.0, color: saffron, blur: 8, alphaMulti: 1.3, speedMulti: 1.0, ampMulti: 1.2, lines: 16, dotSpace: 8, thickness: 2 },
     ];
 
