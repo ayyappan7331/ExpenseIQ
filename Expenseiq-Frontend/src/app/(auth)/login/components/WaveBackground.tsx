@@ -42,66 +42,56 @@ export const WaveBackground = memo(function WaveBackground({ tokens }: { tokens:
     const saffron = [255, 153, 51];
     const green = [19, 136, 8];
 
-    // Boost alpha for a stronger, glowing effect
+    // Greatly boost alpha for a stronger, glowing effect
     const baseAlpha = Math.max(tk.waveAlphaBase * 4.0, 0.45);
 
-    // Two layers representing the two strands of DNA, perfectly 180 degrees (Math.PI) out of phase
-    const strands = [
-      { color: green, blur: 16, alphaMulti: 1.0, lines: 12, dotSpace: 15, thickness: 3.5, phaseOffset: 0 },
-      { color: saffron, blur: 16, alphaMulti: 1.0, lines: 12, dotSpace: 15, thickness: 3.5, phaseOffset: Math.PI },
+    // Define 2 depth layers for parallax using Tiranga colors
+    const layers = [
+      { z: 0.3, color: green, blur: 24, alphaMulti: 0.8, speedMulti: 0.2, ampMulti: 0.6, lines: 8, dotSpace: 25, thickness: 8 },
+      { z: 1.0, color: saffron, blur: 8, alphaMulti: 1.3, speedMulti: 1.0, ampMulti: 1.2, lines: 16, dotSpace: 8, thickness: 2 },
     ];
 
-    const yCentre = 0.5 * H; // Centered vertically
-    const spread = 0.08; // Vertical spread of the inner lines of a single strand
+    const yCentre = 0.55 * H; // Center of the waves slightly lower
+    const spread = 0.25; // Vertical spread of the lines within a layer
     
-    ctx.lineCap = 'round';
+    ctx.lineCap = 'round'; // Essential for circular dots
     ctx.lineJoin = 'round';
 
-    for (const strand of strands) {
-      const half = spread * H;
-      ctx.shadowBlur = strand.blur;
-      ctx.shadowColor = `rgba(${strand.color[0]}, ${strand.color[1]}, ${strand.color[2]}, ${baseAlpha * strand.alphaMulti * 0.8})`;
+    // Draw layers back-to-front
+    for (const layer of layers) {
+      const half = (spread * H) * layer.z; // Scale spread by depth
+      ctx.shadowBlur = layer.blur;
+      ctx.shadowColor = `rgba(${layer.color[0]}, ${layer.color[1]}, ${layer.color[2]}, ${baseAlpha * layer.alphaMulti * 0.8})`;
       
-      for (let li = 0; li < strand.lines; li++) {
-        const liFrac = strand.lines > 1 ? li / (strand.lines - 1) : 0.5;
+      for (let li = 0; li < layer.lines; li++) {
+        const liFrac = layer.lines > 1 ? li / (layer.lines - 1) : 0.5;
         const yBase = yCentre - half + liFrac * half * 2;
-        const distEdge = Math.abs(liFrac - 0.5) * 2;
+        const distEdge = Math.abs(liFrac - 0.5) * 2; // 0 at center, 1 at edge
         
-        const alpha = (baseAlpha * strand.alphaMulti) * (1 - distEdge * 0.5);
+        // Fade out lines that are further from the center vertically
+        const alpha = (baseAlpha * layer.alphaMulti) * (1 - distEdge * 0.7);
         if (alpha <= 0.01) continue;
         
-        const strokeW = strand.thickness;
-        // Inner lines slightly offset in phase to create a "ribbon" thickness
-        const linePhase = strand.phaseOffset + (liFrac - 0.5) * 0.4; 
-        const [r, g, b] = strand.color;
+        const strokeW = layer.thickness;
+        const linePhase = li * 0.4 + layer.z * 15; // offset phase
+        const [r, g, b] = layer.color;
         
         ctx.beginPath();
-        ctx.setLineDash([0, strand.dotSpace]);
+        // Using [0, space] with lineCap 'round' creates perfect dotted circles
+        ctx.setLineDash([0, layer.dotSpace]);
         ctx.lineWidth = strokeW;
         ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
         
-        const step = Math.max(4, strand.dotSpace / 2);
+        const step = Math.max(4, layer.dotSpace / 2);
         for (let x = 0; x <= W + step; x += step) {
           const xNorm = x / W;
           
-          // DNA specific math
-          const twists = 2.5; // Number of full helical twists across the screen
-          const spinSpeed = 0.25; // Speed of horizontal rotation
+          // Complex sine wave math for organic flow
+          const dynamicPhase = linePhase + Math.sin(t * 0.4 * layer.speedMulti + xNorm * 3) * 1.5;
+          const dynamicAmp = 0.1 * layer.ampMulti * (1 + Math.sin(t * 0.3 + li * 0.2) * 0.4);
+          const dynamicFreq = 1.2 * (1 + Math.sin(t * 0.2 + xNorm * 1.5) * 0.3);
           
-          // Global gentle undulation so the DNA isn't completely rigid
-          const globalWobble = Math.sin(xNorm * Math.PI * 1.5 + t * 0.15) * 0.08 * H;
-          
-          // Helix rotation angle
-          const theta = xNorm * Math.PI * 2 * twists - t * spinSpeed * Math.PI * 2 + linePhase;
-          
-          // Y position based on sine to create the 2D projection of a 3D helix
-          const dynamicAmp = 0.18; // Helix radius
-          const y = yBase + globalWobble + Math.sin(theta) * dynamicAmp * H;
-          
-          // Simulate 3D depth by changing stroke thickness/alpha based on cosine (z-axis)
-          // Wait, stroke() draws the whole path with one style. We can't change thickness per point easily with stroke().
-          // But the phase shift alone successfully creates the spinning DNA illusion.
-          
+          const y = yBase + Math.sin(xNorm * Math.PI * 2 * dynamicFreq + t * 0.1 * layer.speedMulti * Math.PI * 2 + dynamicPhase) * dynamicAmp * H;
           if (x === 0) {
             ctx.moveTo(x, y);
           } else {
