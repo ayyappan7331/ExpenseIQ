@@ -100,9 +100,24 @@ export default function LoginPage() {
 
   const glowAStyle = useMemo<React.CSSProperties>(() => ({ position: 'absolute', top: '10%', left: '5%', width: '50vw', height: '50vw', borderRadius: '50%', background: `radial-gradient(circle, ${tk.glowA} 0%, transparent 70%)`, filter: 'blur(60px)', transition: 'background 0.6s ease' }), [tk]);
   const glowBStyle = useMemo<React.CSSProperties>(() => ({ position: 'absolute', bottom: '5%', right: '10%', width: '35vw', height: '35vw', borderRadius: '50%', background: `radial-gradient(circle, ${tk.glowB} 0%, transparent 70%)`, filter: 'blur(60px)', transition: 'background 0.6s ease' }), [tk]);
-  const panelStyle = useMemo<React.CSSProperties>(() => ({ background: tk.cardBg, backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', border: `1px solid ${tk.cardBorder}`, borderRadius: 24, boxShadow: tk.cardShadow, padding: '2rem', width: '100%', minWidth: 'min(440px, 100vw)', maxWidth: 500, maxHeight: '90vh', overflowY: 'auto', transition: 'background 0.4s ease, border-color 0.4s ease' }), [tk]);
+  const panelStyle = useMemo<React.CSSProperties>(() => ({ 
+    background: tk.cardBg, 
+    backdropFilter: 'blur(32px)', 
+    WebkitBackdropFilter: 'blur(32px)', 
+    border: `1px solid ${tk.cardBorder}`, 
+    borderRadius: 32, 
+    boxShadow: `0 25px 50px -12px rgba(0,0,0,0.25), inset 0 1px 1px rgba(255, 255, 255, ${loginTheme === 'dark' ? 0.05 : 0.3})`, 
+    padding: '2.5rem', 
+    width: '100%', 
+    maxWidth: 440, 
+    maxHeight: '90vh', 
+    overflowY: 'auto', 
+    transition: 'background 0.4s ease, border-color 0.4s ease',
+    position: 'relative',
+    zIndex: 30
+  }), [tk, loginTheme]);
 
-  const logoFontStyle = { fontSize: 'clamp(3rem, 8vw, 7rem)', fontFamily: 'var(--font-space-grotesk), system-ui', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1 };
+  const logoFontStyle = { fontSize: 'clamp(2.5rem, 6vw, 5rem)', fontFamily: 'var(--font-space-grotesk), system-ui', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1 };
 
   const formProps = {
     theme: loginTheme,
@@ -127,54 +142,65 @@ export default function LoginPage() {
         <div style={glowBStyle} />
       </div>
 
-      <div className="absolute top-0 left-0 p-8 sm:p-12 z-10">
-        <div className="space-y-2">
-          <div className="flex items-baseline gap-1">
-            <span style={{ ...logoFontStyle, background: 'linear-gradient(135deg, #a78bfa 0%, #7c6ff7 40%, #5ee8b0 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', filter: 'drop-shadow(0 0 32px rgba(124,111,247,0.4))' }}>Expense</span>
-            <span style={{ ...logoFontStyle, background: 'linear-gradient(135deg,#5ee8b0 0%,#38bdf8 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>I</span>
-            <span ref={qRef} onDoubleClick={handleQDoubleClick} onMouseDown={handleQMouseDown} onMouseUp={cancelHold} onMouseLeave={cancelHold} onTouchEnd={handleQTouchEnd}
-              style={{ ...logoFontStyle, background: 'linear-gradient(135deg,#5ee8b0 0%,#38bdf8 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', cursor: 'default', userSelect: 'none', WebkitUserSelect: 'none' }}>Q</span>
-          </div>
-          <p style={{ fontSize: 'clamp(0.7rem, 1.5vw, 1rem)', color: tk.tracker, letterSpacing: '0.25em', textTransform: 'uppercase', fontFamily: 'var(--font-space-grotesk)', transition: 'color 0.4s ease' }}>Intelligent Spend Tracker</p>
-        </div>
-        <div className="hidden lg:flex flex-col gap-4 mt-14">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full flex items-center justify-center bg-violet-500/10" style={{ boxShadow: tk.dot0Shadow, transition: 'box-shadow 0.4s ease' }}>
-              <div className="w-3 h-3 rounded-full" style={{ background: tk.taglineDot0, transition: 'background 0.4s ease' }} />
+      <div className="relative min-h-screen w-full flex flex-col lg:grid lg:grid-cols-2 z-20">
+        
+        {/* Left Side: Branding */}
+        <div className="flex flex-col justify-center p-8 sm:p-12 lg:p-20 order-1 lg:order-1 lg:h-full mt-[5vh] lg:mt-0">
+          <div className="space-y-4 max-w-xl">
+            <div className="flex items-baseline gap-1">
+              <span style={{ ...logoFontStyle, background: 'linear-gradient(135deg, #a78bfa 0%, #7c6ff7 40%, #5ee8b0 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', filter: 'drop-shadow(0 0 24px rgba(124,111,247,0.3))' }}>Expense</span>
+              <span style={{ ...logoFontStyle, background: 'linear-gradient(135deg,#5ee8b0 0%,#38bdf8 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>I</span>
+              <span ref={qRef} onDoubleClick={handleQDoubleClick} onMouseDown={handleQMouseDown} onMouseUp={cancelHold} onMouseLeave={cancelHold} onTouchEnd={handleQTouchEnd}
+                style={{ ...logoFontStyle, background: 'linear-gradient(135deg,#5ee8b0 0%,#38bdf8 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', cursor: 'default', userSelect: 'none', WebkitUserSelect: 'none' }}>Q</span>
             </div>
-            <span style={{ color: tk.subtitle, transition: 'color 0.4s ease' }} className="font-medium tracking-wide">Sync everywhere</span>
+            <p style={{ fontSize: 'clamp(0.85rem, 1.2vw, 1.1rem)', color: tk.tracker, letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'var(--font-space-grotesk)', transition: 'color 0.4s ease' }} className="font-medium">Intelligent Spend Tracker</p>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full flex items-center justify-center bg-cyan-500/10" style={{ boxShadow: tk.dot1Shadow, transition: 'box-shadow 0.4s ease' }}>
-              <div className="w-3 h-3 rounded-full" style={{ background: tk.taglineDot1, transition: 'background 0.4s ease' }} />
+          
+          <div className="hidden lg:flex flex-col gap-6 mt-16">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-violet-500/10 backdrop-blur-md border border-violet-500/20" style={{ boxShadow: tk.dot0Shadow, transition: 'box-shadow 0.4s ease' }}>
+                <div className="w-3.5 h-3.5 rounded-full shadow-[0_0_12px_rgba(167,139,250,0.8)]" style={{ background: tk.taglineDot0, transition: 'background 0.4s ease' }} />
+              </div>
+              <span style={{ color: tk.subtitle, transition: 'color 0.4s ease' }} className="text-lg font-medium tracking-wide">Sync everywhere</span>
             </div>
-            <span style={{ color: tk.subtitle, transition: 'color 0.4s ease' }} className="font-medium tracking-wide">Zero config</span>
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-cyan-500/10 backdrop-blur-md border border-cyan-500/20" style={{ boxShadow: tk.dot1Shadow, transition: 'box-shadow 0.4s ease' }}>
+                <div className="w-3.5 h-3.5 rounded-full shadow-[0_0_12px_rgba(56,189,248,0.8)]" style={{ background: tk.taglineDot1, transition: 'background 0.4s ease' }} />
+              </div>
+              <span style={{ color: tk.subtitle, transition: 'color 0.4s ease' }} className="text-lg font-medium tracking-wide">Zero config</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="absolute inset-y-0 right-0 w-full lg:w-[55%] flex items-center justify-center p-4 sm:p-12 z-20">
-        <div style={panelStyle}>
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold mb-2">
-              {view === 'login' ? 'Welcome back' : view === 'register' ? 'Create an account' : view === 'forgot-password' ? 'Reset password' : 'Login Securely'}
-            </h2>
-            <p className="text-sm" style={{ color: tk.tagline, transition: 'color 0.4s ease' }}>
-              {view === 'login' ? 'Enter your details to access your dashboard.' : view === 'register' ? 'Set up your ExpenseIQ profile.' : view === 'forgot-password' ? 'We\'ll help you get back in.' : 'Receive a one-time code to login instantly.'}
-            </p>
-          </div>
+        {/* Right Side: Auth Card */}
+        <div className="flex flex-col items-center justify-center p-4 sm:p-8 lg:p-12 order-2 lg:order-2 flex-grow relative">
+          
+          {/* Intense ambient glow immediately behind the card */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[600px] h-[600px] rounded-full pointer-events-none opacity-40 mix-blend-screen" style={{ background: `radial-gradient(circle, ${tk.glowA} 0%, transparent 60%)`, filter: 'blur(80px)' }} aria-hidden />
 
-          {error && (
-            <div className="mb-6 p-4 rounded-xl text-sm border bg-red-500/10 border-red-500/20 text-red-500 animate-in fade-in slide-in-from-top-1 duration-200">
-              {error}
+          <div style={panelStyle} className="animate-in fade-in zoom-in-95 slide-in-from-bottom-8 duration-700 ease-out">
+            <div className="mb-8">
+              <h2 className="text-3xl lg:text-4xl font-semibold mb-3 tracking-tight">
+                {view === 'login' ? 'Welcome back' : view === 'register' ? 'Create an account' : view === 'forgot-password' ? 'Reset password' : 'Login Securely'}
+              </h2>
+              <p className="text-base font-medium" style={{ color: tk.tagline, transition: 'color 0.4s ease' }}>
+                {view === 'login' ? 'Enter your details to access your dashboard.' : view === 'register' ? 'Set up your ExpenseIQ profile.' : view === 'forgot-password' ? 'We\'ll help you get back in.' : 'Receive a one-time code to login instantly.'}
+              </p>
             </div>
-          )}
 
-          {view === 'login' && <LoginForm {...formProps} />}
-          {view === 'register' && <RegisterForm {...formProps} />}
-          {view === 'forgot-password' && <ForgotPasswordForm {...formProps} />}
-          {view === 'passwordless-login' && <PasswordlessLoginForm {...formProps} />}
+            {error && (
+              <div className="mb-6 p-4 rounded-xl text-sm font-medium border bg-red-500/10 border-red-500/20 text-red-500 animate-in fade-in slide-in-from-top-2 duration-300">
+                {error}
+              </div>
+            )}
+
+            {view === 'login' && <LoginForm {...formProps} />}
+            {view === 'register' && <RegisterForm {...formProps} />}
+            {view === 'forgot-password' && <ForgotPasswordForm {...formProps} />}
+            {view === 'passwordless-login' && <PasswordlessLoginForm {...formProps} />}
+          </div>
         </div>
+
       </div>
     </div>
   );

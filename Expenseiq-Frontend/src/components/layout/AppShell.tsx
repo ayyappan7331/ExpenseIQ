@@ -15,7 +15,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const { data: settings } = useSettings();
-  const { theme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
 
 
   // Profile Theme Sync

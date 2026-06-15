@@ -7,7 +7,7 @@
 // here — this page exists to prove the API+query layer round-trips against
 // the real backend on http://localhost:5000/api.
 
-import { useTransactions, useHealth, useVersion, useSettings, useBudgets, useCreditCards } from '@/lib/hooks/queries';
+import { useTransactions, useHealth, useVersion } from '@/lib/hooks/queries';
 import type { UseQueryResult } from '@tanstack/react-query';
 
 function State<T>({ q, label }: { q: UseQueryResult<T>; label: string }) {

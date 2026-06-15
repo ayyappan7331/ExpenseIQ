@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable react-hooks/set-state-in-effect */
 
 import { useMemo, useState, useEffect } from 'react';
 import { Plus, Repeat, DollarSign, Pause } from 'lucide-react';

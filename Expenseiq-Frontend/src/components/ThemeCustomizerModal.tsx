@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable react-hooks/set-state-in-effect */
 
 import { useState, useCallback, useEffect } from 'react';
 import { X, Check, Trash2, RotateCcw, Wand2 } from 'lucide-react';

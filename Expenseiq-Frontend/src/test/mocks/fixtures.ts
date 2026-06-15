@@ -30,7 +30,7 @@ export const fixtures = {
   profiles: [
     { _id: OID(1), context: 'default', name: 'Personal', icon: '👤', isDefault: true },
     { _id: OID(2), context: 'work', name: 'Work', icon: '💼', isDefault: false },
-  ] as Array<any>,
+  ] as Array<{ _id: string; context: string; name: string; icon: string; isDefault: boolean }>,
 
   transactions: [
     {

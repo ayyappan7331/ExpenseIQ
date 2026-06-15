@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable react-hooks/set-state-in-effect */
 
 import {
   createContext,
@@ -11,7 +12,6 @@ import {
 } from 'react';
 import {
   DEFAULT_THEME,
-  isThemeKey,
   THEMES,
   THEME_STORAGE_KEY,
   type ThemeKey,

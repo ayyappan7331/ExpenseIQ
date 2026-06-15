@@ -55,9 +55,9 @@ export default function ThemesPage() {
     onMutate: async (newTheme) => {
       await qc.cancelQueries({ queryKey: queryKeys.settings.all });
       const queryKey = queryKeys.settings.one('Personal');
-      const previousSettings: any = qc.getQueryData(queryKey);
+      const previousSettings: unknown = qc.getQueryData(queryKey);
       
-      qc.setQueryData(queryKey, (old: any) => {
+      qc.setQueryData(queryKey, (old: unknown) => {
         if (!old) return old;
         return { ...old, theme: newTheme };
       });
@@ -108,7 +108,7 @@ export default function ThemesPage() {
   const darkThemes = THEME_KEYS.filter((k) => !LIGHT_THEMES.includes(k));
   const lightThemes = THEME_KEYS.filter((k) => LIGHT_THEMES.includes(k));
 
-  function ThemeGroup({ keys, label }: { keys: ThemeKey[]; label: string }) {
+  function renderThemeGroup(keys: ThemeKey[], label: string) {
     return (
       <div className="space-y-3">
         <p className="text-[11px] font-semibold text-text-3 uppercase tracking-[0.12em]">{label}</p>
@@ -260,8 +260,8 @@ export default function ThemesPage() {
             <h2 className="text-sm font-semibold text-text">Color Theme</h2>
             <span className="text-[11px] text-text-3">{THEME_KEYS.length} themes</span>
           </div>
-          <ThemeGroup keys={darkThemes} label="Dark & Vibrant" />
-          <ThemeGroup keys={lightThemes} label="Light & Clean" />
+          {renderThemeGroup(darkThemes, "Dark & Vibrant")}
+          {renderThemeGroup(lightThemes, "Light & Clean")}
 
           {/* Sync Toggle */}
           <div className="pt-4 border-t border-card-border mt-4 flex items-center justify-between">

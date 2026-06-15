@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { authApi } from '@/lib/api/auth';
 import { setToken, setStoredUser } from '@/lib/api/token';
 import { useQueryClient } from '@tanstack/react-query';
@@ -10,7 +10,6 @@ import { FieldError } from '../components/FormElements';
 export function LoginForm({
   theme,
   onSwitchView,
-  showTooltip,
   hideTooltip,
   fieldErrs,
   setFieldErrs,
@@ -58,18 +57,18 @@ export function LoginForm({
   }
 
   const isDark = theme === 'dark';
-  const inpBase = "w-full px-4 py-3 text-sm rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50";
+  const inpBase = "w-full px-4 py-3.5 text-sm rounded-2xl border transition-all duration-300 ease-out focus:outline-none focus:ring-[3px] focus:ring-violet-500/20 focus:border-violet-500/60";
   const inpStyle = {
-    background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.45)',
-    borderColor: isDark ? 'rgba(255,255,255,0.18)' : 'rgba(120,120,160,0.12)',
+    background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.6)',
+    borderColor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
     color: isDark ? '#ffffff' : '#1a1a2e',
-    boxShadow: !isDark ? 'inset 0 1px 3px rgba(0,0,0,0.06)' : 'none',
+    boxShadow: isDark ? 'inset 0 2px 4px rgba(0,0,0,0.2)' : 'inset 0 2px 4px rgba(0,0,0,0.02)',
   };
 
   return (
     <form onSubmit={handleLogin} className="space-y-4" noValidate>
       <div>
-        <label className="block text-xs font-semibold mb-1 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.7)' : '#333' }}>Email or Mobile</label>
+        <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Email or Mobile</label>
         <input
           type="text"
           value={identifier}
@@ -84,7 +83,7 @@ export function LoginForm({
         {fieldErrs.loginIdentifier && <FieldError msg={fieldErrs.loginIdentifier} theme={theme} />}
       </div>
       <div>
-        <label className="block text-xs font-semibold mb-1 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.7)' : '#333' }}>Password</label>
+        <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Password</label>
         <div className="relative">
           <input
             type={showPw ? 'text' : 'password'}
@@ -106,21 +105,26 @@ export function LoginForm({
         {fieldErrs.loginPw && <FieldError msg={fieldErrs.loginPw} theme={theme} />}
         
         <div className="flex justify-end mt-2">
-          <button type="button" onClick={() => onSwitchView('forgot-password')} className="text-xs font-medium hover:underline cursor-pointer" style={{ color: isDark ? '#a78bfa' : '#6d52d8' }}>Forgot password?</button>
+          <button type="button" onClick={() => onSwitchView('forgot-password')} className="text-sm font-medium hover:underline cursor-pointer" style={{ color: isDark ? '#a78bfa' : '#6d52d8' }}>Forgot password?</button>
         </div>
       </div>
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3 mt-2 text-sm font-semibold rounded-xl text-white transition-all duration-200 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-violet-500/20 cursor-pointer"
+        className="relative w-full py-3.5 mt-4 text-sm font-semibold rounded-2xl text-white transition-all duration-300 ease-out hover:-translate-y-[1px] active:translate-y-[1px] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden cursor-pointer"
+        style={{
+          background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
+          boxShadow: '0 8px 20px -8px rgba(124, 58, 237, 0.5), inset 0 1px 1px rgba(255,255,255,0.2)'
+        }}
       >
-        {loading ? 'Signing in...' : 'Sign In'}
+        <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <span className="relative z-10">{loading ? 'Signing in...' : 'Sign In'}</span>
       </button>
 
       <div className="relative flex items-center py-2">
         <div className="flex-grow border-t" style={{ borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }}></div>
-        <span className="flex-shrink-0 mx-4 text-xs" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)' }}>or continue with</span>
+        <span className="flex-shrink-0 mx-4 text-xs font-medium uppercase tracking-wider" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)' }}>or continue with</span>
         <div className="flex-grow border-t" style={{ borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }}></div>
       </div>
 
@@ -128,11 +132,12 @@ export function LoginForm({
         type="button"
         onClick={() => onSwitchView('passwordless-login')}
         disabled={loading}
-        className="w-full py-3 text-sm font-semibold rounded-xl transition-all duration-200 cursor-pointer"
+        className="w-full py-3.5 text-sm font-medium rounded-2xl transition-all duration-300 ease-out hover:-translate-y-[1px] active:translate-y-[1px] active:scale-[0.98] cursor-pointer"
         style={{
-          background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
-          border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
-          color: isDark ? '#fff' : '#1a1a2e'
+          background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+          border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'}`,
+          color: isDark ? '#fff' : '#1a1a2e',
+          boxShadow: '0 4px 12px -4px rgba(0,0,0,0.1)'
         }}
       >
         Login with OTP

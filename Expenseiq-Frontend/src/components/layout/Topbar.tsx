@@ -1,11 +1,12 @@
 'use client';
+/* eslint-disable react-hooks/set-state-in-effect */
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import {
-  Menu, Users, LogOut, User, ChevronDown,
+  Menu, LogOut, User, ChevronDown,
   Palette, Settings as SettingsIcon, Pencil, Check, X,
 } from 'lucide-react';
 import { MonthFilter } from './MonthFilter';

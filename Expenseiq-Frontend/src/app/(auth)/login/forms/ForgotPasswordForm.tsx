@@ -28,7 +28,6 @@ function strengthInfo(passed: number) {
 export function ForgotPasswordForm({
   theme,
   onSwitchView,
-  showTooltip,
   hideTooltip,
   fieldErrs,
   setFieldErrs,
@@ -113,12 +112,12 @@ export function ForgotPasswordForm({
   }
 
   const isDark = theme === 'dark';
-  const inpBase = "w-full px-4 py-3 text-sm rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50";
+  const inpBase = "w-full px-4 py-3.5 text-sm rounded-2xl border transition-all duration-300 ease-out focus:outline-none focus:ring-[3px] focus:ring-violet-500/20 focus:border-violet-500/60";
   const inpStyle = {
-    background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.45)',
-    borderColor: isDark ? 'rgba(255,255,255,0.18)' : 'rgba(120,120,160,0.12)',
+    background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.6)',
+    borderColor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
     color: isDark ? '#ffffff' : '#1a1a2e',
-    boxShadow: !isDark ? 'inset 0 1px 3px rgba(0,0,0,0.06)' : 'none',
+    boxShadow: isDark ? 'inset 0 2px 4px rgba(0,0,0,0.2)' : 'inset 0 2px 4px rgba(0,0,0,0.02)',
   };
 
   if (step === 1) {
@@ -130,7 +129,7 @@ export function ForgotPasswordForm({
         <p className="text-sm mb-6" style={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}>Enter the email address or mobile number associated with your account, and we&apos;ll send you a link to reset your password.</p>
         <form onSubmit={handleFpSendOtp} className="space-y-4" noValidate>
           <div>
-            <label className="block text-xs font-semibold mb-1 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.7)' : '#333' }}>Account Identifier</label>
+            <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Account Identifier</label>
             <input
               type="text" value={fpIdentifier}
               onChange={e => { setFpIdentifier(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.fpIdentifier; return n; }); }}
@@ -139,8 +138,9 @@ export function ForgotPasswordForm({
             />
             {fieldErrs.fpIdentifier && <FieldError msg={fieldErrs.fpIdentifier} theme={theme} />}
           </div>
-          <button type="submit" disabled={loading} className="w-full py-3 mt-2 text-sm font-semibold rounded-xl text-white transition-all duration-200 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-violet-500/20 cursor-pointer">
-            {loading ? 'Sending...' : 'Send Reset Code'}
+          <button type="submit" disabled={loading} className="relative w-full py-3.5 mt-4 text-sm font-semibold rounded-2xl text-white transition-all duration-300 ease-out hover:-translate-y-[1px] active:translate-y-[1px] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden cursor-pointer" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)', boxShadow: '0 8px 20px -8px rgba(124, 58, 237, 0.5), inset 0 1px 1px rgba(255,255,255,0.2)' }}>
+            <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <span className="relative z-10">{loading ? 'Sending...' : 'Send Reset Code'}</span>
           </button>
         </form>
       </>
@@ -166,8 +166,9 @@ export function ForgotPasswordForm({
               <ResendTimer onResend={handleFpResendOtp} theme={theme} />
             </div>
           </div>
-          <button type="submit" disabled={loading || fpOtp.replace(/\D/g, '').length < 6} className="w-full py-3 mt-2 text-sm font-semibold rounded-xl text-white transition-all duration-200 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-violet-500/20">
-            {loading ? 'Verifying...' : 'Verify Code'}
+          <button type="submit" disabled={loading || fpOtp.replace(/\D/g, '').length < 6} className="relative w-full py-3.5 mt-4 text-sm font-semibold rounded-2xl text-white transition-all duration-300 ease-out hover:-translate-y-[1px] active:translate-y-[1px] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden cursor-pointer" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)', boxShadow: '0 8px 20px -8px rgba(124, 58, 237, 0.5), inset 0 1px 1px rgba(255,255,255,0.2)' }}>
+            <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <span className="relative z-10">{loading ? 'Verifying...' : 'Verify Code'}</span>
           </button>
         </form>
       </>
@@ -179,7 +180,7 @@ export function ForgotPasswordForm({
       <p className="text-sm mb-6" style={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}>Your code was verified. You can now securely reset your password.</p>
       <form onSubmit={handleFpReset} className="space-y-4" noValidate>
         <div>
-          <label className="block text-xs font-semibold mb-1 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.7)' : '#333' }}>New Password</label>
+          <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>New Password</label>
           <div className="relative">
             <input
               type={showFpPw ? 'text' : 'password'} value={fpNewPw}
@@ -207,7 +208,7 @@ export function ForgotPasswordForm({
           )}
         </div>
         <div>
-          <label className="block text-xs font-semibold mb-1 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.7)' : '#333' }}>Confirm New Password</label>
+          <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Confirm New Password</label>
           <div className="relative">
             <input
               type={showFpCf ? 'text' : 'password'} value={fpCfPw}
@@ -221,8 +222,9 @@ export function ForgotPasswordForm({
           </div>
           {fieldErrs.fpCfPw && <FieldError msg={fieldErrs.fpCfPw} theme={theme} />}
         </div>
-        <button type="submit" disabled={loading} className="w-full py-3 mt-2 text-sm font-semibold rounded-xl text-white transition-all duration-200 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-violet-500/20 cursor-pointer">
-          {loading ? 'Resetting...' : 'Reset Password'}
+        <button type="submit" disabled={loading} className="relative w-full py-3.5 mt-4 text-sm font-semibold rounded-2xl text-white transition-all duration-300 ease-out hover:-translate-y-[1px] active:translate-y-[1px] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden cursor-pointer" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)', boxShadow: '0 8px 20px -8px rgba(124, 58, 237, 0.5), inset 0 1px 1px rgba(255,255,255,0.2)' }}>
+          <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <span className="relative z-10">{loading ? 'Resetting...' : 'Reset Password'}</span>
         </button>
       </form>
     </>

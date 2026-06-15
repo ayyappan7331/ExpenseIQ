@@ -43,7 +43,6 @@ function looksLikeMobile(val: string) {
 export function RegisterForm({
   theme,
   onSwitchView,
-  showTooltip,
   hideTooltip,
   fieldErrs,
   setFieldErrs,
@@ -124,12 +123,12 @@ export function RegisterForm({
   }
 
   const isDark = theme === 'dark';
-  const inpBase = "w-full px-4 py-3 text-sm rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50";
+  const inpBase = "w-full px-4 py-3.5 text-sm rounded-2xl border transition-all duration-300 ease-out focus:outline-none focus:ring-[3px] focus:ring-violet-500/20 focus:border-violet-500/60";
   const inpStyle = {
-    background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.45)',
-    borderColor: isDark ? 'rgba(255,255,255,0.18)' : 'rgba(120,120,160,0.12)',
+    background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.6)',
+    borderColor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
     color: isDark ? '#ffffff' : '#1a1a2e',
-    boxShadow: !isDark ? 'inset 0 1px 3px rgba(0,0,0,0.06)' : 'none',
+    boxShadow: isDark ? 'inset 0 2px 4px rgba(0,0,0,0.2)' : 'inset 0 2px 4px rgba(0,0,0,0.02)',
   };
 
   return (
@@ -139,7 +138,7 @@ export function RegisterForm({
       </button>
       <form onSubmit={handleRegister} className="space-y-4" noValidate>
         <div>
-          <label className="block text-xs font-semibold mb-1 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.7)' : '#333' }}>Full Name *</label>
+          <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Full Name *</label>
           <input
             type="text" value={regName}
             onChange={e => { setRegName(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.regName; return n; }); }}
@@ -150,7 +149,7 @@ export function RegisterForm({
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold mb-1 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.7)' : '#333' }}>Email (Optional)</label>
+            <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Email (Optional)</label>
             <input
               type="email" value={regEmail}
               onChange={e => { setRegEmail(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.regEmail; delete n.regMobile; return n; }); }}
@@ -160,7 +159,7 @@ export function RegisterForm({
             {fieldErrs.regEmail && <FieldError msg={fieldErrs.regEmail} theme={theme} />}
           </div>
           <div>
-            <label className="block text-xs font-semibold mb-1 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.7)' : '#333' }}>Mobile (Optional)</label>
+            <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Mobile (Optional)</label>
             <input
               type="tel" value={regMobile}
               onChange={e => { setRegMobile(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.regMobile; delete n.regEmail; return n; }); }}
@@ -172,7 +171,7 @@ export function RegisterForm({
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold mb-1 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.7)' : '#333' }}>Date of Birth (Optional)</label>
+            <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Date of Birth (Optional)</label>
             <input
               type="date" value={regDob}
               onChange={e => setRegDob(e.target.value)}
@@ -180,7 +179,7 @@ export function RegisterForm({
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold mb-1 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.7)' : '#333' }}>Primary Purpose *</label>
+            <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Primary Purpose *</label>
             <select
               value={regPurpose}
               onChange={e => { setRegPurpose(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.regPurpose; return n; }); }}
@@ -195,7 +194,7 @@ export function RegisterForm({
           </div>
         </div>
         <div>
-          <label className="block text-xs font-semibold mb-1 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.7)' : '#333' }}>Password *</label>
+          <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Password *</label>
           <div className="relative">
             <input
               type={showRegPw ? 'text' : 'password'} value={regPw}
@@ -243,7 +242,7 @@ export function RegisterForm({
           )}
         </div>
         <div>
-          <label className="block text-xs font-semibold mb-1 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.7)' : '#333' }}>Confirm Password *</label>
+          <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Confirm Password *</label>
           <div className="relative">
             <input
               type={showRegCf ? 'text' : 'password'} value={regCf}
@@ -259,9 +258,14 @@ export function RegisterForm({
         </div>
         <button
           type="submit" disabled={loading}
-          className="w-full py-3 mt-2 text-sm font-semibold rounded-xl text-white transition-all duration-200 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-violet-500/20 cursor-pointer"
+          className="relative w-full py-3.5 mt-4 text-sm font-semibold rounded-2xl text-white transition-all duration-300 ease-out hover:-translate-y-[1px] active:translate-y-[1px] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden cursor-pointer"
+          style={{
+            background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
+            boxShadow: '0 8px 20px -8px rgba(124, 58, 237, 0.5), inset 0 1px 1px rgba(255,255,255,0.2)'
+          }}
         >
-          {loading ? 'Creating Account...' : 'Create Account'}
+          <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <span className="relative z-10">{loading ? 'Creating Account...' : 'Create Account'}</span>
         </button>
       </form>
     </>
