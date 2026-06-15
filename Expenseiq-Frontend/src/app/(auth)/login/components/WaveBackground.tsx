@@ -32,18 +32,25 @@ export const WaveBackground = memo(function WaveBackground({ tokens }: { tokens:
     const rawT = colorTRef.current < 1 ? Math.min(elapsed / WAVE_TRANSITION_MS, 1) : 1;
     const eased = rawT < 0.5 ? 4 * rawT ** 3 : 1 - (-2 * rawT + 2) ** 3 / 2;
     colorTRef.current = rawT;
+    // Calculate theme transition for completeness, but we will override with Tiranga colors
     function lerp(a: number[], b: number[], t: number): number[] { return a.map((v, i) => Math.round(v + (b[i] - v) * t)); }
     const lerpedC0 = lerp(colorFromRef.current[0], colorToRef.current[0], eased);
     const lerpedC1 = lerp(colorFromRef.current[1], colorToRef.current[1], eased);
     prevColorsRef.current = [lerpedC0, lerpedC1];
     
-    const baseAlpha = tk.waveAlphaBase * 1.5; // Boost slightly for dotted visibility
+    // Explicit Tiranga colors
+    const saffron = [255, 153, 51];
+    const white = [255, 255, 255];
+    const green = [19, 136, 8];
 
-    // Define 3 depth layers for parallax (background, midground, foreground)
+    // Greatly boost alpha for a stronger, glowing effect
+    const baseAlpha = Math.max(tk.waveAlphaBase * 4.0, 0.45);
+
+    // Define 3 depth layers for parallax using Tiranga colors
     const layers = [
-      { z: 0.3, color: lerpedC0, blur: 12, alphaMulti: 0.3, speedMulti: 0.2, ampMulti: 0.6, lines: 8, dotSpace: 25, thickness: 8 },
-      { z: 0.6, color: lerpedC1, blur: 4, alphaMulti: 0.6, speedMulti: 0.5, ampMulti: 0.9, lines: 12, dotSpace: 15, thickness: 3.5 },
-      { z: 1.0, color: lerpedC0, blur: 0, alphaMulti: 1.0, speedMulti: 1.0, ampMulti: 1.2, lines: 16, dotSpace: 8, thickness: 2 },
+      { z: 0.3, color: green, blur: 24, alphaMulti: 0.8, speedMulti: 0.2, ampMulti: 0.6, lines: 8, dotSpace: 25, thickness: 8 },
+      { z: 0.6, color: white, blur: 16, alphaMulti: 0.9, speedMulti: 0.5, ampMulti: 0.9, lines: 12, dotSpace: 15, thickness: 3.5 },
+      { z: 1.0, color: saffron, blur: 8, alphaMulti: 1.3, speedMulti: 1.0, ampMulti: 1.2, lines: 16, dotSpace: 8, thickness: 2 },
     ];
 
     const yCentre = 0.55 * H; // Center of the waves slightly lower
