@@ -101,20 +101,20 @@ export default function LoginPage() {
   const glowAStyle = useMemo<React.CSSProperties>(() => ({ position: 'absolute', top: '10%', left: '5%', width: '50vw', height: '50vw', borderRadius: '50%', background: `radial-gradient(circle, ${tk.glowA} 0%, transparent 70%)`, filter: 'blur(60px)', transition: 'background 0.6s ease' }), [tk]);
   const glowBStyle = useMemo<React.CSSProperties>(() => ({ position: 'absolute', bottom: '5%', right: '10%', width: '35vw', height: '35vw', borderRadius: '50%', background: `radial-gradient(circle, ${tk.glowB} 0%, transparent 70%)`, filter: 'blur(60px)', transition: 'background 0.6s ease' }), [tk]);
   const panelStyle = useMemo<React.CSSProperties>(() => ({ 
-    background: tk.cardBg, 
-    backdropFilter: 'blur(32px)', 
-    WebkitBackdropFilter: 'blur(32px)', 
-    border: `1px solid ${tk.cardBorder}`, 
-    borderRadius: 32, 
+    background: loginTheme === 'dark' ? 'rgba(15, 15, 20, 0.4)' : 'rgba(255, 255, 255, 0.65)', 
+    backdropFilter: 'blur(40px)', 
+    WebkitBackdropFilter: 'blur(40px)', 
+    border: `1px solid ${loginTheme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.8)'}`, 
+    borderRadius: 28, 
     boxShadow: `
-      0 30px 60px -12px rgba(0,0,0,0.3), 
-      0 18px 36px -18px rgba(0,0,0,0.2), 
-      inset 0 1px 1px rgba(255, 255, 255, ${loginTheme === 'dark' ? 0.05 : 0.4}),
-      inset 0 -1px 1px rgba(0, 0, 0, ${loginTheme === 'dark' ? 0.2 : 0.05})
+      0 40px 80px -20px rgba(0,0,0,0.4), 
+      0 0 0 1px ${loginTheme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)'},
+      inset 0 1px 0 ${loginTheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,1)'},
+      inset 0 0 20px ${loginTheme === 'dark' ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.5)'}
     `, 
-    padding: '2.5rem', 
+    padding: '2rem', 
     width: '100%', 
-    maxWidth: 440, 
+    maxWidth: 400, 
     maxHeight: '90vh', 
     overflowY: 'auto', 
     transition: 'background 0.4s ease, border-color 0.4s ease',
@@ -188,12 +188,12 @@ export default function LoginPage() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[500px] h-[500px] rounded-full pointer-events-none opacity-50 mix-blend-screen" style={{ background: `radial-gradient(circle, ${tk.glowA} 0%, transparent 50%)`, filter: 'blur(60px)' }} aria-hidden />
 
           <div style={panelStyle} className="animate-in fade-in zoom-in-95 slide-in-from-bottom-8 duration-700 ease-out">
-            <div className="mb-8">
-              <h2 className="text-3xl lg:text-4xl font-semibold mb-3 tracking-tight">
-                {view === 'login' ? 'Welcome back' : view === 'register' ? 'Create an account' : view === 'forgot-password' ? 'Reset password' : 'Login Securely'}
+            <div className="mb-10 space-y-1.5">
+              <h2 className="text-2xl lg:text-3xl font-bold tracking-tight" style={{ fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif' }}>
+                {view === 'login' ? 'Welcome Back' : view === 'register' ? 'Create Account' : view === 'forgot-password' ? 'Reset Password' : 'Sign in securely'}
               </h2>
-              <p className="text-base font-medium" style={{ color: tk.tagline, transition: 'color 0.4s ease' }}>
-                {view === 'login' ? 'Enter your details to access your dashboard.' : view === 'register' ? 'Set up your ExpenseIQ profile.' : view === 'forgot-password' ? 'We\'ll help you get back in.' : 'Receive a one-time code to login instantly.'}
+              <p className="text-sm font-medium tracking-wide" style={{ color: tk.tagline, transition: 'color 0.4s ease' }}>
+                {view === 'login' ? 'Enter your details to access your dashboard.' : view === 'register' ? 'Set up your ExpenseIQ profile.' : view === 'forgot-password' ? 'We\'ll help you get back in.' : 'Receive a one-time code to sign in instantly.'}
               </p>
             </div>
 
