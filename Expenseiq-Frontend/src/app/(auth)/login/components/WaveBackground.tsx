@@ -28,84 +28,97 @@ export const WaveBackground = memo(function WaveBackground({ tokens }: { tokens:
     const W = canvas.width; const H = canvas.height;
     const t = performance.now() / 1000; const tk = tokensRef.current;
     ctx.clearRect(0, 0, W, H);
+    
     const elapsed = performance.now() - colorStartRef.current;
     const rawT = colorTRef.current < 1 ? Math.min(elapsed / WAVE_TRANSITION_MS, 1) : 1;
     const eased = rawT < 0.5 ? 4 * rawT ** 3 : 1 - (-2 * rawT + 2) ** 3 / 2;
     colorTRef.current = rawT;
-    // Calculate theme transition for completeness, but we will override with Tiranga colors
+    
     function lerp(a: number[], b: number[], t: number): number[] { return a.map((v, i) => Math.round(v + (b[i] - v) * t)); }
     const lerpedC0 = lerp(colorFromRef.current[0], colorToRef.current[0], eased);
     const lerpedC1 = lerp(colorFromRef.current[1], colorToRef.current[1], eased);
     prevColorsRef.current = [lerpedC0, lerpedC1];
-    
-    // Explicit Tiranga colors
-    const saffron = [255, 153, 51];
-    const green = [19, 136, 8];
 
-    // Greatly boost alpha for a stronger, glowing effect
-    const baseAlpha = Math.max(tk.waveAlphaBase * 4.0, 0.45);
+    // Card center approximation for fading
+    const cx = W >= 1024 ? W * 0.75 : W * 0.5;
+    const cy = H * 0.5;
 
-    // Define 2 depth layers for parallax: The 'white' structure turned Green, and Saffron
+    // Smoothstep function for fading
+    const smoothstep = (min: number, max: number, value: number) => {
+      const x = Math.max(0, Math.min(1, (value - min) / (max - min)));
+      return x * x * (3 - 2 * x);
+    };
+
+    const baseAlpha = tk.waveAlphaBase * 1.5; // Reduced overall visibility
+
+    // Premium depth layers: Back (blurriest/slowest) to Front (sharpest)
     const layers = [
-      { z: 0.6, color: green, blur: 16, alphaMulti: 0.9, speedMulti: 0.5, ampMulti: 0.9, lines: 12, dotSpace: 15, thickness: 3.5 },
-      { z: 1.0, color: saffron, blur: 8, alphaMulti: 1.3, speedMulti: 1.0, ampMulti: 1.2, lines: 16, dotSpace: 8, thickness: 2 },
+      { z: 0.3, color: lerpedC0, blur: 40, alphaMulti: 0.5, speed: 0.08, amp: 0.3, freq: 1.5, lines: 5, thickness: 4 },
+      { z: 0.6, color: lerpedC1, blur: 20, alphaMulti: 0.7, speed: 0.12, amp: 0.2, freq: 2.0, lines: 7, thickness: 2 },
+      { z: 1.0, color: lerpedC0, blur: 4,  alphaMulti: 1.0, speed: 0.16, amp: 0.1, freq: 2.5, lines: 9, thickness: 1 },
     ];
 
-    const yCentre = 0.55 * H; // Center of the waves slightly lower
-    const spread = 0.25; // Vertical spread of the lines within a layer
-    
-    ctx.lineCap = 'round'; // Essential for circular dots
+    const yCentre = 0.5 * H;
+    const spread = 0.4; // Vertically span 40% of screen
+
+    ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
 
-    // Draw layers back-to-front
     for (const layer of layers) {
-      const half = (spread * H) * layer.z; // Scale spread by depth
+      const half = (spread * H) * layer.z;
       ctx.shadowBlur = layer.blur;
-      ctx.shadowColor = `rgba(${layer.color[0]}, ${layer.color[1]}, ${layer.color[2]}, ${baseAlpha * layer.alphaMulti * 0.8})`;
+      ctx.shadowColor = `rgba(${layer.color[0]}, ${layer.color[1]}, ${layer.color[2]}, ${baseAlpha * layer.alphaMulti})`;
       
       for (let li = 0; li < layer.lines; li++) {
         const liFrac = layer.lines > 1 ? li / (layer.lines - 1) : 0.5;
+        // Offset yBase slightly based on layer and line index
         const yBase = yCentre - half + liFrac * half * 2;
-        const distEdge = Math.abs(liFrac - 0.5) * 2; // 0 at center, 1 at edge
         
-        // Fade out lines that are further from the center vertically
-        const alpha = (baseAlpha * layer.alphaMulti) * (1 - distEdge * 0.7);
-        if (alpha <= 0.01) continue;
+        // Edge strengthening: Lines further from the vertical center are slightly more opaque
+        const distVerticalEdge = Math.abs(liFrac - 0.5) * 2;
+        const lineBaseAlpha = (baseAlpha * layer.alphaMulti) * (0.4 + 0.6 * distVerticalEdge);
         
-        const strokeW = layer.thickness;
-        const linePhase = li * 0.4 + layer.z * 15; // offset phase
-        const [r, g, b] = layer.color;
+        if (lineBaseAlpha <= 0.01) continue;
+        
+        const phaseOffset = li * 0.3 + layer.z * 5;
         
         ctx.beginPath();
-        // Using [0, space] with lineCap 'round' creates perfect dotted circles
-        ctx.setLineDash([0, layer.dotSpace]);
-        ctx.lineWidth = strokeW;
-        ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
+        ctx.lineWidth = layer.thickness;
         
-        const step = Math.max(4, layer.dotSpace / 2);
-        for (let x = 0; x <= W + step; x += step) {
+        let first = true;
+        for (let x = 0; x <= W; x += W / 80) { // 80 segments for smooth curves
           const xNorm = x / W;
           
-          // Complex sine wave math for organic flow
-          const dynamicPhase = linePhase + Math.sin(t * 0.4 * layer.speedMulti + xNorm * 3) * 1.5;
-          const dynamicAmp = 0.1 * layer.ampMulti * (1 + Math.sin(t * 0.3 + li * 0.2) * 0.4);
-          const dynamicFreq = 1.2 * (1 + Math.sin(t * 0.2 + xNorm * 1.5) * 0.3);
+          // Smooth, non-random sine wave
+          const y = yBase + Math.sin(xNorm * Math.PI * layer.freq + phaseOffset + t * layer.speed) * (layer.amp * H);
           
-          const y = yBase + Math.sin(xNorm * Math.PI * 2 * dynamicFreq + t * 0.1 * layer.speedMulti * Math.PI * 2 + dynamicPhase) * dynamicAmp * H;
-          if (x === 0) {
+          // Calculate distance from card to fade out near the form
+          const distToCard = Math.hypot(x - cx, y - cy);
+          const fadeMultiplier = smoothstep(150, 600, distToCard);
+          
+          // Also strengthen on extreme horizontal edges
+          const distHorizontalEdge = Math.abs(xNorm - 0.5) * 2;
+          const edgeMultiplier = 0.5 + 0.5 * distHorizontalEdge;
+
+          const finalAlpha = lineBaseAlpha * fadeMultiplier * edgeMultiplier;
+          
+          ctx.strokeStyle = `rgba(${layer.color[0]}, ${layer.color[1]}, ${layer.color[2]}, ${finalAlpha})`;
+          
+          if (first) {
             ctx.moveTo(x, y);
+            first = false;
           } else {
             ctx.lineTo(x, y);
+            // Apply stroke segment by segment to allow dynamic alpha fading along the line
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
           }
         }
-        ctx.stroke();
       }
     }
     
-    // Cleanup canvas state for next frame
-    ctx.setLineDash([]);
     ctx.shadowBlur = 0;
-    
     rafRef.current = requestAnimationFrame(draw);
   }, []);
 

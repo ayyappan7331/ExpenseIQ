@@ -11000,3 +11000,23 @@ pm run migrate:repair:apply: 510 records fixed, 0 errors, post-fix verification 
 
 ### Validation Results
 - typecheck (0 errors), lint (0 errors).
+
+## Intelligent Wave Animation Refactoring (Login Page)
+
+### Files Changed
+- src/app/(auth)/login/components/WaveBackground.tsx
+
+### What Changed and Why
+- Rewrote the 'draw' function on the HTML canvas to generate a structured sine mesh instead of chaotic dotted curves.
+- Enforced the rule "Animation supports. Form dominates." by:
+  - Masking the animation: dynamically fading out the lines based on distance to the login card's estimated center (distToCard < 600px).
+  - Strengthening the lines near the absolute screen edges (left and top/bottom) using normalizations (distHorizontalEdge / distVerticalEdge).
+  - Removing hardcoded Tiranga colors and restoring standard theme integration.
+  - Adding true parallax depth layering (Z 0.3, 0.6, 1.0) with varied amplitudes, frequencies, blur amounts, and animation speeds.
+  - Drastically reducing speeds and alpha multipliers to make it a subtle, premium ambient effect rather than a distracting foreground.
+
+### Architecture Rules Enforced
+- Modified purely visually inside the canvas. No DOM structural changes or heavy React re-renders. Uses equestAnimationFrame optimally.
+
+### Validation Results
+- typecheck (0 errors), lint (0 errors).
