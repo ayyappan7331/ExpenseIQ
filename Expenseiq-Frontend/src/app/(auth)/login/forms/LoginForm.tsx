@@ -5,7 +5,7 @@ import { setToken, setStoredUser } from '@/lib/api/token';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { SharedFormProps } from '../types';
-import { FieldError, PremiumButton } from '../components/FormElements';
+import { FieldError, PremiumButton, FloatingInput } from '../components/FormElements';
 
 export function LoginForm({
   theme,
@@ -57,53 +57,42 @@ export function LoginForm({
   }
 
   const isDark = theme === 'dark';
-  const inpBase = "w-full px-4 py-3 text-sm rounded-xl border border-[var(--inp-border)] bg-[var(--inp-bg)] text-[var(--inp-text)] shadow-[var(--inp-shadow)] transition-all duration-200 ease-out focus:outline-none focus:border-[var(--inp-focus-border)] focus:ring-[3px] focus:ring-[var(--inp-focus-ring)] placeholder:text-[var(--inp-ph)]";
-  const inpStyle = {
-    '--inp-bg': isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.03)',
-    '--inp-border': isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
-    '--inp-text': isDark ? '#ffffff' : '#1a1a2e',
-    '--inp-shadow': isDark ? 'inset 0 2px 4px rgba(0,0,0,0.3), 0 1px 1px rgba(255,255,255,0.04)' : 'inset 0 2px 4px rgba(0,0,0,0.04), 0 1px 1px rgba(255,255,255,1)',
-    '--inp-focus-border': isDark ? '#8b5cf6' : '#7c3aed',
-    '--inp-focus-ring': isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(124, 58, 237, 0.15)',
-    '--inp-ph': isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.4)',
-  } as React.CSSProperties;
 
   return (
     <form onSubmit={handleLogin} className="space-y-4" noValidate>
       <div>
-        <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Email or Mobile</label>
-        <input
+        <FloatingInput
+          label="Email or Mobile"
           type="text"
           value={identifier}
           onChange={e => { setIdentifier(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.loginIdentifier; return n; }); }}
           onBlur={hideTooltip}
-          className={inpBase}
-          style={inpStyle}
-          placeholder="Enter your email or mobile"
+          placeholder=" "
           autoComplete="username"
           disabled={loading}
+          theme={theme}
+          error={!!fieldErrs.loginIdentifier}
         />
         {fieldErrs.loginIdentifier && <FieldError msg={fieldErrs.loginIdentifier} theme={theme} />}
       </div>
       <div>
-        <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Password</label>
-        <div className="relative">
-          <input
-            type={showPw ? 'text' : 'password'}
-            value={password}
-            onChange={e => { setPassword(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.loginPw; return n; }); }}
-            onKeyDown={handleKeyEvent} onKeyUp={handleKeyEvent}
-            onBlur={hideTooltip}
-            className={inpBase}
-            style={inpStyle}
-            placeholder="••••••••"
-            autoComplete="current-password"
-            disabled={loading}
-          />
+        <FloatingInput
+          label="Password"
+          type={showPw ? 'text' : 'password'}
+          value={password}
+          onChange={e => { setPassword(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.loginPw; return n; }); }}
+          onKeyDown={handleKeyEvent} onKeyUp={handleKeyEvent}
+          onBlur={hideTooltip}
+          placeholder=" "
+          autoComplete="current-password"
+          disabled={loading}
+          theme={theme}
+          error={!!fieldErrs.loginPw}
+        >
           <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity cursor-pointer" tabIndex={-1}>
             {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
-        </div>
+        </FloatingInput>
         {capsLock && <p className="text-xs text-orange-400 mt-1 ml-1">Caps Lock is ON</p>}
         {fieldErrs.loginPw && <FieldError msg={fieldErrs.loginPw} theme={theme} />}
         

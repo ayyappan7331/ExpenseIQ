@@ -1,3 +1,4 @@
+import React, { forwardRef } from 'react';
 import { Check } from 'lucide-react';
 import { TooltipState } from '../types';
 
@@ -127,3 +128,41 @@ export function PremiumButton({ loading, success, text, loadingText, type = 'sub
     </>
   );
 }
+
+export interface FloatingInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label: string;
+  theme: 'dark' | 'light';
+  error?: boolean;
+  children?: React.ReactNode;
+}
+
+export const FloatingInput = forwardRef<HTMLInputElement, FloatingInputProps>(({ label, theme, error, className, children, ...props }, ref) => {
+  const isDark = theme === 'dark';
+  return (
+    <div className="relative group">
+      <input
+        ref={ref}
+        {...props}
+        className={`peer w-full px-4 pt-5 pb-2 text-sm rounded-xl border transition-all duration-200 ease-out focus:outline-none focus:ring-[3px] placeholder:text-transparent ${error ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : 'focus:border-[var(--inp-focus-border)] focus:ring-[var(--inp-focus-ring)] border-[var(--inp-border)]'} bg-[var(--inp-bg)] text-[var(--inp-text)] shadow-[var(--inp-shadow)] disabled:opacity-50 disabled:cursor-not-allowed ${className || ''}`}
+        style={{
+          '--inp-bg': isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.03)',
+          '--inp-border': isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+          '--inp-text': isDark ? '#ffffff' : '#1a1a2e',
+          '--inp-shadow': isDark ? 'inset 0 2px 4px rgba(0,0,0,0.3), 0 1px 1px rgba(255,255,255,0.04)' : 'inset 0 2px 4px rgba(0,0,0,0.04), 0 1px 1px rgba(255,255,255,1)',
+          '--inp-focus-border': isDark ? '#8b5cf6' : '#7c3aed',
+          '--inp-focus-ring': isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(124, 58, 237, 0.15)',
+        } as React.CSSProperties}
+      />
+      <label
+        className={`absolute left-4 top-[5px] text-[0.65rem] font-medium transition-all duration-200 ease-out pointer-events-none 
+          peer-placeholder-shown:top-[14px] peer-placeholder-shown:text-sm 
+          peer-focus:top-[5px] peer-focus:text-[0.65rem]`}
+        style={{ color: error ? '#ef4444' : (isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)') }}
+      >
+        {label}
+      </label>
+      {children}
+    </div>
+  );
+});
+FloatingInput.displayName = 'FloatingInput';

@@ -5,7 +5,7 @@ import { setToken, setStoredUser } from '@/lib/api/token';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { SharedFormProps } from '../types';
-import { FieldError, PremiumButton } from '../components/FormElements';
+import { FieldError, PremiumButton, FloatingInput } from '../components/FormElements';
 import { OtpInput } from '../components/OtpInput';
 import { ResendTimer } from '../components/ResendTimer';
 
@@ -65,16 +65,6 @@ export function PasswordlessLoginForm({
   }
 
   const isDark = theme === 'dark';
-  const inpBase = "w-full px-4 py-3 text-sm rounded-xl border border-[var(--inp-border)] bg-[var(--inp-bg)] text-[var(--inp-text)] shadow-[var(--inp-shadow)] transition-all duration-200 ease-out focus:outline-none focus:border-[var(--inp-focus-border)] focus:ring-[3px] focus:ring-[var(--inp-focus-ring)] placeholder:text-[var(--inp-ph)]";
-  const inpStyle = {
-    '--inp-bg': isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.03)',
-    '--inp-border': isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
-    '--inp-text': isDark ? '#ffffff' : '#1a1a2e',
-    '--inp-shadow': isDark ? 'inset 0 2px 4px rgba(0,0,0,0.3), 0 1px 1px rgba(255,255,255,0.04)' : 'inset 0 2px 4px rgba(0,0,0,0.04), 0 1px 1px rgba(255,255,255,1)',
-    '--inp-focus-border': isDark ? '#8b5cf6' : '#7c3aed',
-    '--inp-focus-ring': isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(124, 58, 237, 0.15)',
-    '--inp-ph': isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.4)',
-  } as React.CSSProperties;
 
   if (step === 1) {
     return (
@@ -82,12 +72,12 @@ export function PasswordlessLoginForm({
         <p className="text-sm mb-6" style={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}>Login instantly without a password. We&apos;ll send a secure one-time code to your registered email or mobile.</p>
         <form onSubmit={handleOtpLoginSend} className="space-y-4" noValidate>
           <div>
-            <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Account Identifier</label>
-            <input
+            <FloatingInput
+              label="Account Identifier"
               type="text" value={otpLoginId}
               onChange={e => { setOtpLoginId(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.otpLoginId; return n; }); }}
               onBlur={hideTooltip}
-              className={inpBase} style={inpStyle} placeholder="Enter your email or mobile" disabled={loading}
+              placeholder=" " disabled={loading} theme={theme} error={!!fieldErrs.otpLoginId}
             />
             {fieldErrs.otpLoginId && <FieldError msg={fieldErrs.otpLoginId} theme={theme} />}
           </div>

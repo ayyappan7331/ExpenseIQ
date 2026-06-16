@@ -5,7 +5,7 @@ import { setToken, setStoredUser } from '@/lib/api/token';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { SharedFormProps } from '../types';
-import { FieldError, PremiumButton } from '../components/FormElements';
+import { FieldError, PremiumButton, FloatingInput } from '../components/FormElements';
 
 const RULES = [
   { id: 'len',     label: 'Min 8 characters',     test: (p: string) => p.length >= 8 },
@@ -124,16 +124,6 @@ export function RegisterForm({
   }
 
   const isDark = theme === 'dark';
-  const inpBase = "w-full px-4 py-3 text-sm rounded-xl border border-[var(--inp-border)] bg-[var(--inp-bg)] text-[var(--inp-text)] shadow-[var(--inp-shadow)] transition-all duration-200 ease-out focus:outline-none focus:border-[var(--inp-focus-border)] focus:ring-[3px] focus:ring-[var(--inp-focus-ring)] placeholder:text-[var(--inp-ph)]";
-  const inpStyle = {
-    '--inp-bg': isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.03)',
-    '--inp-border': isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
-    '--inp-text': isDark ? '#ffffff' : '#1a1a2e',
-    '--inp-shadow': isDark ? 'inset 0 2px 4px rgba(0,0,0,0.3), 0 1px 1px rgba(255,255,255,0.04)' : 'inset 0 2px 4px rgba(0,0,0,0.04), 0 1px 1px rgba(255,255,255,1)',
-    '--inp-focus-border': isDark ? '#8b5cf6' : '#7c3aed',
-    '--inp-focus-ring': isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(124, 58, 237, 0.15)',
-    '--inp-ph': isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.4)',
-  } as React.CSSProperties;
 
   return (
     <>
@@ -142,75 +132,82 @@ export function RegisterForm({
       </button>
       <form onSubmit={handleRegister} className="space-y-4" noValidate>
         <div>
-          <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Full Name *</label>
-          <input
+          <FloatingInput
+            label="Full Name *"
             type="text" value={regName}
             onChange={e => { setRegName(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.regName; return n; }); }}
             onBlur={hideTooltip}
-            className={inpBase} style={inpStyle} placeholder="John Doe" disabled={loading}
+            placeholder=" " disabled={loading} theme={theme} error={!!fieldErrs.regName}
           />
           {fieldErrs.regName && <FieldError msg={fieldErrs.regName} theme={theme} />}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Email (Optional)</label>
-            <input
+            <FloatingInput
+              label="Email (Optional)"
               type="email" value={regEmail}
               onChange={e => { setRegEmail(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.regEmail; delete n.regMobile; return n; }); }}
               onBlur={hideTooltip}
-              className={inpBase} style={inpStyle} placeholder="name@company.com" disabled={loading}
+              placeholder=" " disabled={loading} theme={theme} error={!!fieldErrs.regEmail}
             />
             {fieldErrs.regEmail && <FieldError msg={fieldErrs.regEmail} theme={theme} />}
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Mobile (Optional)</label>
-            <input
+            <FloatingInput
+              label="Mobile (Optional)"
               type="tel" value={regMobile}
               onChange={e => { setRegMobile(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.regMobile; delete n.regEmail; return n; }); }}
               onBlur={hideTooltip}
-              className={inpBase} style={inpStyle} placeholder="9876543210" disabled={loading}
+              placeholder=" " disabled={loading} theme={theme} error={!!fieldErrs.regMobile}
             />
             {fieldErrs.regMobile && <FieldError msg={fieldErrs.regMobile} theme={theme} />}
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Date of Birth (Optional)</label>
-            <input
+            <FloatingInput
+              label="Date of Birth (Optional)"
               type="date" value={regDob}
               onChange={e => setRegDob(e.target.value)}
-              className={inpBase} style={inpStyle} disabled={loading}
+              placeholder=" " disabled={loading} theme={theme}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Primary Purpose *</label>
-            <select
-              value={regPurpose}
-              onChange={e => { setRegPurpose(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.regPurpose; return n; }); }}
-              onBlur={hideTooltip}
-              className={inpBase} style={{ ...inpStyle, appearance: 'none', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em', backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='${isDark ? '%23ffffff' : '%23000000'}' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")` }}
-              disabled={loading}
-            >
-              <option value="" disabled>Select a purpose...</option>
-              {PURPOSES.map(p => <option key={p.value} value={p.value} style={{ color: '#000', background: '#fff' }}>{p.label}</option>)}
-            </select>
+            <div className="relative group">
+              <select
+                value={regPurpose}
+                onChange={e => { setRegPurpose(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.regPurpose; return n; }); }}
+                onBlur={hideTooltip}
+                className={`peer w-full px-4 pt-5 pb-2 text-sm rounded-xl border transition-all duration-200 ease-out focus:outline-none focus:ring-[3px] ${fieldErrs.regPurpose ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : 'focus:border-[var(--inp-focus-border)] focus:ring-[var(--inp-focus-ring)] border-[var(--inp-border)]'} bg-[var(--inp-bg)] text-[var(--inp-text)] shadow-[var(--inp-shadow)] disabled:opacity-50 disabled:cursor-not-allowed`}
+                style={{
+                  appearance: 'none', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em', backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='${isDark ? '%23ffffff' : '%23000000'}' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+                  '--inp-bg': isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.03)', '--inp-border': isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)', '--inp-text': isDark ? '#ffffff' : '#1a1a2e', '--inp-shadow': isDark ? 'inset 0 2px 4px rgba(0,0,0,0.3), 0 1px 1px rgba(255,255,255,0.04)' : 'inset 0 2px 4px rgba(0,0,0,0.04), 0 1px 1px rgba(255,255,255,1)', '--inp-focus-border': isDark ? '#8b5cf6' : '#7c3aed', '--inp-focus-ring': isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(124, 58, 237, 0.15)',
+                } as React.CSSProperties}
+                disabled={loading}
+              >
+                <option value="" disabled hidden></option>
+                {PURPOSES.map(p => <option key={p.value} value={p.value} style={{ color: '#000', background: '#fff' }}>{p.label}</option>)}
+              </select>
+              <label className={`absolute left-4 top-[5px] text-[0.65rem] font-medium transition-all duration-200 ease-out pointer-events-none ${!regPurpose ? 'top-[14px] text-sm' : ''} peer-focus:top-[5px] peer-focus:text-[0.65rem]`} style={{ color: fieldErrs.regPurpose ? '#ef4444' : (isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)') }}>
+                Primary Purpose *
+              </label>
+            </div>
             {fieldErrs.regPurpose && <FieldError msg={fieldErrs.regPurpose} theme={theme} />}
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Password *</label>
-          <div className="relative">
-            <input
-              type={showRegPw ? 'text' : 'password'} value={regPw}
-              onChange={e => { setRegPw(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.regPw; return n; }); }}
-              onKeyDown={handleKeyEvent} onKeyUp={handleKeyEvent}
-              onBlur={hideTooltip}
-              className={inpBase} style={inpStyle} placeholder="••••••••" disabled={loading}
-            />
+          <FloatingInput
+            label="Password *"
+            type={showRegPw ? 'text' : 'password'} value={regPw}
+            onChange={e => { setRegPw(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.regPw; return n; }); }}
+            onKeyDown={handleKeyEvent} onKeyUp={handleKeyEvent}
+            onBlur={hideTooltip}
+            placeholder=" " disabled={loading} theme={theme} error={!!fieldErrs.regPw}
+          >
             <button type="button" onClick={() => setShowRegPw(!showRegPw)} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity cursor-pointer" tabIndex={-1}>
               {showRegPw ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
-          </div>
+          </FloatingInput>
           {capsLock && <p className="text-xs text-orange-400 mt-1 ml-1">Caps Lock is ON</p>}
           {fieldErrs.regPw && <FieldError msg={fieldErrs.regPw} theme={theme} />}
           {regPw.length > 0 && (
@@ -246,18 +243,17 @@ export function RegisterForm({
           )}
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Confirm Password *</label>
-          <div className="relative">
-            <input
-              type={showRegCf ? 'text' : 'password'} value={regCf}
-              onChange={e => { setRegCf(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.regCf; return n; }); }}
-              onBlur={hideTooltip}
-              className={inpBase} style={{ ...inpStyle, borderColor: touched && regCf && !regPwMatch ? '#ef4444' : inpStyle.borderColor }} placeholder="••••••••" disabled={loading}
-            />
+          <FloatingInput
+            label="Confirm Password *"
+            type={showRegCf ? 'text' : 'password'} value={regCf}
+            onChange={e => { setRegCf(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.regCf; return n; }); }}
+            onBlur={hideTooltip}
+            placeholder=" " disabled={loading} theme={theme} error={!!fieldErrs.regCf || (touched && !!regCf && !regPwMatch)}
+          >
             <button type="button" onClick={() => setShowRegCf(!showRegCf)} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity cursor-pointer" tabIndex={-1}>
               {showRegCf ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
-          </div>
+          </FloatingInput>
           {fieldErrs.regCf && <FieldError msg={fieldErrs.regCf} theme={theme} />}
         </div>
         <PremiumButton loading={loading} success={success} text="Create Account" loadingText="Creating Account..." />

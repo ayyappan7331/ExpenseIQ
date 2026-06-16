@@ -191,7 +191,7 @@ export default function LoginPage() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[800px] h-[800px] rounded-full pointer-events-none opacity-20 mix-blend-screen" style={{ background: `radial-gradient(circle, ${tk.glowB} 0%, transparent 70%)`, filter: 'blur(100px)' }} aria-hidden />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[500px] h-[500px] rounded-full pointer-events-none opacity-50 mix-blend-screen" style={{ background: `radial-gradient(circle, ${tk.glowA} 0%, transparent 50%)`, filter: 'blur(60px)' }} aria-hidden />
 
-          <div style={panelStyle} className="animate-in fade-in zoom-in-95 slide-in-from-bottom-8 duration-700 ease-out">
+          <div style={panelStyle} className="animate-in fade-in slide-in-from-bottom-5 duration-500 ease-out">
             <div className="mb-10 space-y-1.5">
               <h2 className="text-2xl lg:text-3xl font-bold tracking-tight" style={{ fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif' }}>
                 {view === 'login' || view === 'passwordless-login' ? 'Welcome Back' : view === 'register' ? 'Create Account' : 'Reset Password'}

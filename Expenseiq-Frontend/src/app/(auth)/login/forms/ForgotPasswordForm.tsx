@@ -5,7 +5,7 @@ import { setToken, setStoredUser } from '@/lib/api/token';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { SharedFormProps } from '../types';
-import { FieldError, PremiumButton } from '../components/FormElements';
+import { FieldError, PremiumButton, FloatingInput } from '../components/FormElements';
 import { OtpInput } from '../components/OtpInput';
 import { ResendTimer } from '../components/ResendTimer';
 
@@ -45,9 +45,9 @@ export function ForgotPasswordForm({
   const [fpOtp, setFpOtp] = useState('');
   const [fpResetToken, setFpResetToken] = useState('');
   const [fpNewPw, setFpNewPw] = useState('');
-  const [forgotCfPw, setForgotCfPw] = useState('');
-  const [showForgotPw, setShowForgotPw] = useState(false);
-  const [showForgotCf, setShowForgotCf] = useState(false);
+  const [fpCfPw, setFpCfPw] = useState('');
+  const [showFpPw, setShowFpPw] = useState(false);
+  const [showFpCf, setShowFpCf] = useState(false);
   const [capsLock, setCapsLock] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -67,7 +67,7 @@ export function ForgotPasswordForm({
 
   const fpPassedRules = RULES.filter(r => r.test(fpNewPw));
   const fpAllRulesPassed = fpPassedRules.length === RULES.length;
-  const fpPwMatch = fpNewPw === forgotCfPw;
+  const fpPwMatch = fpNewPw === fpCfPw;
   const strength = strengthInfo(fpPassedRules.length);
 
   async function handleFpSendOtp(ev: React.FormEvent) {
@@ -75,7 +75,7 @@ export function ForgotPasswordForm({
     if (!fpIdentifier.trim()) { setFieldErrs({ fpIdentifier: 'Enter your email or mobile number.' }); return; }
     setFieldErrs({}); setError(''); setLoading(true);
     try {
-      await authApi.sendOtp({ identifier: fpIdentifier.trim(), purpose: 'reset-password' });
+      await authApi.sendOtp({ identifier: fpIdentifier.trim(), purpose: 'reset' });
       setSuccess(true);
       setTimeout(() => {
         setStep(2);
@@ -95,8 +95,8 @@ export function ForgotPasswordForm({
     if (fpOtp.replace(/\D/g, '').length < 6) { setFieldErrs({ fpOtp: 'Enter all 6 digits of the OTP.' }); return; }
     setFieldErrs({}); setError(''); setLoading(true);
     try {
-      const res = await authApi.verifyOtp({ identifier: fpIdentifier.trim(), code: fpOtp.trim() });
-      setFpResetToken(res.token ?? '');
+      const res = await authApi.verifyOtp({ identifier: fpIdentifier.trim(), code: fpOtp.trim(), purpose: 'reset' });
+      setFpResetToken(res.resetToken ?? '');
       setSuccess(true);
       setTimeout(() => {
         setStep(3);
@@ -114,7 +114,7 @@ export function ForgotPasswordForm({
     if (Object.keys(errs).length) { setFieldErrs(errs); return; }
     setFieldErrs({}); setError(''); setLoading(true);
     try {
-      await authApi.resetPassword({ token: fpResetToken, password: fpNewPw });
+      await authApi.resetPassword({ resetToken: fpResetToken, newPassword: fpNewPw });
       setSuccess(true);
       setTimeout(() => {
         onSwitchView('login');
@@ -124,16 +124,6 @@ export function ForgotPasswordForm({
   }
 
   const isDark = theme === 'dark';
-  const inpBase = "w-full px-4 py-3 text-sm rounded-xl border border-[var(--inp-border)] bg-[var(--inp-bg)] text-[var(--inp-text)] shadow-[var(--inp-shadow)] transition-all duration-200 ease-out focus:outline-none focus:border-[var(--inp-focus-border)] focus:ring-[3px] focus:ring-[var(--inp-focus-ring)] placeholder:text-[var(--inp-ph)]";
-  const inpStyle = {
-    '--inp-bg': isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.03)',
-    '--inp-border': isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
-    '--inp-text': isDark ? '#ffffff' : '#1a1a2e',
-    '--inp-shadow': isDark ? 'inset 0 2px 4px rgba(0,0,0,0.3), 0 1px 1px rgba(255,255,255,0.04)' : 'inset 0 2px 4px rgba(0,0,0,0.04), 0 1px 1px rgba(255,255,255,1)',
-    '--inp-focus-border': isDark ? '#8b5cf6' : '#7c3aed',
-    '--inp-focus-ring': isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(124, 58, 237, 0.15)',
-    '--inp-ph': isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.4)',
-  } as React.CSSProperties;
 
   if (step === 1) {
     return (
@@ -144,12 +134,12 @@ export function ForgotPasswordForm({
         <p className="text-sm mb-6" style={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}>Enter the email address or mobile number associated with your account, and we&apos;ll send you a link to reset your password.</p>
         <form onSubmit={handleFpSendOtp} className="space-y-4" noValidate>
           <div>
-            <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Account Identifier</label>
-            <input
+            <FloatingInput
+              label="Account Identifier"
               type="text" value={fpIdentifier}
               onChange={e => { setFpIdentifier(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.fpIdentifier; return n; }); }}
               onBlur={hideTooltip}
-              className={inpBase} style={inpStyle} placeholder="Email or Mobile Number" disabled={loading}
+              placeholder=" " disabled={loading} theme={theme} error={!!fieldErrs.fpIdentifier}
             />
             {fieldErrs.fpIdentifier && <FieldError msg={fieldErrs.fpIdentifier} theme={theme} />}
           </div>
@@ -189,19 +179,18 @@ export function ForgotPasswordForm({
       <p className="text-sm mb-6" style={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}>Your code was verified. You can now securely reset your password.</p>
       <form onSubmit={handleFpReset} className="space-y-4" noValidate>
         <div>
-          <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>New Password</label>
-          <div className="relative">
-            <input
-              type={showFpPw ? 'text' : 'password'} value={fpNewPw}
-              onChange={e => { setFpNewPw(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.fpNewPw; return n; }); }}
-              onKeyDown={handleKeyEvent} onKeyUp={handleKeyEvent}
-              onBlur={hideTooltip}
-              className={inpBase} style={inpStyle} placeholder="••••••••" disabled={loading}
-            />
+          <FloatingInput
+            label="New Password"
+            type={showFpPw ? 'text' : 'password'} value={fpNewPw}
+            onChange={e => { setFpNewPw(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.fpNewPw; return n; }); }}
+            onKeyDown={handleKeyEvent} onKeyUp={handleKeyEvent}
+            onBlur={hideTooltip}
+            placeholder=" " disabled={loading} theme={theme} error={!!fieldErrs.fpNewPw}
+          >
             <button type="button" onClick={() => setShowFpPw(!showFpPw)} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity cursor-pointer" tabIndex={-1}>
               {showFpPw ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
-          </div>
+          </FloatingInput>
           {capsLock && <p className="text-xs text-orange-400 mt-1 ml-1">Caps Lock is ON</p>}
           {fieldErrs.fpNewPw && <FieldError msg={fieldErrs.fpNewPw} theme={theme} />}
           {fpNewPw.length > 0 && (
@@ -217,24 +206,20 @@ export function ForgotPasswordForm({
           )}
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1.5 ml-1" style={{ color: isDark ? 'rgba(255,255,255,0.85)' : '#4b5563' }}>Confirm New Password</label>
-          <div className="relative">
-            <input
-              type={showFpCf ? 'text' : 'password'} value={fpCfPw}
-              onChange={e => { setFpCfPw(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.fpCfPw; return n; }); }}
-              onBlur={hideTooltip}
-              className={inpBase} style={inpStyle} placeholder="••••••••" disabled={loading}
-            />
+          <FloatingInput
+            label="Confirm New Password"
+            type={showFpCf ? 'text' : 'password'} value={fpCfPw}
+            onChange={e => { setFpCfPw(e.target.value); setFieldErrs(p => { const n = { ...p }; delete n.fpCfPw; return n; }); }}
+            onBlur={hideTooltip}
+            placeholder=" " disabled={loading} theme={theme} error={!!fieldErrs.fpCfPw}
+          >
             <button type="button" onClick={() => setShowFpCf(!showFpCf)} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity cursor-pointer" tabIndex={-1}>
               {showFpCf ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
-          </div>
+          </FloatingInput>
           {fieldErrs.fpCfPw && <FieldError msg={fieldErrs.fpCfPw} theme={theme} />}
         </div>
-        <button type="submit" disabled={loading} className="relative w-full py-3.5 mt-4 text-sm font-semibold rounded-2xl text-white transition-all duration-300 ease-out hover:-translate-y-[1px] active:translate-y-[1px] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden cursor-pointer" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)', boxShadow: '0 8px 20px -8px rgba(124, 58, 237, 0.5), inset 0 1px 1px rgba(255,255,255,0.2)' }}>
-          <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          <span className="relative z-10">{loading ? 'Resetting...' : 'Reset Password'}</span>
-        </button>
+        <PremiumButton loading={loading} success={success} text="Reset Password" loadingText="Resetting..." />
       </form>
     </>
   );
