@@ -28,29 +28,34 @@ async function run() {
   logger.info({ count: allSettings.length }, 'migrateFinancialConfig: found Settings documents');
 
   for (const settings of allSettings) {
-    const profileId = settings.profileId || 'default';
+    const userId = settings.userId;
+    if (!userId) {
+      logger.warn({ settingsId: settings._id }, 'migrateFinancialConfig: Settings missing userId — skipping');
+      skipped++;
+      continue;
+    }
 
     try {
-      // Skip if FinancialConfig already exists for this profile
-      const existing = await FinancialConfig.findOne({ profileId });
+      // Skip if FinancialConfig already exists for this userId
+      const existing = await FinancialConfig.findOne({ userId });
       if (existing) {
         skipped++;
         continue;
       }
 
       await FinancialConfig.create({
-        profileId,
-        customExpenseCategories: settings.customExpenseCategories || [],
-        customIncomeCategories: settings.customIncomeCategories || [],
-        customPaymentMethods: settings.customPaymentMethods || [],
-        subcategoryMap: settings.subcategoryMap || {},
+        userId,
+        customExpenseCategories: [],
+        customIncomeCategories: [],
+        customPaymentMethods: [],
+        subcategoryMap: {},
       });
 
       migrated++;
-      logger.info({ profileId }, 'migrateFinancialConfig: migrated profile');
+      logger.info({ userId }, 'migrateFinancialConfig: migrated user');
     } catch (err) {
       errors++;
-      logger.error({ profileId, err }, 'migrateFinancialConfig: failed to migrate profile');
+      logger.error({ userId, err }, 'migrateFinancialConfig: failed to migrate user');
     }
   }
 

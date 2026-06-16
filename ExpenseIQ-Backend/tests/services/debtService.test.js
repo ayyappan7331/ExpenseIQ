@@ -1,10 +1,14 @@
 const { setupTestDb } = require('../helpers/setup');
 const service = require('../../services/debtService');
+const mongoose = require('mongoose');
 
 setupTestDb();
 
+const uid1 = new mongoose.Types.ObjectId();
+
 const sample = (over = {}) => ({
-  profileId: 'default',
+  userId: uid1,
+  context: 'Personal',
   type: 'lent',
   person: 'Alice',
   amount: 500,
@@ -14,7 +18,7 @@ const sample = (over = {}) => ({
 
 describe('debtService', () => {
   it('findAll returns [] when empty', async () => {
-    expect(await service.findAll()).toEqual([]);
+    expect(await service.findAll({ userId: uid1 })).toEqual([]);
   });
 
   it('findAll sorts by createdAt desc', async () => {
@@ -23,7 +27,7 @@ describe('debtService', () => {
     await service.create(sample({ person: 'B' }));
     await new Promise((r) => setTimeout(r, 5));
     await service.create(sample({ person: 'C' }));
-    const list = await service.findAll();
+    const list = await service.findAll({ userId: uid1 });
     expect(list.map((d) => d.person)).toEqual(['C', 'B', 'A']);
   });
 

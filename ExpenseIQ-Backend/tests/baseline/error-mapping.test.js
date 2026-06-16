@@ -59,19 +59,18 @@ describe('Centralized error mapping', () => {
   });
 
   describe('Duplicate key (unique index) -> 400', () => {
-    it('POST /api/profiles twice with same profileId', async () => {
+    it('POST /api/creditcards twice with same linkedPaymentMethod returns 400', async () => {
       const first = await request(app)
-        .post('/api/profiles')
-        .send({ profileId: 'work', name: 'Work' });
+        .post('/api/creditcards')
+        .send({ name: 'HDFC', billDate: 1, dueDate: 15, linkedPaymentMethod: 'HDFC Credit Card' });
       expect(first.status).toBe(201);
 
       const second = await request(app)
-        .post('/api/profiles')
-        .send({ profileId: 'work', name: 'Work 2' });
+        .post('/api/creditcards')
+        .send({ name: 'HDFC 2', billDate: 1, dueDate: 15, linkedPaymentMethod: 'HDFC Credit Card' });
       expect(second.status).toBe(400);
       expect(second.body).toHaveProperty('error');
-      // Mongo duplicate-key message contains "E11000"
-      expect(second.body.error).toMatch(/E11000|duplicate/i);
+      expect(second.body.error).toMatch(/already linked|duplicate/i);
     });
   });
 

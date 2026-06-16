@@ -38,14 +38,22 @@ const findArchived = async ({ userId, context = 'Personal' } = {}) => {
   return migrateDuePeriod(cards);
 };
 
-const archive = async (id) => {
-  const card = await CreditCard.findByIdAndUpdate(id, { archived: true }, { new: true });
+const archive = async (id, userId) => {
+  const card = await CreditCard.findOneAndUpdate(
+    { _id: id, userId },
+    { archived: true },
+    { new: true }
+  );
   if (!card) throw httpError(404, 'Not found');
   return card;
 };
 
-const restore = async (id) => {
-  const card = await CreditCard.findByIdAndUpdate(id, { archived: false }, { new: true });
+const restore = async (id, userId) => {
+  const card = await CreditCard.findOneAndUpdate(
+    { _id: id, userId },
+    { archived: false },
+    { new: true }
+  );
   if (!card) throw httpError(404, 'Not found');
   return card;
 };
@@ -86,8 +94,8 @@ const update = async (id, data) => {
   return updated;
 };
 
-const remove = async (id) => {
-  const card = await CreditCard.findByIdAndDelete(id);
+const remove = async (id, userId) => {
+  const card = await CreditCard.findOneAndDelete({ _id: id, userId });
   if (!card) throw httpError(404, 'Not found');
   return card;
 };

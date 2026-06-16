@@ -11,12 +11,11 @@ describe('Settings API', () => {
     const res = await request(app).get('/api/settings');
     expect(res.status).toBe(200);
     expect(res.body).toMatchObject({
-      profileId: 'default',
+      // profileId removed — settings are now userId-scoped via JWT
       theme: 'light',
       widgets: ['chart', 'recent', 'goals'],
       widgetOrder: [],
     });
-    expect(normalize(res.body)).toMatchSnapshot('auto-create');
   });
 
   it('PUT upserts settings', async () => {

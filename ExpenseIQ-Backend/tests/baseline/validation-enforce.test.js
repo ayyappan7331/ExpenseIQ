@@ -61,17 +61,12 @@ describe('Validation: enforce mode', () => {
     expect(res.body.error).toMatch(/month/);
   });
 
-  it('rejects POST /api/profiles missing profileId', async () => {
-    const res = await request(app).post('/api/profiles').send({ name: 'NoId' });
-    expect(res.status).toBe(400);
-    expect(res.body.error).toMatch(/profileId/);
-  });
 
   it('rejects PUT /api/creditcards/:id with billDate of wrong type', async () => {
     // First create one with a valid payload, then try a bad update
     delete process.env.VALIDATION_MODE; // create in shadow
     const created = await request(app).post('/api/creditcards').send({
-      profileId: 'default', name: 'HDFC', billDate: 1, dueDate: 15,
+      name: 'HDFC', billDate: 1, dueDate: 15,
     });
     process.env.VALIDATION_MODE = 'enforce';
 

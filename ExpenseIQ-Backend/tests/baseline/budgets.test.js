@@ -37,9 +37,9 @@ describe('Budgets API', () => {
   });
 
   it('POST without required fields returns 400', async () => {
-    const res = await request(app).post('/api/budgets').send({ profileId: 'default' });
+    const res = await request(app).post('/api/budgets').send({});
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'month, category, and amount are required' });
+    expect(res.body.error).toMatch(/required/);
   });
 
   it('GET filters by month', async () => {

@@ -13,7 +13,13 @@
 const authService = require('../services/authService');
 
 const authMiddleware = (req, res, next) => {
-  if (process.env.AUTH_ENABLED !== 'true') return next();
+  if (process.env.AUTH_ENABLED !== 'true') {
+    // Auth is disabled — set a stub so controllers can always access req.user.userId
+    // without crashing. This preserves backward compatibility with unauthenticated
+    // environments (local dev without auth, test suite, etc.).
+    req.user = req.user || { userId: '000000000000000000000000', email: 'anon@local' };
+    return next();
+  }
 
   const header = req.headers.authorization || '';
   if (!header.startsWith('Bearer ')) {

@@ -34,17 +34,13 @@ describe('Auth disabled (default) — backward compat', () => {
     expect(res.status).toBe(201);
   });
 
-  it('GET /api/profiles works without a token (still auto-creates default)', async () => {
-    const res = await request(app).get('/api/profiles');
-    expect(res.status).toBe(200);
-    expect(res.body).toHaveLength(1);
-    expect(res.body[0].profileId).toBe('default');
-  });
+  // /api/profiles route has been removed — no test needed.
 
   it('GET /api/settings works without a token', async () => {
     const res = await request(app).get('/api/settings');
     expect(res.status).toBe(200);
-    expect(res.body.profileId).toBe('default');
+    // Settings is now userId-scoped; profileId field is not present
+    expect(res.body.theme).toBeDefined();
   });
 
   it('register endpoint is still callable when auth is disabled', async () => {
@@ -64,7 +60,7 @@ describe('Auth disabled (default) — backward compat', () => {
       password: 'hunter2hunter2',
     });
     const res = await request(app).post('/api/auth/login').send({
-      email: 'c@d.com',
+      identifier: 'c@d.com',
       password: 'hunter2hunter2',
     });
     expect(res.status).toBe(200);

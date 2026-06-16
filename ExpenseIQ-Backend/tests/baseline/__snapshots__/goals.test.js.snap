@@ -5,10 +5,11 @@ exports[`Goals API POST upserts (creates): create 1`] = `
   "__v": "<__v>",
   "_id": "<_id>",
   "amount": 10000,
+  "context": "Personal",
   "createdAt": "<createdAt>",
   "month": "2026-05",
-  "profileId": "default",
   "updatedAt": "<updatedAt>",
+  "userId": "<userId>",
 }
 `;
 
@@ -18,10 +19,11 @@ exports[`Goals API POST upserts (updates existing for same profile+month): list-
     "__v": "<__v>",
     "_id": "<_id>",
     "amount": 15000,
+    "context": "Personal",
     "createdAt": "<createdAt>",
     "month": "2026-05",
-    "profileId": "default",
     "updatedAt": "<updatedAt>",
+    "userId": "<userId>",
   },
 ]
 `;

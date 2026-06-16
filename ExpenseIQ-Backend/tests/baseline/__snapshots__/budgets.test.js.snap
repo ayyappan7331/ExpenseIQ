@@ -7,10 +7,11 @@ exports[`Budgets API GET filters by month: list-filtered 1`] = `
     "_id": "<_id>",
     "amount": 5000,
     "category": "Food",
+    "context": "Personal",
     "createdAt": "<createdAt>",
     "month": "2026-05",
-    "profileId": "default",
     "updatedAt": "<updatedAt>",
+    "userId": "000000000000000000000000",
   },
 ]
 `;
@@ -21,9 +22,10 @@ exports[`Budgets API POST upserts (creates): create 1`] = `
   "_id": "<_id>",
   "amount": 5000,
   "category": "Food",
+  "context": "Personal",
   "createdAt": "<createdAt>",
   "month": "2026-05",
-  "profileId": "default",
   "updatedAt": "<updatedAt>",
+  "userId": "000000000000000000000000",
 }
 `;

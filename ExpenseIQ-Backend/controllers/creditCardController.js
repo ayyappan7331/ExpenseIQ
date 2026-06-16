@@ -10,11 +10,11 @@ exports.getArchived = asyncHandler(async (req, res) => {
 });
 
 exports.archive = asyncHandler(async (req, res) => {
-  res.json(await service.archive(req.params.id));
+  res.json(await service.archive(req.params.id, req.user.userId));
 });
 
 exports.restore = asyncHandler(async (req, res) => {
-  res.json(await service.restore(req.params.id));
+  res.json(await service.restore(req.params.id, req.user.userId));
 });
 
 exports.create = asyncHandler(async (req, res) => {
@@ -26,6 +26,6 @@ exports.update = asyncHandler(async (req, res) => {
 });
 
 exports.remove = asyncHandler(async (req, res) => {
-  await service.remove(req.params.id);
+  await service.remove(req.params.id, req.user.userId);
   res.json({ message: 'Deleted' });
 });

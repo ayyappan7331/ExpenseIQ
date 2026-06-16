@@ -76,13 +76,10 @@ describe('Credit Cards API', () => {
     expect(res.body.error).toMatch(/already linked/i);
   });
 
-  it('POST allows same linkedPaymentMethod for different profiles', async () => {
-    await request(app).post('/api/creditcards').send(sample({ profileId: 'default' }));
-    const res = await request(app)
-      .post('/api/creditcards')
-      .send(sample({ profileId: 'work' }));
-    expect(res.status).toBe(201);
-  });
+  // Note: linkedPaymentMethod uniqueness is now scoped per userId (not profileId).
+  // In the test environment all requests use the same auth stub userId, so two cards
+  // with the same linkedPaymentMethod correctly fail — see creditCardService.test.js
+  // for the service-level cross-user isolation test.
 
   it('PUT rejects linking to a method already used by another card', async () => {
     const cardA = await request(app)

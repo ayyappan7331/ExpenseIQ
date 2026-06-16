@@ -8,12 +8,13 @@ exports[`Subscriptions API GET lists sorted by due asc: list-sorted 1`] = `
     "active": true,
     "amount": 499,
     "category": "Entertainment",
+    "context": "Personal",
     "createdAt": "<createdAt>",
     "cycle": "monthly",
     "due": "2026-05-05",
     "name": "A",
-    "profileId": "default",
     "updatedAt": "<updatedAt>",
+    "userId": "<userId>",
   },
   {
     "__v": "<__v>",
@@ -21,12 +22,13 @@ exports[`Subscriptions API GET lists sorted by due asc: list-sorted 1`] = `
     "active": true,
     "amount": 499,
     "category": "Entertainment",
+    "context": "Personal",
     "createdAt": "<createdAt>",
     "cycle": "monthly",
     "due": "2026-05-20",
     "name": "B",
-    "profileId": "default",
     "updatedAt": "<updatedAt>",
+    "userId": "<userId>",
   },
 ]
 `;
@@ -38,12 +40,13 @@ exports[`Subscriptions API POST creates (201): create 1`] = `
   "active": true,
   "amount": 499,
   "category": "Entertainment",
+  "context": "Personal",
   "createdAt": "<createdAt>",
   "cycle": "monthly",
   "due": "2026-05-15",
   "name": "Netflix",
-  "profileId": "default",
   "updatedAt": "<updatedAt>",
+  "userId": "<userId>",
 }
 `;
 
@@ -54,11 +57,12 @@ exports[`Subscriptions API PUT updates: update 1`] = `
   "active": false,
   "amount": 599,
   "category": "Entertainment",
+  "context": "Personal",
   "createdAt": "<createdAt>",
   "cycle": "monthly",
   "due": "2026-05-15",
   "name": "Netflix",
-  "profileId": "default",
   "updatedAt": "<updatedAt>",
+  "userId": "<userId>",
 }
 `;

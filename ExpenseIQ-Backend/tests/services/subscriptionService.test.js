@@ -1,10 +1,14 @@
 const { setupTestDb } = require('../helpers/setup');
 const service = require('../../services/subscriptionService');
+const mongoose = require('mongoose');
 
 setupTestDb();
 
+const uid1 = new mongoose.Types.ObjectId();
+
 const sample = (over = {}) => ({
-  profileId: 'default',
+  userId: uid1,
+  context: 'Personal',
   name: 'Netflix',
   amount: 499,
   cycle: 'monthly',
@@ -14,14 +18,14 @@ const sample = (over = {}) => ({
 
 describe('subscriptionService', () => {
   it('findAll returns [] when empty', async () => {
-    expect(await service.findAll()).toEqual([]);
+    expect(await service.findAll({ userId: uid1 })).toEqual([]);
   });
 
   it('findAll sorts by due asc', async () => {
     await service.create(sample({ name: 'C', due: '2026-05-25' }));
     await service.create(sample({ name: 'A', due: '2026-05-05' }));
     await service.create(sample({ name: 'B', due: '2026-05-15' }));
-    const list = await service.findAll();
+    const list = await service.findAll({ userId: uid1 });
     expect(list.map((s) => s.name)).toEqual(['A', 'B', 'C']);
   });
 
@@ -56,6 +60,6 @@ describe('subscriptionService', () => {
     const created = await service.create(sample());
     const removed = await service.remove(created._id);
     expect(removed._id.toString()).toBe(created._id.toString());
-    expect(await service.findAll()).toEqual([]);
+    expect(await service.findAll({ userId: uid1 })).toEqual([]);
   });
 });

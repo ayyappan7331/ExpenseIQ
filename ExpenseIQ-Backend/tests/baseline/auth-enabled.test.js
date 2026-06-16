@@ -10,7 +10,7 @@ const app = buildApp();
 
 const registerAndLogin = async (email = 'user@example.com', password = 'hunter2hunter2') => {
   await request(app).post('/api/auth/register').send({ email, password });
-  const res = await request(app).post('/api/auth/login').send({ email, password });
+  const res = await request(app).post('/api/auth/login').send({ identifier: email, password });
   return res.body.token;
 };
 
@@ -46,7 +46,7 @@ describe('Auth enabled', () => {
         password: 'hunter2hunter2',
       });
       const res = await request(app).post('/api/auth/login').send({
-        email: 'second@example.com',
+        identifier: 'second@example.com',
         password: 'hunter2hunter2',
       });
       expect(res.status).toBe(200);
@@ -99,7 +99,7 @@ describe('Auth enabled', () => {
         '/api/subscriptions',
         '/api/debts',
         '/api/goals',
-        '/api/profiles',
+        // /api/profiles route removed
         '/api/creditcards',
         '/api/settings',
         '/api/budgets',
@@ -131,7 +131,7 @@ describe('Auth enabled', () => {
         password: 'rightpasswordhere',
       });
       const res = await request(app).post('/api/auth/login').send({
-        email: 'pw@example.com',
+        identifier: 'pw@example.com',
         password: 'wrongpasswordhere',
       });
       expect(res.status).toBe(401);
@@ -140,7 +140,7 @@ describe('Auth enabled', () => {
 
     it('login with unknown email returns 401', async () => {
       const res = await request(app).post('/api/auth/login').send({
-        email: 'ghost@example.com',
+        identifier: 'ghost@example.com',
         password: 'anythinghere',
       });
       expect(res.status).toBe(401);

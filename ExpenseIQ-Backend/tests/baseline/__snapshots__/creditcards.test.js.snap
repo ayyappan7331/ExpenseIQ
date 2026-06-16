@@ -8,6 +8,7 @@ exports[`Credit Cards API GET returns the card: list 1`] = `
     "archived": false,
     "billDate": 1,
     "color": "#7c6ff7",
+    "context": "Personal",
     "createdAt": "<createdAt>",
     "dueDate": 15,
     "duePeriod": 14,
@@ -15,8 +16,8 @@ exports[`Credit Cards API GET returns the card: list 1`] = `
     "linkedPaymentMethod": "HDFC Credit Card",
     "name": "HDFC",
     "openingBalance": 0,
-    "profileId": "default",
     "updatedAt": "<updatedAt>",
+    "userId": "000000000000000000000000",
   },
 ]
 `;
@@ -28,14 +29,15 @@ exports[`Credit Cards API POST creates (201): create 1`] = `
   "archived": false,
   "billDate": 1,
   "color": "#7c6ff7",
+  "context": "Personal",
   "createdAt": "<createdAt>",
   "dueDate": 15,
   "limit": 100000,
   "linkedPaymentMethod": "HDFC Credit Card",
   "name": "HDFC",
   "openingBalance": 0,
-  "profileId": "default",
   "updatedAt": "<updatedAt>",
+  "userId": "000000000000000000000000",
 }
 `;
 
@@ -46,13 +48,14 @@ exports[`Credit Cards API PUT updates: update 1`] = `
   "archived": false,
   "billDate": 1,
   "color": "#000000",
+  "context": "Personal",
   "createdAt": "<createdAt>",
   "dueDate": 15,
   "limit": 200000,
   "linkedPaymentMethod": "HDFC Credit Card",
   "name": "HDFC",
   "openingBalance": 0,
-  "profileId": "default",
   "updatedAt": "<updatedAt>",
+  "userId": "000000000000000000000000",
 }
 `;

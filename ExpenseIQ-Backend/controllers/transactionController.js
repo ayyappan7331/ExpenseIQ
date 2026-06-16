@@ -11,7 +11,7 @@ exports.create = asyncHandler(async (req, res) => {
 });
 
 exports.update = asyncHandler(async (req, res) => {
-  res.json(await service.update(req.params.id, { ...req.body, userId: req.user.userId }));
+  res.json(await service.update(req.params.id, req.user.userId, req.body));
 });
 
 exports.remove = asyncHandler(async (req, res) => {
@@ -28,6 +28,9 @@ exports.bulkDelete = asyncHandler(async (req, res) => {
 });
 
 exports.bulkCreate = asyncHandler(async (req, res) => {
-  const txnsToCreate = Array.isArray(req.body) ? req.body.map(t => ({ ...t, userId: req.user.userId })) : req.body;
+  // Always normalize to array and inject userId regardless of body shape.
+  // Prevents a non-array body from bypassing userId injection.
+  const items = Array.isArray(req.body) ? req.body : [req.body];
+  const txnsToCreate = items.map(t => ({ ...t, userId: req.user.userId }));
   res.status(201).json(await service.bulkCreate(txnsToCreate));
 });

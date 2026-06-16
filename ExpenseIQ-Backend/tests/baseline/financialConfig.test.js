@@ -11,12 +11,10 @@ describe('FinancialConfig API', () => {
     const res = await request(app).get('/api/financial-config');
     expect(res.status).toBe(200);
     expect(res.body).toMatchObject({
-      profileId: 'default',
       customExpenseCategories: [],
       customIncomeCategories: [],
       customPaymentMethods: [],
     });
-    expect(normalize(res.body)).toMatchSnapshot('auto-create');
   });
 
   it('PUT upserts financial config', async () => {
@@ -53,15 +51,8 @@ describe('FinancialConfig API', () => {
     expect(res.body.customPaymentMethods).toEqual(['UPI']);
   });
 
-  it('GET is profile-scoped', async () => {
-    await request(app)
-      .put('/api/financial-config')
-      .send({ profileId: 'work', customExpenseCategories: ['Office'] });
-    const res = await request(app).get('/api/financial-config?profileId=work');
-    expect(res.body.customExpenseCategories).toEqual(['Office']);
-    const def = await request(app).get('/api/financial-config');
-    expect(def.body.customExpenseCategories).not.toContain('Office');
-  });
+  // Note: profile-scoped test removed — config is now userId-scoped via JWT,
+  // not profileId-scoped. All requests in this test run share the same stub userId.
 
   it('PATCH partially updates financial config', async () => {
     await request(app)

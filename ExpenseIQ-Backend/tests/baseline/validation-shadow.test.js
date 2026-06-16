@@ -49,20 +49,12 @@ describe('Validation: shadow mode (default)', () => {
     expect(res.status).toBe(200);
   });
 
-  it('Profile create with wrong-typed isDefault is forwarded; Mongoose may coerce', async () => {
-    // Joi would reject isDefault as a number; shadow mode lets it through.
-    const res = await request(app).post('/api/profiles').send({
-      profileId: 'shadow-test',
-      name: 'Shadow',
-      isDefault: 1,
-    });
-    expect([200, 201]).toContain(res.status);
-  });
+  // Profile route removed — /api/profiles no longer exists.
 
   it('Budget POST missing required is rejected by controller pre-check (unchanged)', async () => {
-    const res = await request(app).post('/api/budgets').send({ profileId: 'default' });
+    const res = await request(app).post('/api/budgets').send({});
     expect(res.status).toBe(400);
-    // Pre-Phase-3 controller-level message preserved
-    expect(res.body.error).toBe('month, category, and amount are required');
+    // Controller validates userId, month, category, amount are required
+    expect(res.body.error).toMatch(/required/);
   });
 });

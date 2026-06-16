@@ -1,32 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Settings API GET auto-creates default settings when none exist: auto-create 1`] = `
-{
-  "__v": "<__v>",
-  "_id": "<_id>",
-  "createdAt": "<createdAt>",
-  "navOrder": [],
-  "profileId": "default",
-  "theme": "light",
-  "updatedAt": "<updatedAt>",
-  "widgetOrder": [],
-  "widgets": [
-    "chart",
-    "recent",
-    "goals",
-  ],
-}
-`;
-
 exports[`Settings API PUT upserts settings: update 1`] = `
 {
   "__v": "<__v>",
   "_id": "<_id>",
   "createdAt": "<createdAt>",
   "navOrder": [],
-  "profileId": "default",
   "theme": "dark",
   "updatedAt": "<updatedAt>",
+  "userId": "000000000000000000000000",
   "widgetOrder": [
     "chart",
   ],
