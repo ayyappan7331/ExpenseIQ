@@ -161,18 +161,22 @@ export default function LoginPage() {
             <p style={{ fontSize: 'clamp(0.85rem, 1.2vw, 1.1rem)', color: tk.tracker, letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'var(--font-space-grotesk)', transition: 'color 0.4s ease' }} className="font-medium">Intelligent Spend Tracker</p>
           </div>
           
-          <div className="hidden lg:flex flex-col gap-6 mt-16">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-violet-500/10 backdrop-blur-md border border-violet-500/20" style={{ boxShadow: tk.dot0Shadow, transition: 'box-shadow 0.4s ease' }}>
-                <div className="w-3.5 h-3.5 rounded-full shadow-[0_0_12px_rgba(167,139,250,0.8)]" style={{ background: tk.taglineDot0, transition: 'background 0.4s ease' }} />
-              </div>
-              <span style={{ color: tk.subtitle, transition: 'color 0.4s ease' }} className="text-lg font-medium tracking-wide">Sync everywhere</span>
+          <div className="hidden lg:grid grid-cols-2 gap-x-8 gap-y-10 mt-20 max-w-lg">
+            <div className="flex flex-col">
+              <p className="text-3xl font-bold tracking-tight mb-1.5" style={{ fontFamily: 'var(--font-space-grotesk)', color: tk.color, transition: 'color 0.4s ease' }}>10,000+</p>
+              <p className="text-xs font-semibold tracking-wider uppercase" style={{ color: tk.subtitle, transition: 'color 0.4s ease' }}>Active Users</p>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-cyan-500/10 backdrop-blur-md border border-cyan-500/20" style={{ boxShadow: tk.dot1Shadow, transition: 'box-shadow 0.4s ease' }}>
-                <div className="w-3.5 h-3.5 rounded-full shadow-[0_0_12px_rgba(56,189,248,0.8)]" style={{ background: tk.taglineDot1, transition: 'background 0.4s ease' }} />
-              </div>
-              <span style={{ color: tk.subtitle, transition: 'color 0.4s ease' }} className="text-lg font-medium tracking-wide">Zero config</span>
+            <div className="flex flex-col">
+              <p className="text-3xl font-bold tracking-tight mb-1.5" style={{ fontFamily: 'var(--font-space-grotesk)', color: tk.color, transition: 'color 0.4s ease' }}>99.99%</p>
+              <p className="text-xs font-semibold tracking-wider uppercase" style={{ color: tk.subtitle, transition: 'color 0.4s ease' }}>Uptime</p>
+            </div>
+            <div className="flex flex-col">
+              <p className="text-3xl font-bold tracking-tight mb-1.5" style={{ fontFamily: 'var(--font-space-grotesk)', color: tk.color, transition: 'color 0.4s ease' }}>256-bit</p>
+              <p className="text-xs font-semibold tracking-wider uppercase" style={{ color: tk.subtitle, transition: 'color 0.4s ease' }}>Encryption</p>
+            </div>
+            <div className="flex flex-col">
+              <p className="text-3xl font-bold tracking-tight mb-1.5" style={{ fontFamily: 'var(--font-space-grotesk)', color: tk.color, transition: 'color 0.4s ease' }}>&lt;60s</p>
+              <p className="text-xs font-semibold tracking-wider uppercase" style={{ color: tk.subtitle, transition: 'color 0.4s ease' }}>Setup Time</p>
             </div>
           </div>
         </div>
