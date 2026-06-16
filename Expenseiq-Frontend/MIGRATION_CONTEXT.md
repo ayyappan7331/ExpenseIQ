@@ -10944,3 +10944,25 @@ pm run migrate:repair:apply: 510 records fixed, 0 errors, post-fix verification 
 
 ### Validation Results
 - typecheck (0 errors), lint (0 errors, 0 warnings).
+
+## Expensive Input Fields Refinement (Login Page)
+
+### Files Changed
+- src/app/(auth)/login/forms/LoginForm.tsx
+- src/app/(auth)/login/forms/RegisterForm.tsx
+- src/app/(auth)/login/forms/PasswordlessLoginForm.tsx
+- src/app/(auth)/login/forms/ForgotPasswordForm.tsx
+- src/app/(auth)/login/components/OtpInput.tsx
+
+### What Changed and Why
+- Re-architected the input styles to use a "premium, expensive" aesthetic inspired by tools like Stripe and Linear.
+- Refactored inline 'borderColor' properties to CSS variables to allow Tailwind's focus pseudo-classes ('focus:border', 'focus:ring') to function correctly.
+- Default State: Applied slightly darker, translucent fills with subtle borders and inset drop shadows for depth.
+- Focus State: Replaced hard borders with a 3px smooth brand color glow (violet) and an animated 200ms transition on hover/focus.
+- Restyled OtpInput with similar sophisticated depth effects.
+
+### Architecture Rules Enforced
+- Maintained exact layout and rendering rules without introducing new external UI libraries. CSS variables used cleanly alongside Tailwind.
+
+### Validation Results
+- typecheck (0 errors), lint (0 errors).

@@ -44,14 +44,15 @@ export function OtpInput({
             if (el) (el as HTMLInputElement).focus();
           }}
           style={{
-            width: 44, height: 50, borderRadius: 10, border: `1.5px solid ${isDark ? 'rgba(124,111,247,0.3)' : 'rgba(109,82,216,0.2)'}`,
-            background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.5)',
+            width: 44, height: 50, borderRadius: 12, border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`,
+            background: isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.03)',
+            boxShadow: isDark ? 'inset 0 2px 4px rgba(0,0,0,0.3), 0 1px 1px rgba(255,255,255,0.04)' : 'inset 0 2px 4px rgba(0,0,0,0.04), 0 1px 1px rgba(255,255,255,1)',
             color: isDark ? '#fff' : '#1a1a2e',
             fontSize: '1.25rem', fontWeight: 700, textAlign: 'center',
-            outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s',
+            outline: 'none', transition: 'all 0.2s ease-out',
           }}
-          onFocus={e => { e.currentTarget.style.borderColor = '#7c6ff7'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(124,111,247,0.25)'; }}
-          onBlur={e => { e.currentTarget.style.borderColor = isDark ? 'rgba(124,111,247,0.3)' : 'rgba(109,82,216,0.2)'; e.currentTarget.style.boxShadow = 'none'; }}
+          onFocus={e => { e.currentTarget.style.borderColor = isDark ? '#8b5cf6' : '#7c3aed'; e.currentTarget.style.boxShadow = `0 0 0 3px ${isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(124, 58, 237, 0.15)'}`; }}
+          onBlur={e => { e.currentTarget.style.borderColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'; e.currentTarget.style.boxShadow = isDark ? 'inset 0 2px 4px rgba(0,0,0,0.3), 0 1px 1px rgba(255,255,255,0.04)' : 'inset 0 2px 4px rgba(0,0,0,0.04), 0 1px 1px rgba(255,255,255,1)'; }}
         />
       ))}
     </div>

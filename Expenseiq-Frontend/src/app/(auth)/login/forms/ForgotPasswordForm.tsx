@@ -112,13 +112,16 @@ export function ForgotPasswordForm({
   }
 
   const isDark = theme === 'dark';
-  const inpBase = "w-full px-4 py-3.5 text-sm rounded-2xl border transition-all duration-300 ease-out focus:outline-none focus:ring-[3px] focus:ring-violet-500/20 focus:border-violet-500/60";
+  const inpBase = "w-full px-4 py-3 text-sm rounded-xl border border-[var(--inp-border)] bg-[var(--inp-bg)] text-[var(--inp-text)] shadow-[var(--inp-shadow)] transition-all duration-200 ease-out focus:outline-none focus:border-[var(--inp-focus-border)] focus:ring-[3px] focus:ring-[var(--inp-focus-ring)] placeholder:text-[var(--inp-ph)]";
   const inpStyle = {
-    background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.6)',
-    borderColor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
-    color: isDark ? '#ffffff' : '#1a1a2e',
-    boxShadow: isDark ? 'inset 0 2px 4px rgba(0,0,0,0.2)' : 'inset 0 2px 4px rgba(0,0,0,0.02)',
-  };
+    '--inp-bg': isDark ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.03)',
+    '--inp-border': isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+    '--inp-text': isDark ? '#ffffff' : '#1a1a2e',
+    '--inp-shadow': isDark ? 'inset 0 2px 4px rgba(0,0,0,0.3), 0 1px 1px rgba(255,255,255,0.04)' : 'inset 0 2px 4px rgba(0,0,0,0.04), 0 1px 1px rgba(255,255,255,1)',
+    '--inp-focus-border': isDark ? '#8b5cf6' : '#7c3aed',
+    '--inp-focus-ring': isDark ? 'rgba(139, 92, 246, 0.2)' : 'rgba(124, 58, 237, 0.15)',
+    '--inp-ph': isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.4)',
+  } as React.CSSProperties;
 
   if (step === 1) {
     return (
