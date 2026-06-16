@@ -11,7 +11,6 @@ import { ResendTimer } from '../components/ResendTimer';
 
 export function PasswordlessLoginForm({
   theme,
-  onSwitchView,
   hideTooltip,
   fieldErrs,
   setFieldErrs,
