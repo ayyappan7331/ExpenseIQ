@@ -5,7 +5,7 @@ import { setToken, setStoredUser } from '@/lib/api/token';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { SharedFormProps } from '../types';
-import { FieldError } from '../components/FormElements';
+import { FieldError, PremiumButton } from '../components/FormElements';
 
 export function LoginForm({
   theme,
@@ -24,6 +24,7 @@ export function LoginForm({
   const [password, setPassword] = useState('');
   const [showPw, setShowPw] = useState(false);
   const [capsLock, setCapsLock] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   function handleKeyEvent(e: React.KeyboardEvent) {
     if (e.getModifierState) setCapsLock(e.getModifierState('CapsLock'));
@@ -35,8 +36,8 @@ export function LoginForm({
     setToken(res.token);
     setStoredUser({ id: res.user.id, email: res.user.email, name: res.user.name, dob: res.user.dob, purpose: res.user.purpose });
     qc.clear();
-    // Profile logic removed
-    router.push('/dashboard');
+    setSuccess(true);
+    setTimeout(() => router.push('/dashboard'), 1500);
   }
 
   async function handleLogin(ev: React.FormEvent) {
@@ -50,9 +51,8 @@ export function LoginForm({
     try { 
       await afterLogin(identifier.trim(), password); 
     } catch (err: unknown) { 
-      setError(err instanceof Error ? err.message : 'Login failed'); 
-    } finally { 
-      setLoading(false); 
+      setError(err instanceof Error ? err.message : 'Login failed');
+      setLoading(false);
     }
   }
 
@@ -112,18 +112,7 @@ export function LoginForm({
         </div>
       </div>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="relative w-full py-3.5 mt-4 text-sm font-semibold rounded-2xl text-white transition-all duration-300 ease-out hover:-translate-y-[1px] active:translate-y-[1px] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden cursor-pointer"
-        style={{
-          background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
-          boxShadow: '0 8px 20px -8px rgba(124, 58, 237, 0.5), inset 0 1px 1px rgba(255,255,255,0.2)'
-        }}
-      >
-        <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <span className="relative z-10">{loading ? 'Signing in...' : 'Sign In'}</span>
-      </button>
+      <PremiumButton loading={loading} success={success} text="Sign In" loadingText="Signing in..." />
 
       <p className="text-center text-sm mt-6" style={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}>
         Don&apos;t have an account?{' '}

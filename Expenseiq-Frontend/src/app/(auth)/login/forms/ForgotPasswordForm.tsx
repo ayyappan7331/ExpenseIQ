@@ -5,7 +5,7 @@ import { setToken, setStoredUser } from '@/lib/api/token';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { SharedFormProps } from '../types';
-import { FieldError } from '../components/FormElements';
+import { FieldError, PremiumButton } from '../components/FormElements';
 import { OtpInput } from '../components/OtpInput';
 import { ResendTimer } from '../components/ResendTimer';
 
@@ -45,10 +45,11 @@ export function ForgotPasswordForm({
   const [fpOtp, setFpOtp] = useState('');
   const [fpResetToken, setFpResetToken] = useState('');
   const [fpNewPw, setFpNewPw] = useState('');
-  const [fpCfPw, setFpCfPw] = useState('');
-  const [showFpPw, setShowFpPw] = useState(false);
-  const [showFpCf, setShowFpCf] = useState(false);
+  const [forgotCfPw, setForgotCfPw] = useState('');
+  const [showForgotPw, setShowForgotPw] = useState(false);
+  const [showForgotCf, setShowForgotCf] = useState(false);
   const [capsLock, setCapsLock] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   function handleKeyEvent(e: React.KeyboardEvent) {
     if (e.getModifierState) setCapsLock(e.getModifierState('CapsLock'));
@@ -66,7 +67,7 @@ export function ForgotPasswordForm({
 
   const fpPassedRules = RULES.filter(r => r.test(fpNewPw));
   const fpAllRulesPassed = fpPassedRules.length === RULES.length;
-  const fpPwMatch = fpNewPw === fpCfPw;
+  const fpPwMatch = fpNewPw === forgotCfPw;
   const strength = strengthInfo(fpPassedRules.length);
 
   async function handleFpSendOtp(ev: React.FormEvent) {
@@ -74,8 +75,12 @@ export function ForgotPasswordForm({
     if (!fpIdentifier.trim()) { setFieldErrs({ fpIdentifier: 'Enter your email or mobile number.' }); return; }
     setFieldErrs({}); setError(''); setLoading(true);
     try {
-      await authApi.sendOtp({ identifier: fpIdentifier.trim(), purpose: 'reset' });
-      setStep(2);
+      await authApi.sendOtp({ identifier: fpIdentifier.trim(), purpose: 'reset-password' });
+      setSuccess(true);
+      setTimeout(() => {
+        setStep(2);
+        setSuccess(false);
+      }, 800);
     } catch (err: unknown) { setError(err instanceof Error ? err.message : 'Failed to send OTP'); }
     finally { setLoading(false); }
   }
@@ -90,9 +95,13 @@ export function ForgotPasswordForm({
     if (fpOtp.replace(/\D/g, '').length < 6) { setFieldErrs({ fpOtp: 'Enter all 6 digits of the OTP.' }); return; }
     setFieldErrs({}); setError(''); setLoading(true);
     try {
-      const res = await authApi.verifyOtp({ identifier: fpIdentifier.trim(), code: fpOtp.trim(), purpose: 'reset' });
-      setFpResetToken(res.resetToken ?? '');
-      setStep(3);
+      const res = await authApi.verifyOtp({ identifier: fpIdentifier.trim(), code: fpOtp.trim() });
+      setFpResetToken(res.token ?? '');
+      setSuccess(true);
+      setTimeout(() => {
+        setStep(3);
+        setSuccess(false);
+      }, 800);
     } catch (err: unknown) { setError(err instanceof Error ? err.message : 'Invalid or expired OTP'); }
     finally { setLoading(false); }
   }
@@ -105,8 +114,11 @@ export function ForgotPasswordForm({
     if (Object.keys(errs).length) { setFieldErrs(errs); return; }
     setFieldErrs({}); setError(''); setLoading(true);
     try {
-      await authApi.resetPassword({ resetToken: fpResetToken, newPassword: fpNewPw });
-      await afterLogin(fpIdentifier.trim(), fpNewPw);
+      await authApi.resetPassword({ token: fpResetToken, password: fpNewPw });
+      setSuccess(true);
+      setTimeout(() => {
+        onSwitchView('login');
+      }, 1500);
     } catch (err: unknown) { setError(err instanceof Error ? err.message : 'Failed to reset password'); }
     finally { setLoading(false); }
   }
@@ -141,10 +153,7 @@ export function ForgotPasswordForm({
             />
             {fieldErrs.fpIdentifier && <FieldError msg={fieldErrs.fpIdentifier} theme={theme} />}
           </div>
-          <button type="submit" disabled={loading} className="relative w-full py-3.5 mt-4 text-sm font-semibold rounded-2xl text-white transition-all duration-300 ease-out hover:-translate-y-[1px] active:translate-y-[1px] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden cursor-pointer" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)', boxShadow: '0 8px 20px -8px rgba(124, 58, 237, 0.5), inset 0 1px 1px rgba(255,255,255,0.2)' }}>
-            <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <span className="relative z-10">{loading ? 'Sending...' : 'Send Reset Code'}</span>
-          </button>
+          <PremiumButton loading={loading} success={success} text="Send Recovery Code" loadingText="Sending..." />
         </form>
       </>
     );
@@ -169,10 +178,7 @@ export function ForgotPasswordForm({
               <ResendTimer onResend={handleFpResendOtp} theme={theme} />
             </div>
           </div>
-          <button type="submit" disabled={loading || fpOtp.replace(/\D/g, '').length < 6} className="relative w-full py-3.5 mt-4 text-sm font-semibold rounded-2xl text-white transition-all duration-300 ease-out hover:-translate-y-[1px] active:translate-y-[1px] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden cursor-pointer" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)', boxShadow: '0 8px 20px -8px rgba(124, 58, 237, 0.5), inset 0 1px 1px rgba(255,255,255,0.2)' }}>
-            <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <span className="relative z-10">{loading ? 'Verifying...' : 'Verify Code'}</span>
-          </button>
+          <PremiumButton loading={loading} success={success} text="Verify Code" loadingText="Verifying..." disabled={fpOtp.replace(/\D/g, '').length < 6} />
         </form>
       </>
     );

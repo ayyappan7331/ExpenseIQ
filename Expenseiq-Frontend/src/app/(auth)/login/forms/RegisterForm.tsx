@@ -5,7 +5,7 @@ import { setToken, setStoredUser } from '@/lib/api/token';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { SharedFormProps } from '../types';
-import { FieldError } from '../components/FormElements';
+import { FieldError, PremiumButton } from '../components/FormElements';
 
 const RULES = [
   { id: 'len',     label: 'Min 8 characters',     test: (p: string) => p.length >= 8 },
@@ -64,6 +64,7 @@ export function RegisterForm({
   const [showRegCf, setShowRegCf] = useState(false);
   const [touched, setTouched] = useState(false);
   const [capsLock, setCapsLock] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   function handleKeyEvent(e: React.KeyboardEvent) {
     if (e.getModifierState) setCapsLock(e.getModifierState('CapsLock'));
@@ -75,8 +76,8 @@ export function RegisterForm({
     setToken(res.token);
     setStoredUser({ id: res.user.id, email: res.user.email, name: res.user.name, dob: res.user.dob, purpose: res.user.purpose });
     qc.clear();
-    // Profile logic removed
-    router.push('/dashboard');
+    setSuccess(true);
+    setTimeout(() => router.push('/dashboard'), 1500);
   }
 
   const passedRules = RULES.filter(r => r.test(regPw));
@@ -259,17 +260,7 @@ export function RegisterForm({
           </div>
           {fieldErrs.regCf && <FieldError msg={fieldErrs.regCf} theme={theme} />}
         </div>
-        <button
-          type="submit" disabled={loading}
-          className="relative w-full py-3.5 mt-4 text-sm font-semibold rounded-2xl text-white transition-all duration-300 ease-out hover:-translate-y-[1px] active:translate-y-[1px] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden cursor-pointer"
-          style={{
-            background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
-            boxShadow: '0 8px 20px -8px rgba(124, 58, 237, 0.5), inset 0 1px 1px rgba(255,255,255,0.2)'
-          }}
-        >
-          <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          <span className="relative z-10">{loading ? 'Creating Account...' : 'Create Account'}</span>
-        </button>
+        <PremiumButton loading={loading} success={success} text="Create Account" loadingText="Creating Account..." />
       </form>
     </>
   );

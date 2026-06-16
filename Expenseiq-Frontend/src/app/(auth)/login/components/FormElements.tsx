@@ -79,3 +79,51 @@ export function SuccessNote({ msg, theme }: { msg: string; theme: 'dark' | 'ligh
     </p>
   );
 }
+
+export function PremiumButton({ loading, success, text, loadingText, type = 'submit', disabled = false, onClick }: { loading: boolean, success?: boolean, text: string, loadingText?: string, type?: 'button' | 'submit', disabled?: boolean, onClick?: () => void }) {
+  return (
+    <>
+      <style>{`
+        .premium-btn {
+          background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 50%, #7c3aed 100%);
+          background-size: 200% 200%;
+          background-position: 0% 50%;
+          box-shadow: 0 8px 20px -8px rgba(124, 58, 237, 0.5), inset 0 1px 1px rgba(255,255,255,0.2);
+          transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .premium-btn:hover:not(:disabled) {
+          background-position: 100% 50%;
+          box-shadow: 0 14px 28px -6px rgba(124, 58, 237, 0.6), inset 0 1px 1px rgba(255,255,255,0.3);
+          transform: translateY(-2px);
+        }
+        .premium-btn:active:not(:disabled) {
+          transform: translateY(1px) scale(0.98);
+          box-shadow: 0 4px 10px -4px rgba(124, 58, 237, 0.5), inset 0 1px 1px rgba(255,255,255,0.2);
+        }
+      `}</style>
+      <button
+        type={type}
+        disabled={disabled || loading || success}
+        onClick={onClick}
+        className="premium-btn relative w-full mt-4 text-sm font-semibold rounded-2xl text-white overflow-hidden group flex justify-center items-center h-[52px] cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+      >
+        <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <span className="relative z-10 flex items-center justify-center gap-2">
+          {success ? (
+            <Check className="w-5 h-5 animate-in zoom-in duration-300" />
+          ) : loading ? (
+            <>
+              <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              {loadingText || text}
+            </>
+          ) : (
+            text
+          )}
+        </span>
+      </button>
+    </>
+  );
+}

@@ -5,7 +5,7 @@ import { setToken, setStoredUser } from '@/lib/api/token';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { SharedFormProps } from '../types';
-import { FieldError } from '../components/FormElements';
+import { FieldError, PremiumButton } from '../components/FormElements';
 import { OtpInput } from '../components/OtpInput';
 import { ResendTimer } from '../components/ResendTimer';
 
@@ -24,6 +24,7 @@ export function PasswordlessLoginForm({
   const [step, setStep] = useState<1 | 2>(1);
   const [otpLoginId, setOtpLoginId] = useState('');
   const [otpLoginCode, setOtpLoginCode] = useState('');
+  const [success, setSuccess] = useState(false);
 
   async function handleOtpLoginSend(ev: React.FormEvent) {
     ev.preventDefault();
@@ -31,7 +32,11 @@ export function PasswordlessLoginForm({
     setFieldErrs({}); setError(''); setLoading(true);
     try {
       await authApi.sendOtp({ identifier: otpLoginId.trim(), purpose: 'login' });
-      setStep(2);
+      setSuccess(true);
+      setTimeout(() => {
+        setStep(2);
+        setSuccess(false);
+      }, 800);
     } catch (err: unknown) { setError(err instanceof Error ? err.message : 'Failed to send OTP'); }
     finally { setLoading(false); }
   }
@@ -48,10 +53,13 @@ export function PasswordlessLoginForm({
     try {
       const res = await authApi.loginWithOtp({ identifier: otpLoginId.trim(), code: otpLoginCode.trim() });
       try { localStorage.setItem('expenseiq_last_identifier', otpLoginId.trim()); } catch { /* ignore */ }
-      setToken(res.token);
-      setStoredUser({ id: res.user.id, email: res.user.email, name: res.user.name, dob: res.user.dob, purpose: res.user.purpose });
-      qc.clear();
-      router.push('/dashboard');
+      setSuccess(true);
+      setTimeout(() => {
+        setToken(res.token);
+        setStoredUser({ id: res.user.id, email: res.user.email, name: res.user.name, dob: res.user.dob, purpose: res.user.purpose });
+        qc.clear();
+        router.push('/dashboard');
+      }, 1500);
     } catch (err: unknown) { setError(err instanceof Error ? err.message : 'Invalid or expired OTP'); }
     finally { setLoading(false); }
   }
@@ -83,10 +91,7 @@ export function PasswordlessLoginForm({
             />
             {fieldErrs.otpLoginId && <FieldError msg={fieldErrs.otpLoginId} theme={theme} />}
           </div>
-          <button type="submit" disabled={loading} className="relative w-full py-3.5 mt-4 text-sm font-semibold rounded-2xl text-white transition-all duration-300 ease-out hover:-translate-y-[1px] active:translate-y-[1px] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden cursor-pointer" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)', boxShadow: '0 8px 20px -8px rgba(124, 58, 237, 0.5), inset 0 1px 1px rgba(255,255,255,0.2)' }}>
-            <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <span className="relative z-10">{loading ? 'Sending...' : 'Send Login Code'}</span>
-          </button>
+          <PremiumButton loading={loading} success={success} text="Send Login Code" loadingText="Sending..." />
         </form>
       </>
     );
@@ -110,10 +115,7 @@ export function PasswordlessLoginForm({
             <ResendTimer onResend={handleOtpLoginResend} theme={theme} />
           </div>
         </div>
-        <button type="submit" disabled={loading || otpLoginCode.replace(/\D/g, '').length < 6} className="relative w-full py-3.5 mt-4 text-sm font-semibold rounded-2xl text-white transition-all duration-300 ease-out hover:-translate-y-[1px] active:translate-y-[1px] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden cursor-pointer" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)', boxShadow: '0 8px 20px -8px rgba(124, 58, 237, 0.5), inset 0 1px 1px rgba(255,255,255,0.2)' }}>
-          <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          <span className="relative z-10">{loading ? 'Verifying...' : 'Login Securely'}</span>
-        </button>
+        <PremiumButton loading={loading} success={success} text="Login Securely" loadingText="Verifying..." disabled={otpLoginCode.replace(/\D/g, '').length < 6} />
       </form>
     </>
   );
