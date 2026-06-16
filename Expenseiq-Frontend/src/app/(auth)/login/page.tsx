@@ -106,7 +106,12 @@ export default function LoginPage() {
     WebkitBackdropFilter: 'blur(32px)', 
     border: `1px solid ${tk.cardBorder}`, 
     borderRadius: 32, 
-    boxShadow: `0 25px 50px -12px rgba(0,0,0,0.25), inset 0 1px 1px rgba(255, 255, 255, ${loginTheme === 'dark' ? 0.05 : 0.3})`, 
+    boxShadow: `
+      0 30px 60px -12px rgba(0,0,0,0.3), 
+      0 18px 36px -18px rgba(0,0,0,0.2), 
+      inset 0 1px 1px rgba(255, 255, 255, ${loginTheme === 'dark' ? 0.05 : 0.4}),
+      inset 0 -1px 1px rgba(0, 0, 0, ${loginTheme === 'dark' ? 0.2 : 0.05})
+    `, 
     padding: '2.5rem', 
     width: '100%', 
     maxWidth: 440, 
@@ -175,8 +180,12 @@ export default function LoginPage() {
         {/* Right Side: Auth Card */}
         <div className="flex flex-col items-center justify-center p-4 sm:p-8 lg:p-12 order-2 lg:order-2 flex-grow relative">
           
-          {/* Intense ambient glow immediately behind the card */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[600px] h-[600px] rounded-full pointer-events-none opacity-40 mix-blend-screen" style={{ background: `radial-gradient(circle, ${tk.glowA} 0%, transparent 60%)`, filter: 'blur(80px)' }} aria-hidden />
+          {/* Soft background radial gradient for the entire right side to separate depth */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(circle at center, rgba(255,255,255, ${loginTheme === 'dark' ? 0.02 : 0.15}) 0%, transparent 70%)` }} aria-hidden />
+
+          {/* Layered ambient glows immediately behind the card */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[800px] h-[800px] rounded-full pointer-events-none opacity-20 mix-blend-screen" style={{ background: `radial-gradient(circle, ${tk.glowB} 0%, transparent 70%)`, filter: 'blur(100px)' }} aria-hidden />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[500px] h-[500px] rounded-full pointer-events-none opacity-50 mix-blend-screen" style={{ background: `radial-gradient(circle, ${tk.glowA} 0%, transparent 50%)`, filter: 'blur(60px)' }} aria-hidden />
 
           <div style={panelStyle} className="animate-in fade-in zoom-in-95 slide-in-from-bottom-8 duration-700 ease-out">
             <div className="mb-8">

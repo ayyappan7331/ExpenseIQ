@@ -10884,3 +10884,22 @@ pm run migrate:repair:apply: 510 records fixed, 0 errors, post-fix verification 
 
 ### Validation Results
 - Validation metrics: typecheck (0 errors), lint (0 errors, 0 warnings).
+
+## Login Page Polish
+
+### Files Changed
+- src/app/(auth)/login/page.tsx
+
+### What Changed and Why
+- Updated login card container styling (panelStyle) with multiple drop-shadows and inset shadows to provide a premium glassmorphic elevation rather than a flat box.
+- Layered the ambient glows (tk.glowA and tk.glowB) behind the card with varying sizes and opacities to produce a rich depth lighting effect.
+- Added a soft background radial gradient to the right-side section.
+
+### Architecture Rules Enforced
+- Maintained exact layout and rendering rules while replacing simplistic inline styling with nuanced glass and light layers.
+
+### Formulas / Patterns
+- Box Shadow Layering: Combine outer soft dark shadows with subtle white/transparent inner borders.
+
+### Validation Results
+- typecheck (0 errors), lint (0 errors, 0 warnings).

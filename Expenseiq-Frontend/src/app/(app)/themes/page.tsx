@@ -67,7 +67,7 @@ export default function ThemesPage() {
     onError: (err, newTheme, context) => {
       if (context?.previousSettings) {
         qc.setQueryData(queryKeys.settings.one('Personal'), context.previousSettings);
-        setTheme(context.previousSettings.theme);
+        setTheme((context.previousSettings as { theme: string }).theme);
       }
     },
     onSettled: () => {
