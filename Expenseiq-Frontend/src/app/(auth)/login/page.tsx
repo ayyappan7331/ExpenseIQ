@@ -120,7 +120,7 @@ export default function LoginPage() {
     transition: 'background 0.4s ease, border-color 0.4s ease',
     position: 'relative',
     zIndex: 30
-  }), [tk, loginTheme]);
+  }), [loginTheme]);
 
   const logoFontStyle = { fontSize: 'clamp(2.5rem, 6vw, 5rem)', fontFamily: 'var(--font-space-grotesk), system-ui', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1 };
 
