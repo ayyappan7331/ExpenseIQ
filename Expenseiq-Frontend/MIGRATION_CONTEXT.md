@@ -10982,3 +10982,21 @@ pm run migrate:repair:apply: 510 records fixed, 0 errors, post-fix verification 
 
 ### Validation Results
 - typecheck (0 errors), lint (0 errors).
+
+## OTP Screen Flow Improvement (Login Page)
+
+### Files Changed
+- src/app/(auth)/login/page.tsx
+- src/app/(auth)/login/forms/LoginForm.tsx
+- src/app/(auth)/login/forms/PasswordlessLoginForm.tsx
+
+### What Changed and Why
+- Replaced the disconnected "Login with Password" / "Login with OTP" text links with a unified segmented control switch at the top of the auth card.
+- Unified the heading language to "Welcome Back" for both login methods.
+- This creates a cleaner, more intuitive mental model for users to toggle between authentication methods, reducing cognitive load and matching modern standard patterns.
+
+### Architecture Rules Enforced
+- Maintained exact layout and rendering rules without introducing new external UI libraries. Reused existing state hooks and view switching logic.
+
+### Validation Results
+- typecheck (0 errors), lint (0 errors).

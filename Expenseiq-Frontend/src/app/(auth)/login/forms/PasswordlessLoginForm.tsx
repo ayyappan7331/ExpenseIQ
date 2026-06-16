@@ -72,9 +72,6 @@ export function PasswordlessLoginForm({
   if (step === 1) {
     return (
       <>
-        <button type="button" onClick={() => onSwitchView('login')} className="mb-6 flex items-center gap-2 text-sm font-medium hover:underline opacity-80 hover:opacity-100 transition-opacity cursor-pointer">
-          <ArrowLeft size={16} /> Login with Password
-        </button>
         <p className="text-sm mb-6" style={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}>Login instantly without a password. We&apos;ll send a secure one-time code to your registered email or mobile.</p>
         <form onSubmit={handleOtpLoginSend} className="space-y-4" noValidate>
           <div>

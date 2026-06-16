@@ -125,27 +125,6 @@ export function LoginForm({
         <span className="relative z-10">{loading ? 'Signing in...' : 'Sign In'}</span>
       </button>
 
-      <div className="relative flex items-center py-2">
-        <div className="flex-grow border-t" style={{ borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }}></div>
-        <span className="flex-shrink-0 mx-4 text-xs font-medium uppercase tracking-wider" style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)' }}>or continue with</span>
-        <div className="flex-grow border-t" style={{ borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }}></div>
-      </div>
-
-      <button
-        type="button"
-        onClick={() => onSwitchView('passwordless-login')}
-        disabled={loading}
-        className="w-full py-3.5 text-sm font-medium rounded-2xl transition-all duration-300 ease-out hover:-translate-y-[1px] active:translate-y-[1px] active:scale-[0.98] cursor-pointer"
-        style={{
-          background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
-          border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'}`,
-          color: isDark ? '#fff' : '#1a1a2e',
-          boxShadow: '0 4px 12px -4px rgba(0,0,0,0.1)'
-        }}
-      >
-        Login with OTP
-      </button>
-
       <p className="text-center text-sm mt-6" style={{ color: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}>
         Don&apos;t have an account?{' '}
         <button type="button" onClick={() => onSwitchView('register')} className="font-semibold hover:underline cursor-pointer" style={{ color: isDark ? '#a78bfa' : '#6d52d8' }}>

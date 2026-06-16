@@ -194,12 +194,41 @@ export default function LoginPage() {
           <div style={panelStyle} className="animate-in fade-in zoom-in-95 slide-in-from-bottom-8 duration-700 ease-out">
             <div className="mb-10 space-y-1.5">
               <h2 className="text-2xl lg:text-3xl font-bold tracking-tight" style={{ fontFamily: 'var(--font-space-grotesk), system-ui, sans-serif' }}>
-                {view === 'login' ? 'Welcome Back' : view === 'register' ? 'Create Account' : view === 'forgot-password' ? 'Reset Password' : 'Sign in securely'}
+                {view === 'login' || view === 'passwordless-login' ? 'Welcome Back' : view === 'register' ? 'Create Account' : 'Reset Password'}
               </h2>
               <p className="text-sm font-medium tracking-wide" style={{ color: tk.tagline, transition: 'color 0.4s ease' }}>
-                {view === 'login' ? 'Enter your details to access your dashboard.' : view === 'register' ? 'Set up your ExpenseIQ profile.' : view === 'forgot-password' ? 'We\'ll help you get back in.' : 'Receive a one-time code to sign in instantly.'}
+                {view === 'login' || view === 'passwordless-login' ? 'Enter your details to access your dashboard.' : view === 'register' ? 'Set up your ExpenseIQ profile.' : 'We\'ll help you get back in.'}
               </p>
             </div>
+
+            {(view === 'login' || view === 'passwordless-login') && (
+              <div className="flex p-1 mb-8 rounded-xl" style={{ background: loginTheme === 'dark' ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.04)', border: `1px solid ${loginTheme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'}` }}>
+                <button
+                  type="button"
+                  onClick={() => handleSwitchView('login')}
+                  className="flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-violet-500/50"
+                  style={{
+                    background: view === 'login' ? (loginTheme === 'dark' ? 'rgba(255,255,255,0.1)' : '#fff') : 'transparent',
+                    color: view === 'login' ? (loginTheme === 'dark' ? '#fff' : '#000') : (loginTheme === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'),
+                    boxShadow: view === 'login' ? (loginTheme === 'dark' ? '0 2px 8px rgba(0,0,0,0.2)' : '0 2px 8px rgba(0,0,0,0.05)') : 'none',
+                  }}
+                >
+                  Password
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSwitchView('passwordless-login')}
+                  className="flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-violet-500/50"
+                  style={{
+                    background: view === 'passwordless-login' ? (loginTheme === 'dark' ? 'rgba(255,255,255,0.1)' : '#fff') : 'transparent',
+                    color: view === 'passwordless-login' ? (loginTheme === 'dark' ? '#fff' : '#000') : (loginTheme === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'),
+                    boxShadow: view === 'passwordless-login' ? (loginTheme === 'dark' ? '0 2px 8px rgba(0,0,0,0.2)' : '0 2px 8px rgba(0,0,0,0.05)') : 'none',
+                  }}
+                >
+                  OTP
+                </button>
+              </div>
+            )}
 
             {error && (
               <div className="mb-6 p-4 rounded-xl text-sm font-medium border bg-red-500/10 border-red-500/20 text-red-500 animate-in fade-in slide-in-from-top-2 duration-300">
