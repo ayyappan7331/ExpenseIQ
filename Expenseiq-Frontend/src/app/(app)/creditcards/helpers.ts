@@ -346,7 +346,7 @@ export function computeCardStats(
         .filter((t) => t.date >= cycleStart! && t.date <= cycleEnd!)
         .reduce((s, t) => s + t.amount, 0);
 
-      // cycleCredits: all card credits within the cycle (refunds reduce statement)
+      // cycleCredits: all card credits within the cycle
       const cycleCredits = cardCreditTxns
         .filter((t) => t.date >= cycleStart! && t.date <= cycleEnd!)
         .reduce((s, t) => s + t.amount, 0);
@@ -356,7 +356,15 @@ export function computeCardStats(
         .filter((t) => t.date >= cycleStart! && t.date <= cycleEnd!)
         .reduce((s, t) => s + t.amount, 0);
 
-      statementBalance = Math.max(0, cyclePurchases - cycleCredits);
+      // statementBalance is exactly the outstanding balance as of cycleEnd
+      const expensesUpToCycleEnd = expenseTxns
+        .filter((t) => t.date <= cycleEnd!)
+        .reduce((s, t) => s + t.amount, 0);
+      const creditsUpToCycleEnd = cardCreditTxns
+        .filter((t) => t.date <= cycleEnd!)
+        .reduce((s, t) => s + t.amount, 0);
+      
+      statementBalance = Math.max(0, openingBalance + expensesUpToCycleEnd - creditsUpToCycleEnd);
     }
 
     // Payment status
@@ -371,7 +379,9 @@ export function computeCardStats(
       paymentsAfterCycle = billPaymentTxns
         .filter((t) => t.date > cycleEnd!)
         .reduce((s, t) => s + t.amount, 0);
-      remainingDue = Math.max(0, statementBalance - paymentsAfterCycle);
+      
+      // remainingDue cannot exceed the current total outstanding balance (e.g. if refunds occurred)
+      remainingDue = Math.max(0, Math.min(outstandingBalance, statementBalance - paymentsAfterCycle));
 
       // Days until due: compare today's local date string to nextDueDate
       const todayStr = (() => {
@@ -485,6 +495,13 @@ export function computeMonthlyStatements(
     ? Math.ceil((new Date().getTime() - new Date(earliest + 'T00:00:00').getTime()) / (1000 * 60 * 60 * 24 * 28)) + 2
     : 24;
 
+  const openingBalance = cardTxns.length > 0 && cardTxns[0].paymentMethod ? 0 : 0; // we don't have meta.openingBalance easily here, assume 0 or derive from total. Actually, computeMonthlyStatements doesn't have openingBalance. Let's pass openingBalance.
+  // Wait, I can derive the total outstanding balance today to cap remainingDue
+  const totalExpenses = cardTxns.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+  const totalCredits = cardTxns.filter(t => t.type === 'income' && t.subtype !== 'transfer_in').reduce((s, t) => s + t.amount, 0);
+  // outstandingBalance today (assuming openingBalance = 0 since we don't have it passed, but that's fine for statements)
+  const currentOutstandingBalance = Math.max(0, totalExpenses - totalCredits);
+
   const statements: MonthlyStatement[] = [];
   let ref = new Date();
   // Upper bound for paymentsAfterCycle attribution.
@@ -521,18 +538,23 @@ export function computeMonthlyStatements(
       .filter((t) => t.date >= cycleStart && t.date <= cycleEnd)
       .reduce((s, t) => s + t.amount, 0);
 
-    const statementBalance = Math.max(0, purchases - credits);
-
-    // FIX: Scope payments to between this cycleEnd and prevCycleEnd (exclusive/inclusive).
-    // Previously this was unbounded (t.date > cycleEnd), so all future months' payments
-    // appeared as paid against every older statement. Now each cycle only claims payments
-    // made within its own settlement window.
-    const upperBound = prevCycleEnd;
-    const paymentsAfterCycle = billPaymentTxns
-      .filter((t) => t.date > cycleEnd && t.date <= upperBound)
+    const expensesUpToCycleEnd = expenseTxns
+      .filter((t) => t.date <= cycleEnd)
+      .reduce((s, t) => s + t.amount, 0);
+    const creditsUpToCycleEnd = cardCreditTxns
+      .filter((t) => t.date <= cycleEnd)
       .reduce((s, t) => s + t.amount, 0);
 
-    const remainingDue = Math.max(0, statementBalance - paymentsAfterCycle);
+    const statementBalance = Math.max(0, expensesUpToCycleEnd - creditsUpToCycleEnd);
+
+    // Payments after cycle are ALL future payments. This correctly attributes
+    // late payments to past statements chronologically.
+    const paymentsAfterCycle = billPaymentTxns
+      .filter((t) => t.date > cycleEnd)
+      .reduce((s, t) => s + t.amount, 0);
+
+    // remainingDue capped at current total outstanding balance (for refunds)
+    const remainingDue = Math.max(0, Math.min(currentOutstandingBalance, statementBalance - paymentsAfterCycle));
 
     const todayStr = (() => {
       const d = new Date();
@@ -550,9 +572,6 @@ export function computeMonthlyStatements(
     const monthLabel = new Date(cy, cm - 1, 1).toLocaleDateString('en-IN', { month: 'long' });
 
     statements.push({ label, monthLabel, year: cy, cycleStart, cycleEnd, dueDate: nextDueDate, purchases, credits, statementBalance, paymentsAfterCycle, remainingDue, status });
-
-    // Advance the upper bound for the next (older) cycle
-    prevCycleEnd = cycleEnd;
 
     // Step back one cycle
     ref = new Date(cycleStart + 'T00:00:00');

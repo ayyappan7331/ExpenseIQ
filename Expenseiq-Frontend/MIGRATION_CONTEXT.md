@@ -11109,3 +11109,27 @@ pm run migrate:repair:apply: 510 records fixed, 0 errors, post-fix verification 
 - TypeScript: passing (`npx tsc --noEmit`)
 - Browser: page loads, DNA helix visible, all form switches work, console clean
 - Lazy loading: Register form loads on demand with spinner fallback
+
+---
+
+## Credit Cards Screen Visual & Logic Improvements
+
+### Files Changed (Frontend)
+- src/components/charts/BarChart.tsx
+- src/app/(app)/creditcards/helpers.ts
+
+### What changed and why
+
+1. **BarChart Visual Enhancement**: Upgraded the BarChart component (used by Card Spend Comparison) from flat base colors to dynamic Canvas 2D linear gradients. A bottom-to-top gradient (50% opacity fading to 100%) adds depth, and a specialized hoverBackgroundColor applies a bright top-edge glow on hover, creating a premium aesthetic.
+2. **Statement Overdue Bug Fix**: Fixed a logical flaw in computeMonthlyStatements where late bill payments (occurring after the next statement's cutoff date) were inadvertently scoped out by upperBound.
+   - **Why**: Capping paymentsAfterCycle to an upperBound caused late payments to be incorrectly attributed only to the next cycle, stranding the older paid statement in a permanent "overdue" state.
+   - **Fix**: Replaced the isolated purchases - credits calculation with a true running outstandingBalance at cycleEnd. Removed the upperBound limit, allowing late payments to cascade chronologically to the oldest unpaid statements. Added a cap to emainingDue using the current outstanding balance to accurately factor in refunds.
+
+### Architecture rules introduced or enforced
+- **Waterfall Payment Attribution**: Credit card payments must be attributed to historical statements in a chronological waterfall sequence. Imposing arbitrary future date bounds (upperBound) on payments breaks historical statement tracking.
+- **Statement Balance Definition**: A historical statement's balance is simply a snapshot of the card's total running outstandingBalance at midnight on the cycleEnd date, ensuring any unpaid rollover debt from previous months is natively included.
+
+### Validation results
+- **Typecheck**: 
+px tsc --noEmit passed.
+- **Browser Tests**: Rendered correctly with no console errors.

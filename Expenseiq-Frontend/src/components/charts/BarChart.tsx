@@ -58,17 +58,44 @@ export function BarChart({
 
   const chartData = {
     labels,
-    datasets: datasets.map((ds, i) => ({
-      label: ds.label,
-      data: ds.data,
-      backgroundColor: resolveColor(
+    datasets: datasets.map((ds, i) => {
+      const baseColor = resolveColor(
         ds.color,
         i === 0 ? t.income : i === 1 ? t.expense : t.accent
-      ),
-      borderRadius: 6,
-      borderSkipped: false as const,
-      maxBarThickness: 40,
-    })),
+      );
+
+      return {
+        label: ds.label,
+        data: ds.data,
+        backgroundColor: (context: any) => {
+          const chart = context.chart;
+          const { ctx, chartArea } = chart;
+          if (!chartArea) return baseColor;
+          
+          // Create gradient from top to bottom of the bar
+          const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+          gradient.addColorStop(0, `${baseColor}80`); // 50% opacity at bottom
+          gradient.addColorStop(1, baseColor);        // 100% opacity at top
+          return gradient;
+        },
+        hoverBackgroundColor: (context: any) => {
+          const chart = context.chart;
+          const { ctx, chartArea } = chart;
+          if (!chartArea) return baseColor;
+          
+          const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+          gradient.addColorStop(0, `${baseColor}99`); // 60% opacity
+          gradient.addColorStop(1, '#ffffff');        // Glow effect at top
+          return gradient;
+        },
+        borderRadius: 6,
+        borderSkipped: false as const,
+        maxBarThickness: 40,
+        borderWidth: 1,
+        borderColor: `${baseColor}20`,
+        hoverBorderColor: baseColor,
+      };
+    }),
   };
 
   const options: ChartOptions<'bar'> = {
