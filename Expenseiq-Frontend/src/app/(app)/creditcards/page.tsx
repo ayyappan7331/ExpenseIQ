@@ -448,6 +448,11 @@ const isLoading = metaLoading || txnsLoading;
                   {(() => {
                     const moLabel = new Date(cardMo + '-01T00:00:00').toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
 
+                    // Show billing cycle date range when available
+                    const cycleRange = activeCard.cycleStart && activeCard.cycleEnd
+                      ? `${dateLabel(activeCard.cycleStart)} – ${dateLabel(activeCard.cycleEnd)}`
+                      : null;
+
                     return (
                       <div className="bg-bg-2 rounded-lg p-2 space-y-2">
                         <div className="flex items-center justify-between">
@@ -457,6 +462,9 @@ const isLoading = metaLoading || txnsLoading;
                           </button>
                           <div className="text-center">
                             <p className="text-[10px] text-text-3">{moLabel}</p>
+                            {cycleRange && (
+                              <p className="text-[9px] text-text-3/70">{cycleRange}</p>
+                            )}
                             <p className={`text-sm font-semibold ${activeCard.monthlySpend > 0 ? 'text-expense' : 'text-text-3'}`}>
                               {formatCurrency(activeCard.monthlySpend)}
                             </p>
@@ -516,7 +524,11 @@ const isLoading = metaLoading || txnsLoading;
                       </div>
                     )}
                     <div>
-                      <p className="text-[10px] text-text-3 uppercase tracking-wider">{offset === 0 ? monthLabel(currentMonth) : 'Month'}</p>
+                      <p className="text-[10px] text-text-3 uppercase tracking-wider">
+                        {activeCard.cycleStart && activeCard.cycleEnd
+                          ? `${dateLabel(activeCard.cycleStart)} – ${dateLabel(activeCard.cycleEnd)}`
+                          : offset === 0 ? monthLabel(currentMonth) : 'Month'}
+                      </p>
                       <p className="text-sm font-semibold text-expense">{formatCurrency(activeCard.monthlySpend)}</p>
                     </div>
                     <div>

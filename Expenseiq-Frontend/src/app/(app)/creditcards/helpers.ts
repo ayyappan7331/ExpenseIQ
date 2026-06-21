@@ -294,7 +294,8 @@ export function computeCardStats(
       (t) => t.type === 'income' && (t.subtype === 'payment' || t.subtype === undefined)
     );
 
-    const monthlySpend = expenseTxns
+    // Calendar-month spend — used as fallback when no billDate is configured.
+    const calendarMonthlySpend = expenseTxns
       .filter((t) => t.date.startsWith(currentMonth))
       .reduce((s, t) => s + t.amount, 0);
 
@@ -326,10 +327,16 @@ export function computeCardStats(
     const dates = expenseTxns.map((t) => t.date).sort();
     const lastTxnDate = dates.length > 0 ? dates[dates.length - 1] : null;
 
-    // Billing cycle — prefer duePeriod, fall back to legacy dueDate
+    // Billing cycle — prefer duePeriod, fall back to legacy dueDate.
+    // Use a reference date derived from currentMonth so that historical month
+    // navigation produces the correct billing cycle, not always today's cycle.
     const hasDuePeriod = !!meta?.duePeriod;
     const duePeriodValue = meta?.duePeriod ?? meta?.dueDate;
-    const cycle = computeBillingCycle(meta?.billDate, duePeriodValue, new Date(), !hasDuePeriod);
+    const [refYear, refMonth] = currentMonth.split('-').map(Number);
+    const now = new Date();
+    const isCurrentMonth = refYear === now.getFullYear() && refMonth === (now.getMonth() + 1);
+    const cycleRefDate = isCurrentMonth ? now : new Date(refYear, refMonth, 0); // last day of month for historical
+    const cycle = computeBillingCycle(meta?.billDate, duePeriodValue, cycleRefDate, !hasDuePeriod);
     let cycleStart: string | null = null;
     let cycleEnd: string | null = null;
     let nextDueDate: string | null = null;
@@ -427,6 +434,9 @@ export function computeCardStats(
         );
       }
     }
+
+    // monthlySpend: use billing cycle purchases when available, else calendar month
+    const monthlySpend = cycle ? cyclePurchases : calendarMonthlySpend;
 
     return {
       name: methodName,

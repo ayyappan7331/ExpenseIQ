@@ -11133,3 +11133,35 @@ pm run migrate:repair:apply: 510 records fixed, 0 errors, post-fix verification 
 - **Typecheck**: 
 px tsc --noEmit passed.
 - **Browser Tests**: Rendered correctly with no console errors.
+
+---
+
+## Credit Card Monthly Spend — Billing Cycle Fix
+
+### Files Changed (Frontend)
+- `src/app/(app)/creditcards/helpers.ts`
+- `src/app/(app)/creditcards/page.tsx`
+
+### What changed and why
+
+**Problem**: The monthly spend field in the center card detail containers was calculated using the **calendar month** (e.g., June 1–30). Real credit card apps (HDFC, SBI, ICICI) show spend for the **billing cycle** (e.g., May 20 – Jun 19 for HDFC with bill date 19th).
+
+**Fix in helpers.ts**:
+1. Renamed the calendar-month spend to `calendarMonthlySpend` and added a billing-cycle-aware `monthlySpend`: when a card has a configured billing cycle (`billDate`), `monthlySpend` is set to `cyclePurchases` (expenses within `[cycleStart, cycleEnd]`). Cards without `billDate` fall back to calendar month.
+2. Changed the reference date for `computeBillingCycle` from `new Date()` to a date derived from `currentMonth`. For the current month, today's date is used. For historical months (month navigator), the last day of the target month is used. This ensures the month navigator correctly computes the billing cycle for each historical month.
+
+**Fix in page.tsx**:
+1. The month navigator now shows a subtitle with the billing cycle date range (e.g., "20 May – 19 Jun") below the calendar month label.
+2. The grid label for monthly spend now shows the cycle date range (e.g., "20 May – 19 Jun") instead of the calendar month name (e.g., "JUN 2026").
+
+### Architecture rules introduced or enforced
+- **Billing Cycle as Primary Period**: Monthly spend fields on credit card screens MUST use the billing cycle period when `billDate` is configured. Calendar month is only a fallback for unconfigured cards.
+- **Reference Date Derivation**: When computing billing cycles for historical navigation, the reference date MUST be derived from the target month, never from `new Date()`.
+
+### Formulas and invariants
+- `monthlySpend = cycle ? cyclePurchases : calendarMonthlySpend`
+- `cycleRefDate = isCurrentMonth ? new Date() : new Date(refYear, refMonth, 0)`
+
+### Validation results
+- **Typecheck**: `npx tsc --noEmit` passed (0 errors).
+- **Browser**: Verified on localhost — HDFC shows "20 May – 19 Jun" with ₹20,325.94 (was ₹12,641.30 using calendar month). Amazon Pay shows "12 May – 11 Jun" with ₹4,369.50.
