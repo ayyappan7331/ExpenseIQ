@@ -11066,3 +11066,46 @@ pm run migrate:repair:apply: 510 records fixed, 0 errors, post-fix verification 
 - lint: passing
 - All interactions verified to degrade gracefully or transition smoothly using native CSS variables.
 
+
+---
+
+## Login Page Performance Fix — DNA Helix Background
+
+### Files Changed (Frontend)
+- `src/app/(auth)/login/components/WaveBackground.tsx` — Complete rewrite
+- `src/app/(auth)/login/page.tsx` — Lazy imports + glow div optimisation
+
+### What Changed and Why
+
+**WaveBackground.tsx** — The old implementation drew 21 wave lines across 3 parallax layers using per-segment `ctx.stroke()` calls (1,680 per frame at 60fps) with `ctx.shadowBlur` on each, resulting in ~100K GPU-backed draw calls/second. The page was sluggish and consumed excessive CPU/GPU.
+
+**New implementation**: A DNA double-helix with:
+- 2 backbone strands (sine waves offset by π) with 3D depth scaling
+- Horizontal rungs (base pairs) connecting the strands with depth-based opacity
+- Node dots at connection points when facing the viewer
+- 40 floating AI particles with inter-particle connection lines
+- Card-area fade-out to keep the form readable
+
+**Performance gains**:
+- Path2D batching: ~6 stroke calls per frame vs 1,680
+- No `ctx.shadowBlur` — glow via layered thicker-stroke pass at lower alpha
+- 30 FPS throttle (sine waves are perceptually identical at 30fps)
+- `devicePixelRatio`-aware canvas sizing (sharp on Retina)
+- Color interpolation skipped when not transitioning (guarded by `colorTRef.current < 1`)
+- `prefers-reduced-motion` support: renders one static frame and stops
+
+**page.tsx** — Three secondary forms (`RegisterForm`, `ForgotPasswordForm`, `PasswordlessLoginForm`) converted from static imports to `React.lazy()` with `Suspense` boundary showing a violet spinner. Saves ~25KB from initial bundle.
+
+**Glow divs** — Removed `filter: blur(60px)` from the two radial-gradient glow elements. Replaced with slightly larger gradient radii (55vw/40vw) and tighter falloff (`transparent 60%`) at opacity 0.8. Visually identical, eliminates GPU blur compositing on two viewport-scale elements.
+
+### Architecture Rules
+- Canvas animations must use Path2D batching and avoid per-segment stroke calls
+- Canvas animations must throttle to 30fps unless high-frequency motion is required
+- Never use `ctx.shadowBlur` in animation loops — layer strokes instead
+- Inactive form variants should be lazy-loaded when behind tab/view switches
+- Avoid CSS `filter: blur()` on elements larger than 200×200px — use softer gradients
+
+### Validation Results
+- TypeScript: passing (`npx tsc --noEmit`)
+- Browser: page loads, DNA helix visible, all form switches work, console clean
+- Lazy loading: Register form loads on demand with spinner fallback

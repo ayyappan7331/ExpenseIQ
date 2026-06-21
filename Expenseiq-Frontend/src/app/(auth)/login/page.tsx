@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useLayoutEffect, useMemo } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect, useMemo, Suspense, lazy } from 'react';
 import { useRouter } from 'next/navigation';
 import { isAuthEnabled, getToken } from '@/lib/api/token';
 
@@ -11,9 +11,9 @@ import { WaveBackground } from './components/WaveBackground';
 import { ThemeRipple } from './components/ThemeRipple';
 
 import { LoginForm } from './forms/LoginForm';
-import { RegisterForm } from './forms/RegisterForm';
-import { ForgotPasswordForm } from './forms/ForgotPasswordForm';
-import { PasswordlessLoginForm } from './forms/PasswordlessLoginForm';
+const RegisterForm = lazy(() => import('./forms/RegisterForm').then(m => ({ default: m.RegisterForm })));
+const ForgotPasswordForm = lazy(() => import('./forms/ForgotPasswordForm').then(m => ({ default: m.ForgotPasswordForm })));
+const PasswordlessLoginForm = lazy(() => import('./forms/PasswordlessLoginForm').then(m => ({ default: m.PasswordlessLoginForm })));
 
 export default function LoginPage() {
   const router = useRouter();
@@ -98,8 +98,8 @@ export default function LoginPage() {
     setView(v);
   }
 
-  const glowAStyle = useMemo<React.CSSProperties>(() => ({ position: 'absolute', top: '10%', left: '5%', width: '50vw', height: '50vw', borderRadius: '50%', background: `radial-gradient(circle, ${tk.glowA} 0%, transparent 70%)`, filter: 'blur(60px)', transition: 'background 0.6s ease' }), [tk]);
-  const glowBStyle = useMemo<React.CSSProperties>(() => ({ position: 'absolute', bottom: '5%', right: '10%', width: '35vw', height: '35vw', borderRadius: '50%', background: `radial-gradient(circle, ${tk.glowB} 0%, transparent 70%)`, filter: 'blur(60px)', transition: 'background 0.6s ease' }), [tk]);
+  const glowAStyle = useMemo<React.CSSProperties>(() => ({ position: 'absolute', top: '10%', left: '5%', width: '55vw', height: '55vw', borderRadius: '50%', background: `radial-gradient(circle, ${tk.glowA} 0%, transparent 60%)`, transition: 'background 0.6s ease', opacity: 0.8 }), [tk]);
+  const glowBStyle = useMemo<React.CSSProperties>(() => ({ position: 'absolute', bottom: '5%', right: '10%', width: '40vw', height: '40vw', borderRadius: '50%', background: `radial-gradient(circle, ${tk.glowB} 0%, transparent 60%)`, transition: 'background 0.6s ease', opacity: 0.8 }), [tk]);
   const panelStyle = useMemo<React.CSSProperties>(() => ({ 
     background: loginTheme === 'dark' ? 'rgba(15, 15, 20, 0.4)' : 'rgba(255, 255, 255, 0.65)', 
     backdropFilter: 'blur(40px)', 
@@ -237,9 +237,11 @@ export default function LoginPage() {
             )}
 
             {view === 'login' && <LoginForm {...formProps} />}
-            {view === 'register' && <RegisterForm {...formProps} />}
-            {view === 'forgot-password' && <ForgotPasswordForm {...formProps} />}
-            {view === 'passwordless-login' && <PasswordlessLoginForm {...formProps} />}
+            <Suspense fallback={<div className="flex justify-center py-8"><div className="w-6 h-6 border-2 border-violet-500/30 border-t-violet-500 rounded-full animate-spin" /></div>}>
+              {view === 'register' && <RegisterForm {...formProps} />}
+              {view === 'forgot-password' && <ForgotPasswordForm {...formProps} />}
+              {view === 'passwordless-login' && <PasswordlessLoginForm {...formProps} />}
+            </Suspense>
           </div>
         </div>
 
