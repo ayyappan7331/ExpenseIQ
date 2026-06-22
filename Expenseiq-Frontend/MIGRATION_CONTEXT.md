@@ -11165,3 +11165,40 @@ px tsc --noEmit passed.
 ### Validation results
 - **Typecheck**: `npx tsc --noEmit` passed (0 errors).
 - **Browser**: Verified on localhost — HDFC shows "20 May – 19 Jun" with ₹20,325.94 (was ₹12,641.30 using calendar month). Amazon Pay shows "12 May – 11 Jun" with ₹4,369.50.
+
+---
+
+## Credit Card Payment Modal & Overdue Logic Fix
+
+### Files Changed (Frontend)
+- `src/app/(app)/creditcards/helpers.ts`
+- `src/app/(app)/creditcards/page.tsx`
+- `src/app/(app)/creditcards/creditcards.test.ts`
+
+### What changed and why
+
+**Problem 1 - Payment modal missing cycle info**: The Record Payment modal only showed the card name and amount. Users had no indication which billing cycle's bill they were paying.
+
+**Fix**: Added a billing cycle context banner inside the modal showing: cycle date range (e.g., "20 May – 19 Jun"), due date, statement balance, and remaining balance.
+
+**Problem 2 - False overdue flags**: The overdue logic used `daysUntilDue = today - nextDueDate` to determine overdue status. If a user paid their bill before the due date but entered the transaction in the app after the due date, the system incorrectly marked it as overdue.
+
+**Fix**: Introduced a `paidByDueDate` parameter to `computePaymentStatus`. Post-statement payments are now split into two buckets:
+1. `paidByDueDate`: payments with `date > cycleEnd AND date <= nextDueDate` (on-time)
+2. `paidAfterDueDate`: payments with `date > nextDueDate` (late)
+
+A cycle is only marked `overdue` if `paidByDueDate < statementBalance` AND the due date has passed. This matches how real credit card apps (HDFC/SBI/ICICI) determine overdue status.
+
+### Architecture rules introduced or enforced
+- **Payment-date overdue check**: Overdue status MUST be based on the actual payment transaction date vs due date, not the current date vs due date.
+- **Payment bucket split**: `paymentsAfterCycle` MUST be decomposed into `paidByDueDate` and `paidAfterDueDate` for accurate status determination.
+
+### Formulas and invariants
+- `paidByDueDate = billPaymentTxns.filter(t => t.date > cycleEnd && t.date <= nextDueDate).sum()`
+- `paidAfterDueDate = billPaymentTxns.filter(t => t.date > nextDueDate).sum()`
+- `paymentsAfterCycle = paidByDueDate + paidAfterDueDate`
+- `computePaymentStatus` precedence: null > no_payment_due > paid(remainingDue=0) > paid(paidByDueDate>=statement) > overdue > due_soon > partially_paid > upcoming
+
+### Validation results
+- **Typecheck**: `npx tsc --noEmit` passed (0 errors)
+- **Tests**: Updated 2 existing overdue tests, added 4 new paidByDueDate tests

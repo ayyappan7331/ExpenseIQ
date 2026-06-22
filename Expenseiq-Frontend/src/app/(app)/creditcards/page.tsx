@@ -1028,80 +1028,110 @@ const isLoading = metaLoading || txnsLoading;
         title={`Record Payment — ${paymentCard?.name ?? ''}`}
         size="sm"
       >
-        <form onSubmit={handlePaymentSubmit} className="space-y-4">
-          <Input
-            label="Amount (₹)"
-            type="number"
-            value={payAmount}
-            onChange={(e) => setPayAmount(e.target.value)}
-            placeholder="0"
-            min="1"
-            step="any"
-            required
-            autoFocus
-          />
-          <Input
-            label="Date"
-            type="date"
-            value={payDate}
-            onChange={(e) => setPayDate(e.target.value)}
-            required
-          />
-          <Input
-            label="Notes (optional)"
-            value={payNotes}
-            onChange={(e) => setPayNotes(e.target.value)}
-            placeholder="e.g. Full payment, Minimum due..."
-          />
-          {/* Remaining-due hint — shows when a pre-filled amount exists */}
-          {(() => {
-            const card = cardStats.find(c => c.name === paymentCard?.name);
-            const remaining = card?.remainingDue ?? 0;
-            const minPct = card?.meta?.minimumPaymentPct;
-            const minDue = minPct && card
-              ? Math.max(200, card.outstandingBalance * (minPct / 100))
-              : null;
-            return (
-              <>
-                {remaining > 0 && Number(payAmount) !== remaining && (
-                  <div className="flex items-center justify-between rounded-lg bg-bg-2 border border-card-border px-3 py-2">
-                    <span className="text-[11px] text-text-3">
-                      Remaining due: <span className="font-semibold text-expense">{formatCurrency(remaining)}</span>
+        {(() => {
+          const payCard = cardStats.find(c => c.name === paymentCard?.name);
+          const cycleInfo = payCard?.cycleStart && payCard?.cycleEnd && payCard?.nextDueDate
+            ? { start: payCard.cycleStart, end: payCard.cycleEnd, due: payCard.nextDueDate, statement: payCard.statementBalance, remaining: payCard.remainingDue }
+            : null;
+
+          return (
+            <form onSubmit={handlePaymentSubmit} className="space-y-4">
+              {/* Billing cycle context — so user knows which bill they're paying */}
+              {cycleInfo && (
+                <div className="rounded-lg bg-bg-2 border border-card-border px-3 py-2.5 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-medium text-text-2">
+                      Cycle: {dateLabel(cycleInfo.start)} – {dateLabel(cycleInfo.end)}
                     </span>
-                    <button
-                      type="button"
-                      onClick={() => setPayAmount(String(remaining))}
-                      className="text-[11px] text-accent hover:text-accent/80 font-medium transition-colors"
-                    >
-                      Use this amount
-                    </button>
-                  </div>
-                )}
-                {minDue !== null && Number(payAmount) !== minDue && (
-                  <div className="flex items-center justify-between rounded-lg bg-bg-2 border border-card-border px-3 py-2">
                     <span className="text-[11px] text-text-3">
-                      Min. due ({minPct}%): <span className="font-semibold text-warning">{formatCurrency(minDue)}</span>
+                      Due {dateLabel(cycleInfo.due)}
                     </span>
-                    <button
-                      type="button"
-                      onClick={() => setPayAmount(String(Math.round(minDue)))}
-                      className="text-[11px] text-accent hover:text-accent/80 font-medium transition-colors"
-                    >
-                      Use this amount
-                    </button>
                   </div>
-                )}
-              </>
-            );
-          })()}
-          <p className="text-[11px] text-text-3">
-            This records an income transaction on <span className="font-medium text-text-2">{paymentCard?.paymentMethod}</span> and reduces the outstanding balance.
-          </p>
-          <div className="flex justify-end gap-2 pt-1">
-            <Button variant="ghost" type="button" onClick={closePayment}>Cancel</Button>
-            <Button type="submit" loading={recordPayment.isPending}>Record Payment</Button>
-          </div>
-        </form>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] text-text-3">
+                      Statement: <span className="font-semibold text-text">{formatCurrency(cycleInfo.statement)}</span>
+                    </span>
+                    <span className="text-[11px] text-text-3">
+                      Remaining: <span className={`font-semibold ${cycleInfo.remaining > 0 ? 'text-expense' : 'text-income'}`}>{formatCurrency(cycleInfo.remaining)}</span>
+                    </span>
+                  </div>
+                </div>
+              )}
+              <Input
+                label="Amount (₹)"
+                type="number"
+                value={payAmount}
+                onChange={(e) => setPayAmount(e.target.value)}
+                placeholder="0"
+                min="1"
+                step="any"
+                required
+                autoFocus
+              />
+              <Input
+                label="Date"
+                type="date"
+                value={payDate}
+                onChange={(e) => setPayDate(e.target.value)}
+                required
+              />
+              <Input
+                label="Notes (optional)"
+                value={payNotes}
+                onChange={(e) => setPayNotes(e.target.value)}
+                placeholder="e.g. Full payment, Minimum due..."
+              />
+              {/* Remaining-due hint — shows when a pre-filled amount exists */}
+              {(() => {
+                const card = payCard;
+                const remaining = card?.remainingDue ?? 0;
+                const minPct = card?.meta?.minimumPaymentPct;
+                const minDue = minPct && card
+                  ? Math.max(200, card.outstandingBalance * (minPct / 100))
+                  : null;
+                return (
+                  <>
+                    {remaining > 0 && Number(payAmount) !== remaining && (
+                      <div className="flex items-center justify-between rounded-lg bg-bg-2 border border-card-border px-3 py-2">
+                        <span className="text-[11px] text-text-3">
+                          Remaining due: <span className="font-semibold text-expense">{formatCurrency(remaining)}</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setPayAmount(String(remaining))}
+                          className="text-[11px] text-accent hover:text-accent/80 font-medium transition-colors"
+                        >
+                          Use this amount
+                        </button>
+                      </div>
+                    )}
+                    {minDue !== null && Number(payAmount) !== minDue && (
+                      <div className="flex items-center justify-between rounded-lg bg-bg-2 border border-card-border px-3 py-2">
+                        <span className="text-[11px] text-text-3">
+                          Min. due ({minPct}%): <span className="font-semibold text-warning">{formatCurrency(minDue)}</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setPayAmount(String(Math.round(minDue)))}
+                          className="text-[11px] text-accent hover:text-accent/80 font-medium transition-colors"
+                        >
+                          Use this amount
+                        </button>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
+              <p className="text-[11px] text-text-3">
+                This records an income transaction on <span className="font-medium text-text-2">{paymentCard?.paymentMethod}</span> and reduces the outstanding balance.
+              </p>
+              <div className="flex justify-end gap-2 pt-1">
+                <Button variant="ghost" type="button" onClick={closePayment}>Cancel</Button>
+                <Button type="submit" loading={recordPayment.isPending}>Record Payment</Button>
+              </div>
+            </form>
+          );
+        })()}
       </Modal>
 
       {/* Card Details Drawer */}

@@ -188,24 +188,33 @@ export function computeBillingCycle(
 /**
  * Computes payment status for a card statement.
  *
+ * Uses the actual payment date (transaction.date) to determine overdue,
+ * NOT today's date. This matches real bank apps (HDFC/SBI/ICICI):
+ * a bill is overdue only if insufficient payment was made BY the due date.
+ *
  * Precedence (highest to lowest):
  *   1. No cycle configured → null
  *   2. statementBalance === 0 → no_payment_due
  *   3. remainingDue === 0 → paid
- *   4. today > nextDueDate → overdue
- *   5. daysUntilDue <= 7 → due_soon   (imminent — within a week)
- *   6. paymentsAfterCycle > 0 → partially_paid
- *   7. daysUntilDue > 7, no payments → upcoming  (payment needed, not yet urgent)
+ *   4. paidByDueDate >= statementBalance → paid (on time, even if checking later)
+ *   5. today > nextDueDate AND paidByDueDate < statementBalance → overdue
+ *   6. daysUntilDue <= 7 → due_soon   (imminent — within a week)
+ *   7. paymentsAfterCycle > 0 → partially_paid
+ *   8. daysUntilDue > 7, no payments → upcoming  (payment needed, not yet urgent)
  */
 export function computePaymentStatus(
   statementBalance: number,
   remainingDue: number,
   paymentsAfterCycle: number,
-  daysUntilDue: number | null
+  daysUntilDue: number | null,
+  paidByDueDate: number = 0
 ): PaymentStatus | null {
   if (daysUntilDue === null) return null;
   if (statementBalance === 0) return 'no_payment_due';
   if (remainingDue === 0) return 'paid';
+  // Sufficient payment was made by the due date → paid on time
+  if (paidByDueDate >= statementBalance) return 'paid';
+  // Due date passed and insufficient payment by due date → overdue
   if (daysUntilDue < 0) return 'overdue';
   if (daysUntilDue <= 7) return 'due_soon';
   if (paymentsAfterCycle > 0) return 'partially_paid';
@@ -381,11 +390,20 @@ export function computeCardStats(
     let paymentStatus: PaymentStatus | null = null;
 
     if (cycleEnd && nextDueDate) {
-      // paymentsAfterCycle: only bill payments after the statement date
-      // (refunds/cashback after cycle end do not count as paying the bill)
-      paymentsAfterCycle = billPaymentTxns
-        .filter((t) => t.date > cycleEnd!)
+      // Split post-statement payments into two buckets:
+      // 1. paidByDueDate: payments made after statement close but on or before the due date
+      //    → these count as "on-time" payments (matches how HDFC/SBI apps work)
+      // 2. paidAfterDueDate: payments made after the due date
+      //    → these still reduce the balance but the bill was late
+      const paidByDueDate = billPaymentTxns
+        .filter((t) => t.date > cycleEnd! && t.date <= nextDueDate!)
         .reduce((s, t) => s + t.amount, 0);
+
+      const paidAfterDueDate = billPaymentTxns
+        .filter((t) => t.date > nextDueDate!)
+        .reduce((s, t) => s + t.amount, 0);
+
+      paymentsAfterCycle = paidByDueDate + paidAfterDueDate;
       
       // remainingDue cannot exceed the current total outstanding balance (e.g. if refunds occurred)
       remainingDue = Math.max(0, Math.min(outstandingBalance, statementBalance - paymentsAfterCycle));
@@ -404,7 +422,8 @@ export function computeCardStats(
         statementBalance,
         remainingDue,
         paymentsAfterCycle,
-        daysUntilDue
+        daysUntilDue,
+        paidByDueDate
       );
     }
 
@@ -557,11 +576,16 @@ export function computeMonthlyStatements(
 
     const statementBalance = Math.max(0, expensesUpToCycleEnd - creditsUpToCycleEnd);
 
-    // Payments after cycle are ALL future payments. This correctly attributes
-    // late payments to past statements chronologically.
-    const paymentsAfterCycle = billPaymentTxns
-      .filter((t) => t.date > cycleEnd)
+    // Split post-statement payments by due date (same logic as computeCardStats)
+    const paidByDueDate = billPaymentTxns
+      .filter((t) => t.date > cycleEnd && t.date <= nextDueDate)
       .reduce((s, t) => s + t.amount, 0);
+
+    const paidAfterDueDate = billPaymentTxns
+      .filter((t) => t.date > nextDueDate)
+      .reduce((s, t) => s + t.amount, 0);
+
+    const paymentsAfterCycle = paidByDueDate + paidAfterDueDate;
 
     // remainingDue capped at current total outstanding balance (for refunds)
     const remainingDue = Math.max(0, Math.min(currentOutstandingBalance, statementBalance - paymentsAfterCycle));
@@ -575,7 +599,7 @@ export function computeMonthlyStatements(
       (new Date(nextDueDate + 'T00:00:00').getTime() - new Date(todayStr + 'T00:00:00').getTime()) / msPerDay
     );
 
-    const status = computePaymentStatus(statementBalance, remainingDue, paymentsAfterCycle, daysUntilDue);
+    const status = computePaymentStatus(statementBalance, remainingDue, paymentsAfterCycle, daysUntilDue, paidByDueDate);
 
     const [cy, cm] = cycleEnd.split('-').map(Number);
     const label = new Date(cy, cm - 1, 1).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });

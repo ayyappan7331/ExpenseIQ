@@ -79,9 +79,11 @@ describe('computeCardStats', () => {
   const hdfcCard = makeCard({ linkedPaymentMethod: 'HDFC Credit Card' });
   const cardMethodMap = new Map([['HDFC Credit Card', hdfcCard as CreditCard | undefined]]);
 
-  it('computes monthly spend correctly (expenses only)', () => {
+  it('computes monthly spend correctly (billing cycle, not calendar month)', () => {
+    // With billDate=19, May cycle = Apr 20 – May 19
+    // Expenses in cycle: Apr 20 (200) + May 10 (500) + May 15 (300) = 1000
     const [hdfc] = computeCardStats(cardMethodMap, txns, '2026-05', '2026');
-    expect(hdfc.monthlySpend).toBe(800); // 500 + 300
+    expect(hdfc.monthlySpend).toBe(1000);
   });
 
   it('computes yearly spend correctly (expenses only)', () => {
@@ -372,12 +374,12 @@ describe('computePaymentStatus', () => {
     expect(computePaymentStatus(10000, 0, 10000, 5)).toBe('paid');
   });
 
-  it('overdue when daysUntilDue < 0 and unpaid', () => {
-    expect(computePaymentStatus(10000, 10000, 0, -3)).toBe('overdue');
+  it('overdue when daysUntilDue < 0, unpaid, and no paidByDueDate', () => {
+    expect(computePaymentStatus(10000, 10000, 0, -3, 0)).toBe('overdue');
   });
 
-  it('overdue when daysUntilDue < 0 and partially paid', () => {
-    expect(computePaymentStatus(10000, 4000, 6000, -1)).toBe('overdue');
+  it('overdue when daysUntilDue < 0, partially paid but paidByDueDate < statement', () => {
+    expect(computePaymentStatus(10000, 4000, 6000, -1, 6000)).toBe('overdue');
   });
 
   it('due_soon when daysUntilDue <= 7 and unpaid', () => {
@@ -406,6 +408,29 @@ describe('computePaymentStatus', () => {
 
   it('paid takes precedence over overdue', () => {
     expect(computePaymentStatus(10000, 0, 10000, -5)).toBe('paid');
+  });
+
+  // ── paidByDueDate tests (payment-date-aware overdue logic) ──────────
+
+  it('paid when paidByDueDate >= statementBalance, even if daysUntilDue < 0 and remainingDue > 0', () => {
+    // User paid ₹10,000 by the due date, but some late charges made remainingDue > 0
+    // The original bill was paid on time → should be "paid", not "overdue"
+    expect(computePaymentStatus(10000, 2000, 10000, -5, 10000)).toBe('paid');
+  });
+
+  it('paid when paidByDueDate > statementBalance (overpaid by due date)', () => {
+    expect(computePaymentStatus(10000, 0, 12000, -5, 12000)).toBe('paid');
+  });
+
+  it('overdue when paidByDueDate < statementBalance and due date passed', () => {
+    // User only paid ₹5,000 of ₹10,000 by the due date
+    expect(computePaymentStatus(10000, 5000, 5000, -3, 5000)).toBe('overdue');
+  });
+
+  it('NOT overdue when paidByDueDate >= statementBalance (retroactive entry)', () => {
+    // User paid full amount before due date but entered it in app after due date
+    // paidByDueDate = 10000, statementBalance = 10000, but remainingDue = 500 due to new charges
+    expect(computePaymentStatus(10000, 500, 10000, -10, 10000)).toBe('paid');
   });
 });
 
